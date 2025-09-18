@@ -78,80 +78,88 @@ export default function HomePage() {
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {/* Activities */}
             <Link href="/activities" className="block group">
-              <Card className="hover:shadow-2xl transition-all duration-300 cursor-pointer border-0 shadow-lg">
+              <Card className="hover:shadow-2xl transition-all duration-300 cursor-pointer border-0 shadow-lg h-80 flex flex-col">
                 <div className="relative overflow-hidden rounded-lg">
                   <div className="h-48 bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center">
                     <Navigation className="w-16 h-16 text-white" />
                   </div>
                   <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-all duration-300"></div>
                 </div>
-                <CardContent className="p-6">
+                <CardContent className="p-6 flex flex-col flex-1">
                   <h3 className="text-xl font-bold mb-2">Activities</h3>
                   <p className="text-gray-600 mb-4">Tours, attractions, and experiences</p>
-                  <Button className="w-full bg-blue-500 hover:bg-blue-600 group-hover:bg-blue-600 transition-colors">
-                    Explore Activities
-                    <ArrowRight className="w-4 h-4 ml-2" />
-                  </Button>
+                  <div className="mt-auto">
+                    <Button className="w-full bg-blue-500 hover:bg-blue-600 group-hover:bg-blue-600 transition-colors">
+                      Explore Activities
+                      <ArrowRight className="w-4 h-4 ml-2" />
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             </Link>
 
             {/* Food & Drink */}
             <Link href="/food-drink" className="block group">
-              <Card className="hover:shadow-2xl transition-all duration-300 cursor-pointer border-0 shadow-lg">
+              <Card className="hover:shadow-2xl transition-all duration-300 cursor-pointer border-0 shadow-lg h-80 flex flex-col">
                 <div className="relative overflow-hidden rounded-lg">
                   <div className="h-48 bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center">
                     <Utensils className="w-16 h-16 text-white" />
                   </div>
                   <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-all duration-300"></div>
                 </div>
-                <CardContent className="p-6">
+                <CardContent className="p-6 flex flex-col flex-1">
                   <h3 className="text-xl font-bold mb-2">Food & Drink</h3>
                   <p className="text-gray-600 mb-4">Restaurants, cafes, and local cuisine</p>
-                  <Button className="w-full bg-orange-500 hover:bg-orange-600 group-hover:bg-orange-600 transition-colors">
-                    Find Restaurants
-                    <ArrowRight className="w-4 h-4 ml-2" />
-                  </Button>
+                  <div className="mt-auto">
+                    <Button className="w-full bg-orange-500 hover:bg-orange-600 group-hover:bg-orange-600 transition-colors">
+                      Find Restaurants
+                      <ArrowRight className="w-4 h-4 ml-2" />
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             </Link>
 
             {/* Shopping */}
             <Link href="/shopping" className="block group">
-              <Card className="hover:shadow-2xl transition-all duration-300 cursor-pointer border-0 shadow-lg">
+              <Card className="hover:shadow-2xl transition-all duration-300 cursor-pointer border-0 shadow-lg h-80 flex flex-col">
                 <div className="relative overflow-hidden rounded-lg">
                   <div className="h-48 bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center">
                     <ShoppingBag className="w-16 h-16 text-white" />
                   </div>
                   <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-all duration-300"></div>
                 </div>
-                <CardContent className="p-6">
+                <CardContent className="p-6 flex flex-col flex-1">
                   <h3 className="text-xl font-bold mb-2">Shopping</h3>
                   <p className="text-gray-600 mb-4">Markets, boutiques, and souvenirs</p>
-                  <Button className="w-full bg-green-500 hover:bg-green-600 group-hover:bg-green-600 transition-colors">
-                    Shop Now
-                    <ArrowRight className="w-4 h-4 ml-2" />
-                  </Button>
+                  <div className="mt-auto">
+                    <Button className="w-full bg-green-500 hover:bg-green-600 group-hover:bg-green-600 transition-colors">
+                      Shop Now
+                      <ArrowRight className="w-4 h-4 ml-2" />
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             </Link>
 
             {/* Hotels */}
             <Link href="/hotels" className="block group">
-              <Card className="hover:shadow-2xl transition-all duration-300 cursor-pointer border-0 shadow-lg">
+              <Card className="hover:shadow-2xl transition-all duration-300 cursor-pointer border-0 shadow-lg h-80 flex flex-col">
                 <div className="relative overflow-hidden rounded-lg">
                   <div className="h-48 bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center">
                     <Bed className="w-16 h-16 text-white" />
                   </div>
                   <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-all duration-300"></div>
                 </div>
-                <CardContent className="p-6">
+                <CardContent className="p-6 flex flex-col flex-1">
                   <h3 className="text-xl font-bold mb-2">Hotels</h3>
                   <p className="text-gray-600 mb-4">Accommodations and stays</p>
-                  <Button className="w-full bg-purple-500 hover:bg-purple-600 group-hover:bg-purple-600 transition-colors">
-                    Book Hotels
-                    <ArrowRight className="w-4 h-4 ml-2" />
-                  </Button>
+                  <div className="mt-auto">
+                    <Button className="w-full bg-purple-500 hover:bg-purple-600 group-hover:bg-purple-600 transition-colors">
+                      Book Hotels
+                      <ArrowRight className="w-4 h-4 ml-2" />
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             </Link>
@@ -203,14 +211,14 @@ export default function HomePage() {
           </h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {/* Experience 1 */}
-            <Card className="group hover:shadow-2xl transition-all duration-300 border-0 shadow-lg">
+            <Card className="group hover:shadow-2xl transition-all duration-300 border-0 shadow-lg h-80 flex flex-col">
               <div className="relative overflow-hidden rounded-t-lg">
                 <div className="h-48 bg-gradient-to-br from-blue-600 to-purple-700 flex items-center justify-center">
                   <Camera className="w-16 h-16 text-white" />
                 </div>
                 <Badge className="absolute top-4 left-4 bg-yellow-500 text-black">#1</Badge>
               </div>
-              <CardContent className="p-6">
+              <CardContent className="p-6 flex flex-col flex-1">
                 <h3 className="text-xl font-bold mb-2">Hagia Sophia Tour</h3>
                 <p className="text-gray-600 mb-4">Explore the iconic Byzantine architecture and rich history</p>
                 <div className="flex items-center justify-between mb-4">
@@ -222,21 +230,23 @@ export default function HomePage() {
                   </div>
                   <Badge variant="outline">$$$</Badge>
                 </div>
-                <Button className="w-full bg-blue-600 hover:bg-blue-700">
-                  Book Now
-                </Button>
+                <div className="mt-auto">
+                  <Button className="w-full bg-blue-600 hover:bg-blue-700">
+                    Book Now
+                  </Button>
+                </div>
               </CardContent>
             </Card>
 
             {/* Experience 2 */}
-            <Card className="group hover:shadow-2xl transition-all duration-300 border-0 shadow-lg">
+            <Card className="group hover:shadow-2xl transition-all duration-300 border-0 shadow-lg h-80 flex flex-col">
               <div className="relative overflow-hidden rounded-t-lg">
                 <div className="h-48 bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center">
                   <Utensils className="w-16 h-16 text-white" />
                 </div>
                 <Badge className="absolute top-4 left-4 bg-yellow-500 text-black">#2</Badge>
               </div>
-              <CardContent className="p-6">
+              <CardContent className="p-6 flex flex-col flex-1">
                 <h3 className="text-xl font-bold mb-2">Bosphorus Dinner Cruise</h3>
                 <p className="text-gray-600 mb-4">Romantic dinner with stunning city views</p>
                 <div className="flex items-center justify-between mb-4">
@@ -248,21 +258,23 @@ export default function HomePage() {
                   </div>
                   <Badge variant="outline">$$$$</Badge>
                 </div>
-                <Button className="w-full bg-orange-600 hover:bg-orange-700">
-                  Reserve Table
-                </Button>
+                <div className="mt-auto">
+                  <Button className="w-full bg-orange-600 hover:bg-orange-700">
+                    Reserve Table
+                  </Button>
+                </div>
               </CardContent>
             </Card>
 
             {/* Experience 3 */}
-            <Card className="group hover:shadow-2xl transition-all duration-300 border-0 shadow-lg">
+            <Card className="group hover:shadow-2xl transition-all duration-300 border-0 shadow-lg h-80 flex flex-col">
               <div className="relative overflow-hidden rounded-t-lg">
                 <div className="h-48 bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center">
                   <ShoppingBag className="w-16 h-16 text-white" />
                 </div>
                 <Badge className="absolute top-4 left-4 bg-yellow-500 text-black">#3</Badge>
               </div>
-              <CardContent className="p-6">
+              <CardContent className="p-6 flex flex-col flex-1">
                 <h3 className="text-xl font-bold mb-2">Grand Bazaar Shopping</h3>
                 <p className="text-gray-600 mb-4">World&apos;s oldest covered market experience</p>
                 <div className="flex items-center justify-between mb-4">
@@ -274,9 +286,11 @@ export default function HomePage() {
                   </div>
                   <Badge variant="outline">$$</Badge>
                 </div>
-                <Button className="w-full bg-green-600 hover:bg-green-700">
-                  Shop Now
-                </Button>
+                <div className="mt-auto">
+                  <Button className="w-full bg-green-600 hover:bg-green-700">
+                    Shop Now
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           </div>
