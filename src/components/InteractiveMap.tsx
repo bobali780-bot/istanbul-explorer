@@ -1,8 +1,8 @@
 "use client"
 
-import { useState, useCallback } from "react"
+import { useState } from "react"
 import Map, { Marker, Popup } from "react-map-gl/mapbox"
-import { MapPin, Star } from "lucide-react"
+import { Star } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -34,7 +34,7 @@ export default function InteractiveMap({
   zoom = 12,
   className = ""
 }: InteractiveMapProps) {
-  const [selectedLocation, setSelectedLocation] = useState<MapLocation | null>(null)
+  const [selectedPin, setSelectedPin] = useState<MapLocation | null>(null)
   const [viewState, setViewState] = useState({
     longitude: center[0],
     latitude: center[1],
@@ -42,14 +42,6 @@ export default function InteractiveMap({
   })
 
   const mapboxToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN
-
-  const handleMarkerClick = useCallback((location: MapLocation) => {
-    console.log('Marker clicked:', location.name, 'Setting selectedLocation to:', location)
-    setSelectedLocation(location)
-  }, [])
-
-  // Debug log when selectedLocation changes
-  console.log('Current selectedLocation:', selectedLocation?.name || 'none')
 
   // Show fallback if Mapbox token is missing
   if (!mapboxToken) {
@@ -70,115 +62,78 @@ export default function InteractiveMap({
     )
   }
 
-  const getCategoryColor = (category: string) => {
-    switch (category) {
-      case "activities": return "bg-blue-500"
-      case "food": return "bg-orange-500"
-      case "shopping": return "bg-green-500"
-      case "hotels": return "bg-purple-500"
-      default: return "bg-gray-500"
-    }
-  }
-
-  const getCategoryIcon = (category: string) => {
-    switch (category) {
-      case "activities": return "🎯"
-      case "food": return "🍽️"
-      case "shopping": return "🛍️"
-      case "hotels": return "🏨"
-      default: return "📍"
-    }
-  }
-
   return (
     <div className={`w-full h-96 rounded-lg overflow-hidden border ${className}`}>
       <Map
         {...viewState}
         onMove={evt => setViewState(evt.viewState)}
-        onClick={() => setSelectedLocation(null)}
+        onClick={() => setSelectedPin(null)}
         mapboxAccessToken={mapboxToken}
         style={{ width: "100%", height: "100%" }}
         mapStyle="mapbox://styles/mapbox/streets-v12"
       >
-        {locations.map((location) => (
+        {locations.map((pin) => (
           <Marker
-            key={location.id}
-            longitude={location.coordinates[0]}
-            latitude={location.coordinates[1]}
+            key={pin.id}
+            longitude={pin.coordinates[0]}
+            latitude={pin.coordinates[1]}
           >
             <div 
-              className="relative cursor-pointer select-none"
-              onClick={(e) => {
-                e.stopPropagation()
-                handleMarkerClick(location)
-              }}
-              onTouchEnd={(e) => {
-                e.stopPropagation()
-                handleMarkerClick(location)
-              }}
-            >
-              <div className={`w-8 h-8 rounded-full ${getCategoryColor(location.category)} flex items-center justify-center text-white text-sm hover:scale-110 active:scale-95 transition-transform shadow-lg`}>
-                {getCategoryIcon(location.category)}
-              </div>
-              <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-800"></div>
-            </div>
+              className="w-4 h-4 bg-red-500 rounded-full cursor-pointer hover:scale-125 transition-transform"
+              onClick={() => setSelectedPin(pin)}
+            />
           </Marker>
         ))}
 
-        {selectedLocation && (
+        {selectedPin && (
           <Popup
-            longitude={selectedLocation.coordinates[0]}
-            latitude={selectedLocation.coordinates[1]}
-            onClose={() => setSelectedLocation(null)}
+            longitude={selectedPin.coordinates[0]}
+            latitude={selectedPin.coordinates[1]}
+            onClose={() => setSelectedPin(null)}
             closeButton={true}
             closeOnClick={false}
-            className="mapbox-popup"
-            maxWidth="300px"
-            anchor="bottom"
-            offset={[0, -10]}
           >
-            <Card className="w-72 max-w-[90vw] border-0 shadow-xl">
+            <Card className="w-64 border-0 shadow-lg">
               <CardContent className="p-4">
-                <div className="flex items-start justify-between mb-3">
-                  <h4 className="font-bold text-base leading-tight">{selectedLocation.name}</h4>
-                  <Badge variant="outline" className="text-xs ml-2">
-                    {selectedLocation.category}
+                <div className="flex items-start justify-between mb-2">
+                  <h4 className="font-bold text-sm">{selectedPin.name}</h4>
+                  <Badge variant="outline" className="text-xs">
+                    {selectedPin.category}
                   </Badge>
                 </div>
-                <p className="text-sm text-gray-600 mb-4 leading-relaxed">
-                  {selectedLocation.description}
+                <p className="text-xs text-gray-600 mb-3">
+                  {selectedPin.description}
                 </p>
-                {selectedLocation.rating && (
+                {selectedPin.rating && (
                   <div className="flex items-center gap-1 mb-3">
                     {[...Array(5)].map((_, i) => (
                       <Star 
                         key={i} 
-                        className={`w-4 h-4 ${i < selectedLocation.rating! ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`} 
+                        className={`w-3 h-3 ${i < selectedPin.rating! ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`} 
                       />
                     ))}
-                    <span className="text-xs text-gray-500 ml-1">({selectedLocation.rating}/5)</span>
                   </div>
                 )}
-                {selectedLocation.price && (
-                  <div className="text-sm font-medium text-gray-700 mb-4">
-                    {selectedLocation.price}
+                {selectedPin.price && (
+                  <div className="text-xs text-gray-500 mb-3">
+                    {selectedPin.price}
                   </div>
                 )}
-                {(selectedLocation.affiliateUrl || selectedLocation.ctaLink) && (
+                {(selectedPin.affiliateUrl || selectedPin.ctaLink) && (
                   <Button 
                     size="sm" 
-                    className="w-full"
+                    className="w-full text-xs"
                     asChild
                   >
                     <a 
-                      href={selectedLocation.ctaLink || selectedLocation.affiliateUrl}
+                      href={selectedPin.ctaLink || selectedPin.affiliateUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      {selectedLocation.ctaText || 
-                       (selectedLocation.category === "hotels" ? "Book Now" :
-                        selectedLocation.category === "activities" ? "Book Tour" :
-                        selectedLocation.category === "food" ? "Reserve Table" :
+                      {selectedPin.ctaText || 
+                       (selectedPin.category === "hotels" ? "Book Now" :
+                        selectedPin.category === "activities" ? "Book Tour" :
+                        selectedPin.category === "food" ? "Reserve Table" :
                         "Shop Now")}
                     </a>
                   </Button>
