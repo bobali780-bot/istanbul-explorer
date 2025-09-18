@@ -39,9 +39,30 @@ export default function InteractiveMap({
     zoom: zoom
   })
 
+  const mapboxToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN
+
   const handleMarkerClick = useCallback((location: MapLocation) => {
     setSelectedLocation(location)
   }, [])
+
+  // Show fallback if Mapbox token is missing
+  if (!mapboxToken) {
+    return (
+      <div className={`w-full h-96 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center ${className}`}>
+        <div className="text-center p-8">
+          <div className="text-gray-500 mb-4">
+            <div className="text-lg font-medium mb-2">Mapbox Token Missing</div>
+            <div className="text-sm text-gray-400">
+              Please add NEXT_PUBLIC_MAPBOX_TOKEN to your environment variables
+            </div>
+            <div className="text-xs text-gray-400 mt-2">
+              Get your free token at: <a href="https://account.mapbox.com/" target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">mapbox.com</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   const getCategoryColor = (category: string) => {
     switch (category) {
@@ -68,7 +89,7 @@ export default function InteractiveMap({
       <Map
         {...viewState}
         onMove={evt => setViewState(evt.viewState)}
-        mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_TOKEN || "pk.eyJ1IjoiaXN0YW5idWwtZXhwbG9yZXIiLCJhIjoiY2x4ZGV2ZGV2ZGV2In0.example"}
+        mapboxAccessToken={mapboxToken}
         style={{ width: "100%", height: "100%" }}
         mapStyle="mapbox://styles/mapbox/streets-v12"
       >

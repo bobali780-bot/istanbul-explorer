@@ -52,22 +52,21 @@ export default function AffiliateButton({
   }
 
   return (
-    <Button 
-      asChild
-      variant={variant}
-      size={size}
-      className={className}
+    <a 
+      href={getAffiliateUrl()} 
+      target="_blank" 
+      rel="noopener noreferrer"
       onClick={handleClick}
+      className="inline-block"
     >
-      <a 
-        href={getAffiliateUrl()} 
-        target="_blank" 
-        rel="noopener noreferrer"
-        className="inline-flex items-center"
+      <Button 
+        variant={variant}
+        size={size}
+        className={`inline-flex items-center ${className}`}
       >
         {children}
         <ArrowRight className="w-4 h-4 ml-2" />
-      </a>
-    </Button>
+      </Button>
+    </a>
   )
 }
