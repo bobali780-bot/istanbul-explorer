@@ -651,9 +651,6 @@ export default function ActivitiesPage() {
           <div className="max-w-6xl mx-auto">
             <h3 className="text-2xl font-bold mb-8 text-gray-900">Activities on the Map</h3>
             <InteractiveMap 
-              locations={activitiesLocations}
-              center={[28.9784, 41.0082]}
-              zoom={11}
               className="border-2 border-gray-200"
             />
             <div className="text-center mt-6">

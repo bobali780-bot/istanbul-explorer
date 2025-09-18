@@ -373,9 +373,6 @@ export default function HomePage() {
           </h2>
           <div className="max-w-6xl mx-auto">
             <InteractiveMap 
-              locations={sampleLocations}
-              center={[28.9784, 41.0082]}
-              zoom={11}
               className="border-2 border-gray-200"
             />
             <div className="text-center mt-6">
