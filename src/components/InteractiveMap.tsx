@@ -43,6 +43,40 @@ export default function InteractiveMap({
 
   const mapboxToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN
 
+  // Debug: Log the locations data
+  console.log('InteractiveMap received locations:', locations)
+  console.log('Number of locations:', locations?.length || 0)
+
+  // Hardcoded test pins to ensure visibility
+  const testPins = [
+    {
+      id: "test-1",
+      name: "Test Pin 1",
+      description: "This is a test pin to ensure visibility",
+      coordinates: [28.9784, 41.0082] as [number, number],
+      category: "activities" as const,
+      price: "$$",
+      rating: 5,
+      ctaText: "Test Button",
+      ctaLink: "https://example.com"
+    },
+    {
+      id: "test-2", 
+      name: "Test Pin 2",
+      description: "Another test pin for debugging",
+      coordinates: [28.9848, 41.0086] as [number, number],
+      category: "food" as const,
+      price: "$$$",
+      rating: 4,
+      ctaText: "Test Button",
+      ctaLink: "https://example.com"
+    }
+  ]
+
+  // Use test pins if no locations provided or if locations is empty
+  const pinsToRender = locations && locations.length > 0 ? locations : testPins
+  console.log('Using pins:', pinsToRender.length, 'pins')
+
   // Show fallback if Mapbox token is missing
   if (!mapboxToken) {
     return (
@@ -55,6 +89,9 @@ export default function InteractiveMap({
             </div>
             <div className="text-xs text-gray-400 mt-2">
               Get your free token at: <a href="https://account.mapbox.com/" target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">mapbox.com</a>
+            </div>
+            <div className="text-xs text-gray-400 mt-4">
+              Pins would appear here: {pinsToRender.length} locations ready
             </div>
           </div>
         </div>
@@ -72,18 +109,24 @@ export default function InteractiveMap({
         style={{ width: "100%", height: "100%" }}
         mapStyle="mapbox://styles/mapbox/streets-v12"
       >
-        {locations.map((pin) => (
-          <Marker
-            key={pin.id}
-            longitude={pin.coordinates[0]}
-            latitude={pin.coordinates[1]}
-          >
-            <div 
-              className="w-4 h-4 bg-red-500 rounded-full cursor-pointer hover:scale-125 transition-transform"
-              onClick={() => setSelectedPin(pin)}
-            />
-          </Marker>
-        ))}
+        {pinsToRender.map((pin) => {
+          console.log('Rendering pin:', pin.name, 'at coordinates:', pin.coordinates)
+          return (
+            <Marker
+              key={pin.id}
+              longitude={pin.coordinates[0]}
+              latitude={pin.coordinates[1]}
+            >
+              <div 
+                className="w-8 h-8 bg-red-500 rounded-full cursor-pointer hover:scale-125 transition-transform border-2 border-white shadow-lg"
+                onClick={() => {
+                  console.log('Pin clicked:', pin.name)
+                  setSelectedPin(pin)
+                }}
+              />
+            </Marker>
+          )
+        })}
 
         {selectedPin && (
           <Popup
