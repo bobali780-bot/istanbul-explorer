@@ -79,7 +79,10 @@ export default function InteractiveMap({ className = "" }: InteractiveMapProps) 
       <Map
         {...viewState}
         onMove={evt => setViewState(evt.viewState)}
-        onClick={() => setSelectedPin(null)}
+        onClick={() => {
+          console.log("Map clicked - closing popup")
+          setSelectedPin(null)
+        }}
         mapboxAccessToken={mapboxToken}
         style={{ width: "100%", height: "100%" }}
         mapStyle="mapbox://styles/mapbox/streets-v12"
@@ -94,7 +97,8 @@ export default function InteractiveMap({ className = "" }: InteractiveMapProps) 
             >
               <div 
                 className="text-3xl cursor-pointer z-50 hover:scale-110 transition-transform"
-                onClick={() => {
+                onClick={(e) => {
+                  e.stopPropagation()
                   console.log('Clicked pin:', pin.name)
                   console.log("Opening popup for:", pin.name)
                   setSelectedPin(pin)
@@ -107,7 +111,13 @@ export default function InteractiveMap({ className = "" }: InteractiveMapProps) 
           )
         })}
 
-        {selectedPin && selectedPin.latitude && selectedPin.longitude && (
+        {selectedPin && 
+         selectedPin.latitude && 
+         selectedPin.longitude && 
+         typeof selectedPin.latitude === 'number' && 
+         typeof selectedPin.longitude === 'number' && 
+         !isNaN(selectedPin.latitude) && 
+         !isNaN(selectedPin.longitude) && (
           <Popup
             latitude={selectedPin.latitude}
             longitude={selectedPin.longitude}
@@ -132,7 +142,8 @@ export default function InteractiveMap({ className = "" }: InteractiveMapProps) 
                 target="_blank"
                 rel="noopener noreferrer"
                 className="block w-full bg-blue-600 hover:bg-blue-700 text-white text-center py-2 px-4 rounded text-sm font-medium transition-colors"
-                onClick={() => {
+                onClick={(e) => {
+                  e.stopPropagation()
                   console.log('CTA clicked for:', selectedPin.name)
                 }}
               >
