@@ -5,6 +5,10 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
+import AdSenseBanner from "@/components/AdSenseBanner"
+import AffiliateButton from "@/components/AffiliateButton"
+import InteractiveMap from "@/components/InteractiveMap"
+import GoogleAnalytics from "@/components/GoogleAnalytics"
 import { 
   MapPin, 
   Search, 
@@ -27,8 +31,57 @@ import {
 } from "lucide-react"
 
 export default function HomePage() {
+  // Sample map data for homepage preview
+  const sampleLocations = [
+    {
+      id: "hagia-sophia",
+      name: "Hagia Sophia",
+      description: "Iconic Byzantine architecture and rich history",
+      coordinates: [28.9848, 41.0086] as [number, number],
+      category: "activities" as const,
+      price: "$$$",
+      rating: 5,
+      affiliateUrl: "https://www.viator.com/hagia-sophia-tour",
+      affiliateType: "viator" as const
+    },
+    {
+      id: "four-seasons",
+      name: "Four Seasons Hotel",
+      description: "Historic luxury in Sultanahmet with stunning views",
+      coordinates: [28.9784, 41.0082] as [number, number],
+      category: "hotels" as const,
+      price: "$$$$",
+      rating: 5,
+      affiliateUrl: "https://www.booking.com/four-seasons-istanbul",
+      affiliateType: "booking" as const
+    },
+    {
+      id: "grand-bazaar",
+      name: "Grand Bazaar",
+      description: "World's oldest covered market with 4,000 shops",
+      coordinates: [28.9708, 41.0106] as [number, number],
+      category: "shopping" as const,
+      price: "$$",
+      rating: 5,
+      affiliateUrl: "https://www.amazon.com/grand-bazaar-guide",
+      affiliateType: "shop" as const
+    },
+    {
+      id: "pera-palace",
+      name: "Pera Palace Hotel",
+      description: "Iconic Belle Époque hotel with Agatha Christie connections",
+      coordinates: [28.9784, 41.0082] as [number, number],
+      category: "food" as const,
+      price: "$$$",
+      rating: 5,
+      affiliateUrl: "https://www.tripadvisor.com/pera-palace-restaurant",
+      affiliateType: "tripadvisor" as const
+    }
+  ]
+
   return (
     <div className="min-h-screen bg-white">
+      <GoogleAnalytics />
       {/* Hero Section */}
       <section className="relative h-screen flex items-center justify-center overflow-hidden">
         {/* Background Image/Video Placeholder */}
@@ -231,9 +284,14 @@ export default function HomePage() {
                   <Badge variant="outline">$$$</Badge>
                 </div>
                 <div className="mt-auto">
-                  <Button className="w-full bg-blue-600 hover:bg-blue-700">
+                  <AffiliateButton 
+                    href="https://www.viator.com/hagia-sophia-tour"
+                    affiliateType="viator"
+                    trackingId="homepage-hagia-sophia"
+                    className="w-full bg-blue-600 hover:bg-blue-700"
+                  >
                     Book Now
-                  </Button>
+                  </AffiliateButton>
                 </div>
               </CardContent>
             </Card>
@@ -259,9 +317,14 @@ export default function HomePage() {
                   <Badge variant="outline">$$$$</Badge>
                 </div>
                 <div className="mt-auto">
-                  <Button className="w-full bg-orange-600 hover:bg-orange-700">
+                  <AffiliateButton 
+                    href="https://www.tripadvisor.com/bosphorus-dinner-cruise"
+                    affiliateType="tripadvisor"
+                    trackingId="homepage-bosphorus-cruise"
+                    className="w-full bg-orange-600 hover:bg-orange-700"
+                  >
                     Reserve Table
-                  </Button>
+                  </AffiliateButton>
                 </div>
               </CardContent>
             </Card>
@@ -287,9 +350,14 @@ export default function HomePage() {
                   <Badge variant="outline">$$</Badge>
                 </div>
                 <div className="mt-auto">
-                  <Button className="w-full bg-green-600 hover:bg-green-700">
+                  <AffiliateButton 
+                    href="https://www.amazon.com/grand-bazaar-shopping-guide"
+                    affiliateType="shop"
+                    trackingId="homepage-grand-bazaar"
+                    className="w-full bg-green-600 hover:bg-green-700"
+                  >
                     Shop Now
-                  </Button>
+                  </AffiliateButton>
                 </div>
               </CardContent>
             </Card>
@@ -303,15 +371,44 @@ export default function HomePage() {
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-gray-900">
             Explore Istanbul on the Map
           </h2>
-          <Card className="border-0 shadow-lg">
-            <div className="h-96 bg-gradient-to-br from-blue-100 to-green-100 flex items-center justify-center rounded-lg">
-              <div className="text-center">
-                <MapPin className="w-16 h-16 text-blue-600 mx-auto mb-4" />
-                <h3 className="text-xl font-semibold mb-2">Interactive Map Coming Soon</h3>
-                <p className="text-gray-600">Explore all attractions, restaurants, and hotels</p>
+          <div className="max-w-6xl mx-auto">
+            <InteractiveMap 
+              locations={sampleLocations}
+              center={[28.9784, 41.0082]}
+              zoom={11}
+              className="border-2 border-gray-200"
+            />
+            <div className="text-center mt-6">
+              <p className="text-gray-600 mb-4">Click on pins to explore activities, restaurants, hotels, and shopping</p>
+              <div className="flex flex-wrap justify-center gap-4 text-sm">
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 bg-blue-500 rounded-full"></div>
+                  <span>Activities</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 bg-orange-500 rounded-full"></div>
+                  <span>Food & Drink</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 bg-green-500 rounded-full"></div>
+                  <span>Shopping</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 bg-purple-500 rounded-full"></div>
+                  <span>Hotels</span>
+                </div>
               </div>
             </div>
-          </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* AdSense Banner */}
+      <section className="py-8 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto">
+            <AdSenseBanner slot="homepage-highlights" format="auto" />
+          </div>
         </div>
       </section>
 
