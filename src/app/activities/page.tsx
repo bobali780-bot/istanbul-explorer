@@ -26,8 +26,79 @@ import {
   Share2,
   Bookmark
 } from "lucide-react"
+import InteractiveMap from "@/components/InteractiveMap"
+import AffiliateButton from "@/components/AffiliateButton"
 
 export default function ActivitiesPage() {
+  // Activities map data
+  const activitiesLocations = [
+    {
+      id: "hagia-sophia-tour",
+      name: "Hagia Sophia Tour",
+      description: "Explore the iconic Byzantine architecture and rich history",
+      coordinates: [28.9848, 41.0086] as [number, number],
+      category: "activities" as const,
+      price: "$$$",
+      rating: 5,
+      ctaText: "Book Tour",
+      ctaLink: "https://www.viator.com/hagia-sophia-tour"
+    },
+    {
+      id: "bosphorus-cruise",
+      name: "Bosphorus Dinner Cruise",
+      description: "Romantic dinner with stunning city views",
+      coordinates: [28.9784, 41.0082] as [number, number],
+      category: "activities" as const,
+      price: "$$$$",
+      rating: 5,
+      ctaText: "Book Cruise",
+      ctaLink: "https://www.viator.com/bosphorus-cruise"
+    },
+    {
+      id: "grand-bazaar-tour",
+      name: "Grand Bazaar Shopping Tour",
+      description: "World's oldest covered market experience",
+      coordinates: [28.9708, 41.0106] as [number, number],
+      category: "activities" as const,
+      price: "$$",
+      rating: 4,
+      ctaText: "Book Tour",
+      ctaLink: "https://www.viator.com/grand-bazaar-tour"
+    },
+    {
+      id: "blue-mosque-tour",
+      name: "Blue Mosque & Topkapi Palace",
+      description: "Historic Islamic architecture and Ottoman treasures",
+      coordinates: [28.9784, 41.0055] as [number, number],
+      category: "activities" as const,
+      price: "$$$",
+      rating: 5,
+      ctaText: "Book Tour",
+      ctaLink: "https://www.viator.com/blue-mosque-tour"
+    },
+    {
+      id: "princes-islands",
+      name: "Princes Islands Day Trip",
+      description: "Escape to car-free islands with historic charm",
+      coordinates: [29.1000, 40.9000] as [number, number],
+      category: "activities" as const,
+      price: "$$",
+      rating: 4,
+      ctaText: "Book Trip",
+      ctaLink: "https://www.viator.com/princes-islands"
+    },
+    {
+      id: "whirling-dervishes",
+      name: "Whirling Dervishes Show",
+      description: "Traditional Sufi ceremony and cultural experience",
+      coordinates: [28.9784, 41.0082] as [number, number],
+      category: "activities" as const,
+      price: "$$",
+      rating: 4,
+      ctaText: "Book Show",
+      ctaLink: "https://www.viator.com/whirling-dervishes"
+    }
+  ]
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Banner */}
@@ -571,6 +642,24 @@ export default function ActivitiesPage() {
               </div>
             </div>
           </Card>
+        </div>
+      </section>
+
+      {/* Interactive Map */}
+      <section className="py-16 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="max-w-6xl mx-auto">
+            <h3 className="text-2xl font-bold mb-8 text-gray-900">Activities on the Map</h3>
+            <InteractiveMap 
+              locations={activitiesLocations}
+              center={[28.9784, 41.0082]}
+              zoom={11}
+              className="border-2 border-gray-200"
+            />
+            <div className="text-center mt-6">
+              <p className="text-gray-600 mb-4">Click on pins to view activity details and book directly</p>
+            </div>
+          </div>
         </div>
       </section>
 

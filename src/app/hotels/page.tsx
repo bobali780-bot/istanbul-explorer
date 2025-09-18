@@ -4,8 +4,80 @@ import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Star, Search, MapPin, Wifi, Car, Coffee, Dumbbell, Waves, Shield, Heart } from "lucide-react"
+import InteractiveMap from "@/components/InteractiveMap"
+import AffiliateButton from "@/components/AffiliateButton"
 
 export default function HotelsPage() {
+  // Hotels map data
+  const hotelsLocations = [
+    {
+      id: "four-seasons-hotel",
+      name: "Four Seasons Hotel Istanbul",
+      description: "Historic luxury in Sultanahmet with stunning Hagia Sophia views",
+      coordinates: [28.9784, 41.0082] as [number, number],
+      category: "hotels" as const,
+      price: "$$$$",
+      rating: 5,
+      ctaText: "Book Now",
+      ctaLink: "https://www.booking.com/four-seasons-istanbul"
+    },
+    {
+      id: "pera-palace-hotel",
+      name: "Pera Palace Hotel",
+      description: "Iconic Belle Époque hotel with Agatha Christie connections",
+      coordinates: [28.9784, 41.0082] as [number, number],
+      category: "hotels" as const,
+      price: "$$$",
+      rating: 5,
+      ctaText: "Book Now",
+      ctaLink: "https://www.booking.com/pera-palace-hotel"
+    },
+    {
+      id: "ciragan-palace-kempinski",
+      name: "Çırağan Palace Kempinski",
+      description: "Ottoman palace on the Bosphorus with world-class spa facilities",
+      coordinates: [28.9784, 41.0082] as [number, number],
+      category: "hotels" as const,
+      price: "$$$$",
+      rating: 5,
+      ctaText: "Book Now",
+      ctaLink: "https://www.booking.com/ciragan-palace-kempinski"
+    },
+    {
+      id: "conrad-istanbul",
+      name: "Conrad Istanbul Bosphorus",
+      description: "Modern business hotel with fitness center and meeting facilities",
+      coordinates: [28.9784, 41.0082] as [number, number],
+      category: "hotels" as const,
+      price: "$$$",
+      rating: 4,
+      ctaText: "Book Now",
+      ctaLink: "https://www.booking.com/conrad-istanbul"
+    },
+    {
+      id: "swissotel-bosphorus",
+      name: "Swissotel The Bosphorus",
+      description: "Family-friendly resort with pools and kids' activities",
+      coordinates: [28.9784, 41.0082] as [number, number],
+      category: "hotels" as const,
+      price: "$$$",
+      rating: 4,
+      ctaText: "Book Now",
+      ctaLink: "https://www.booking.com/swissotel-bosphorus"
+    },
+    {
+      id: "ritz-carlton-istanbul",
+      name: "The Ritz-Carlton Istanbul",
+      description: "Ultimate luxury with panoramic Bosphorus views and Michelin-starred dining",
+      coordinates: [28.9784, 41.0082] as [number, number],
+      category: "hotels" as const,
+      price: "$$$$",
+      rating: 5,
+      ctaText: "Book Now",
+      ctaLink: "https://www.booking.com/ritz-carlton-istanbul"
+    }
+  ]
+
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
@@ -437,6 +509,24 @@ export default function HotelsPage() {
                 <p className="text-gray-500">Click on hotel pins to view details and book directly</p>
                 <p className="text-sm text-gray-400 mt-2">Map integration coming soon</p>
               </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Interactive Map */}
+      <section className="py-16 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="max-w-6xl mx-auto">
+            <h3 className="text-2xl font-bold mb-8 text-gray-900">Hotels on the Map</h3>
+            <InteractiveMap 
+              locations={hotelsLocations}
+              center={[28.9784, 41.0082]}
+              zoom={11}
+              className="border-2 border-gray-200"
+            />
+            <div className="text-center mt-6">
+              <p className="text-gray-600 mb-4">Click on pins to view hotel details and book directly</p>
             </div>
           </div>
         </div>

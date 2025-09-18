@@ -4,8 +4,80 @@ import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Star, Search, MapPin, ShoppingBag, Store, Crown, Gift, Sparkles, Heart, Star as StarIcon } from "lucide-react"
+import InteractiveMap from "@/components/InteractiveMap"
+import AffiliateButton from "@/components/AffiliateButton"
 
 export default function ShoppingPage() {
+  // Shopping map data
+  const shoppingLocations = [
+    {
+      id: "grand-bazaar",
+      name: "Grand Bazaar",
+      description: "World's oldest covered market with 4,000 shops and authentic Turkish crafts",
+      coordinates: [28.9708, 41.0106] as [number, number],
+      category: "shopping" as const,
+      price: "$$",
+      rating: 5,
+      ctaText: "Visit Location",
+      ctaLink: "https://www.amazon.com/grand-bazaar-guide"
+    },
+    {
+      id: "nisantasi-shopping",
+      name: "Nişantaşı Shopping District",
+      description: "Upscale boutiques and designer stores in Istanbul's fashion capital",
+      coordinates: [28.9784, 41.0082] as [number, number],
+      category: "shopping" as const,
+      price: "$$$$",
+      rating: 5,
+      ctaText: "Shop Now",
+      ctaLink: "https://www.amazon.com/nisantasi-shopping"
+    },
+    {
+      id: "istinye-park",
+      name: "İstinye Park",
+      description: "Modern shopping mall with international brands and entertainment",
+      coordinates: [28.9784, 41.0082] as [number, number],
+      category: "shopping" as const,
+      price: "$$$",
+      rating: 4,
+      ctaText: "Visit Location",
+      ctaLink: "https://www.amazon.com/istinye-park-guide"
+    },
+    {
+      id: "spice-bazaar",
+      name: "Spice Bazaar",
+      description: "Historic market for spices, teas, and traditional Turkish souvenirs",
+      coordinates: [28.9708, 41.0106] as [number, number],
+      category: "shopping" as const,
+      price: "$",
+      rating: 5,
+      ctaText: "Shop Now",
+      ctaLink: "https://www.amazon.com/spice-bazaar-products"
+    },
+    {
+      id: "cukurcuma-antiques",
+      name: "Çukurcuma Antiques",
+      description: "Charming neighborhood with vintage shops and unique finds",
+      coordinates: [28.9784, 41.0082] as [number, number],
+      category: "shopping" as const,
+      price: "$$",
+      rating: 4,
+      ctaText: "Visit Location",
+      ctaLink: "https://www.amazon.com/cukurcuma-antiques"
+    },
+    {
+      id: "kadikoy-moda",
+      name: "Kadıköy Moda",
+      description: "Trendy district with local designers and hip boutiques",
+      coordinates: [28.9784, 41.0082] as [number, number],
+      category: "shopping" as const,
+      price: "$$",
+      rating: 4,
+      ctaText: "Shop Now",
+      ctaLink: "https://www.amazon.com/kadikoy-moda"
+    }
+  ]
+
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
@@ -424,6 +496,24 @@ export default function ShoppingPage() {
                 <p className="text-gray-500">Click on shopping pins to view details and get directions</p>
                 <p className="text-sm text-gray-400 mt-2">Map integration coming soon</p>
               </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Interactive Map */}
+      <section className="py-16 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="max-w-6xl mx-auto">
+            <h3 className="text-2xl font-bold mb-8 text-gray-900">Shopping Spots on the Map</h3>
+            <InteractiveMap 
+              locations={shoppingLocations}
+              center={[28.9784, 41.0082]}
+              zoom={11}
+              className="border-2 border-gray-200"
+            />
+            <div className="text-center mt-6">
+              <p className="text-gray-600 mb-4">Click on pins to view shopping details and get directions</p>
             </div>
           </div>
         </div>

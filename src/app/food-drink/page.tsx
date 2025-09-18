@@ -25,8 +25,79 @@ import {
   Globe,
   Navigation
 } from "lucide-react"
+import InteractiveMap from "@/components/InteractiveMap"
+import AffiliateButton from "@/components/AffiliateButton"
 
 export default function FoodDrinkPage() {
+  // Food & Drink map data
+  const foodLocations = [
+    {
+      id: "four-seasons-restaurant",
+      name: "Four Seasons Hotel Restaurant",
+      description: "Historic luxury dining with stunning Hagia Sophia views",
+      coordinates: [28.9784, 41.0082] as [number, number],
+      category: "food" as const,
+      price: "$$$$",
+      rating: 5,
+      ctaText: "Reserve Table",
+      ctaLink: "https://www.tripadvisor.com/four-seasons-restaurant"
+    },
+    {
+      id: "pera-palace-restaurant",
+      name: "Pera Palace Hotel Restaurant",
+      description: "Iconic Belle Époque dining with Agatha Christie connections",
+      coordinates: [28.9784, 41.0082] as [number, number],
+      category: "food" as const,
+      price: "$$$",
+      rating: 5,
+      ctaText: "Reserve Table",
+      ctaLink: "https://www.tripadvisor.com/pera-palace-restaurant"
+    },
+    {
+      id: "ciragan-palace-restaurant",
+      name: "Çırağan Palace Restaurant",
+      description: "Ottoman palace dining on the Bosphorus",
+      coordinates: [28.9784, 41.0082] as [number, number],
+      category: "food" as const,
+      price: "$$$$",
+      rating: 5,
+      ctaText: "Reserve Table",
+      ctaLink: "https://www.tripadvisor.com/ciragan-palace-restaurant"
+    },
+    {
+      id: "grand-bazaar-cafe",
+      name: "Grand Bazaar Traditional Café",
+      description: "Authentic Turkish coffee and traditional sweets",
+      coordinates: [28.9708, 41.0106] as [number, number],
+      category: "food" as const,
+      price: "$",
+      rating: 4,
+      ctaText: "Order Now",
+      ctaLink: "https://www.tripadvisor.com/grand-bazaar-cafe"
+    },
+    {
+      id: "spice-bazaar-tea",
+      name: "Spice Bazaar Tea House",
+      description: "Traditional Turkish tea and spice tasting",
+      coordinates: [28.9708, 41.0106] as [number, number],
+      category: "food" as const,
+      price: "$",
+      rating: 4,
+      ctaText: "Visit Location",
+      ctaLink: "https://www.tripadvisor.com/spice-bazaar-tea"
+    },
+    {
+      id: "taksim-street-food",
+      name: "Taksim Street Food Tour",
+      description: "Authentic street food experience in vibrant Taksim",
+      coordinates: [28.9784, 41.0082] as [number, number],
+      category: "food" as const,
+      price: "$$",
+      rating: 4,
+      ctaText: "Book Tour",
+      ctaLink: "https://www.tripadvisor.com/taksim-street-food"
+    }
+  ]
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Banner */}
@@ -574,6 +645,24 @@ export default function FoodDrinkPage() {
               </div>
             </div>
           </Card>
+        </div>
+      </section>
+
+      {/* Interactive Map */}
+      <section className="py-16 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="max-w-6xl mx-auto">
+            <h3 className="text-2xl font-bold mb-8 text-gray-900">Restaurants & Cafés on the Map</h3>
+            <InteractiveMap 
+              locations={foodLocations}
+              center={[28.9784, 41.0082]}
+              zoom={11}
+              className="border-2 border-gray-200"
+            />
+            <div className="text-center mt-6">
+              <p className="text-gray-600 mb-4">Click on pins to view restaurant details and make reservations</p>
+            </div>
+          </div>
         </div>
       </section>
 

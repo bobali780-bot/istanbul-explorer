@@ -41,8 +41,8 @@ export default function HomePage() {
       category: "activities" as const,
       price: "$$$",
       rating: 5,
-      affiliateUrl: "https://www.viator.com/hagia-sophia-tour",
-      affiliateType: "viator" as const
+      ctaText: "Explore Activities",
+      ctaLink: "/activities"
     },
     {
       id: "four-seasons",
@@ -52,8 +52,8 @@ export default function HomePage() {
       category: "hotels" as const,
       price: "$$$$",
       rating: 5,
-      affiliateUrl: "https://www.booking.com/four-seasons-istanbul",
-      affiliateType: "booking" as const
+      ctaText: "Explore Hotels",
+      ctaLink: "/hotels"
     },
     {
       id: "grand-bazaar",
@@ -63,8 +63,8 @@ export default function HomePage() {
       category: "shopping" as const,
       price: "$$",
       rating: 5,
-      affiliateUrl: "https://www.amazon.com/grand-bazaar-guide",
-      affiliateType: "shop" as const
+      ctaText: "Explore Shopping",
+      ctaLink: "/shopping"
     },
     {
       id: "pera-palace",
@@ -74,8 +74,8 @@ export default function HomePage() {
       category: "food" as const,
       price: "$$$",
       rating: 5,
-      affiliateUrl: "https://www.tripadvisor.com/pera-palace-restaurant",
-      affiliateType: "tripadvisor" as const
+      ctaText: "Explore Food & Drink",
+      ctaLink: "/food-drink"
     }
   ]
 

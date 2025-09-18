@@ -17,6 +17,8 @@ interface MapLocation {
   rating?: number
   affiliateUrl?: string
   affiliateType?: "booking" | "viator" | "tripadvisor" | "shop"
+  ctaText?: string
+  ctaLink?: string
 }
 
 interface InteractiveMapProps {
@@ -117,16 +119,17 @@ export default function InteractiveMap({
             closeButton={true}
             closeOnClick={false}
             className="mapbox-popup"
+            maxWidth="300px"
           >
-            <Card className="w-64 border-0 shadow-lg">
+            <Card className="w-72 border-0 shadow-xl">
               <CardContent className="p-4">
-                <div className="flex items-start justify-between mb-2">
-                  <h4 className="font-bold text-sm">{selectedLocation.name}</h4>
-                  <Badge variant="outline" className="text-xs">
+                <div className="flex items-start justify-between mb-3">
+                  <h4 className="font-bold text-base leading-tight">{selectedLocation.name}</h4>
+                  <Badge variant="outline" className="text-xs ml-2">
                     {selectedLocation.category}
                   </Badge>
                 </div>
-                <p className="text-xs text-gray-600 mb-3">
+                <p className="text-sm text-gray-600 mb-4 leading-relaxed">
                   {selectedLocation.description}
                 </p>
                 {selectedLocation.rating && (
@@ -134,31 +137,33 @@ export default function InteractiveMap({
                     {[...Array(5)].map((_, i) => (
                       <Star 
                         key={i} 
-                        className={`w-3 h-3 ${i < selectedLocation.rating! ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`} 
+                        className={`w-4 h-4 ${i < selectedLocation.rating! ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`} 
                       />
                     ))}
+                    <span className="text-xs text-gray-500 ml-1">({selectedLocation.rating}/5)</span>
                   </div>
                 )}
                 {selectedLocation.price && (
-                  <div className="text-xs text-gray-500 mb-3">
+                  <div className="text-sm font-medium text-gray-700 mb-4">
                     {selectedLocation.price}
                   </div>
                 )}
-                {selectedLocation.affiliateUrl && (
+                {(selectedLocation.affiliateUrl || selectedLocation.ctaLink) && (
                   <Button 
                     size="sm" 
-                    className="w-full text-xs"
+                    className="w-full"
                     asChild
                   >
                     <a 
-                      href={selectedLocation.affiliateUrl}
+                      href={selectedLocation.ctaLink || selectedLocation.affiliateUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      {selectedLocation.category === "hotels" ? "Book Now" :
-                       selectedLocation.category === "activities" ? "Book Tour" :
-                       selectedLocation.category === "food" ? "Reserve Table" :
-                       "Shop Now"}
+                      {selectedLocation.ctaText || 
+                       (selectedLocation.category === "hotels" ? "Book Now" :
+                        selectedLocation.category === "activities" ? "Book Tour" :
+                        selectedLocation.category === "food" ? "Reserve Table" :
+                        "Shop Now")}
                     </a>
                   </Button>
                 )}
