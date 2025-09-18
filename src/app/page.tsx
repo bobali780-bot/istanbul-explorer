@@ -88,7 +88,7 @@ export default function HomePage() {
                 <CardContent className="p-6">
                   <h3 className="text-xl font-bold mb-2">Activities</h3>
                   <p className="text-gray-600 mb-4">Tours, attractions, and experiences</p>
-                  <Button className="w-full bg-blue-500 hover:bg-blue-500 group-hover:bg-blue-600 transition-colors">
+                  <Button className="w-full bg-blue-500 group-hover:bg-blue-600 transition-colors">
                     Explore Activities
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
@@ -108,7 +108,7 @@ export default function HomePage() {
                 <CardContent className="p-6">
                   <h3 className="text-xl font-bold mb-2">Food & Drink</h3>
                   <p className="text-gray-600 mb-4">Restaurants, cafes, and local cuisine</p>
-                  <Button className="w-full bg-orange-500 hover:bg-orange-500 group-hover:bg-orange-600 transition-colors">
+                  <Button className="w-full bg-orange-500 group-hover:bg-orange-600 transition-colors">
                     Find Restaurants
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
@@ -128,7 +128,7 @@ export default function HomePage() {
                 <CardContent className="p-6">
                   <h3 className="text-xl font-bold mb-2">Shopping</h3>
                   <p className="text-gray-600 mb-4">Markets, boutiques, and souvenirs</p>
-                  <Button className="w-full bg-green-500 hover:bg-green-500 group-hover:bg-green-600 transition-colors">
+                  <Button className="w-full bg-green-500 group-hover:bg-green-600 transition-colors">
                     Shop Now
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
@@ -148,7 +148,7 @@ export default function HomePage() {
                 <CardContent className="p-6">
                   <h3 className="text-xl font-bold mb-2">Hotels</h3>
                   <p className="text-gray-600 mb-4">Accommodations and stays</p>
-                  <Button className="w-full bg-purple-500 hover:bg-purple-500 group-hover:bg-purple-600 transition-colors">
+                  <Button className="w-full bg-purple-500 group-hover:bg-purple-600 transition-colors">
                     Book Hotels
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
