@@ -96,6 +96,7 @@ export default function InteractiveMap({ className = "" }: InteractiveMapProps) 
                 className="text-3xl cursor-pointer z-50 hover:scale-110 transition-transform"
                 onClick={() => {
                   console.log('Clicked pin:', pin.name)
+                  console.log("Opening popup for:", pin.name)
                   setSelectedPin(pin)
                 }}
                 style={{ zIndex: 1000 }}
@@ -106,20 +107,25 @@ export default function InteractiveMap({ className = "" }: InteractiveMapProps) 
           )
         })}
 
-        {selectedPin && (
+        {selectedPin && selectedPin.latitude && selectedPin.longitude && (
           <Popup
-            longitude={selectedPin.longitude}
             latitude={selectedPin.latitude}
-            onClose={() => setSelectedPin(null)}
+            longitude={selectedPin.longitude}
+            onClose={() => {
+              console.log("Closing popup for:", selectedPin.name)
+              setSelectedPin(null)
+            }}
             closeButton={true}
             closeOnClick={false}
             anchor="bottom"
             offset={[0, -10]}
           >
             <div className="bg-white p-4 rounded-lg shadow-lg max-w-xs">
-              <h4 className="font-bold text-sm mb-2">{selectedPin.name}</h4>
+              <h4 className="font-bold text-sm mb-2">
+                {selectedPin.name || "Unknown location"}
+              </h4>
               <p className="text-xs text-gray-600 mb-3">
-                {selectedPin.description}
+                {selectedPin.description || "No description"}
               </p>
               <a 
                 href="https://example.com"
@@ -130,7 +136,7 @@ export default function InteractiveMap({ className = "" }: InteractiveMapProps) 
                   console.log('CTA clicked for:', selectedPin.name)
                 }}
               >
-                Explore
+                Book Now
               </a>
             </div>
           </Popup>
