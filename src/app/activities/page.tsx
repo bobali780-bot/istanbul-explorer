@@ -650,7 +650,12 @@ export default function ActivitiesPage() {
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
             <h3 className="text-2xl font-bold mb-8 text-gray-900">Activities on the Map</h3>
+            {(() => {
+              console.log("Category pins:", activitiesLocations?.length, activitiesLocations?.map(p => p.name))
+              return null
+            })()}
             <InteractiveMap 
+              locations={activitiesLocations}
               className="border-2 border-gray-200"
             />
             <div className="text-center mt-6">

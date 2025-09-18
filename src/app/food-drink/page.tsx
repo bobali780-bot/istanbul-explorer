@@ -653,7 +653,12 @@ export default function FoodDrinkPage() {
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
             <h3 className="text-2xl font-bold mb-8 text-gray-900">Restaurants & Cafés on the Map</h3>
+            {(() => {
+              console.log("Category pins:", foodLocations?.length, foodLocations?.map(p => p.name))
+              return null
+            })()}
             <InteractiveMap 
+              locations={foodLocations}
               className="border-2 border-gray-200"
             />
             <div className="text-center mt-6">

@@ -519,7 +519,12 @@ export default function HotelsPage() {
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
             <h3 className="text-2xl font-bold mb-8 text-gray-900">Hotels on the Map</h3>
+            {(() => {
+              console.log("Category pins:", hotelsLocations?.length, hotelsLocations?.map(p => p.name))
+              return null
+            })()}
             <InteractiveMap 
+              locations={hotelsLocations}
               className="border-2 border-gray-200"
             />
             <div className="text-center mt-6">

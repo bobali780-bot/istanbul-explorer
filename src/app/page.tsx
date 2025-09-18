@@ -372,7 +372,12 @@ export default function HomePage() {
             Explore Istanbul on the Map
           </h2>
           <div className="max-w-6xl mx-auto">
+            {(() => {
+              console.log("Category pins:", sampleLocations?.length, sampleLocations?.map(p => p.name))
+              return null
+            })()}
             <InteractiveMap 
+              locations={sampleLocations}
               className="border-2 border-gray-200"
             />
             <div className="text-center mt-6">
