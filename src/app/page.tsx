@@ -441,14 +441,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* AdSense Banner Placeholder */}
-      <section className="py-8 bg-gray-100">
-        <div className="container mx-auto px-4">
-          <div className="h-24 bg-gray-200 rounded-lg flex items-center justify-center">
-            <p className="text-gray-500 text-sm">Google AdSense Banner Placeholder</p>
-          </div>
-        </div>
-      </section>
     </div>
   )
 }
