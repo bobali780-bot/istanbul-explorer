@@ -1,6 +1,13 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, useRef } from "react"
+
+// Declare global adsbygoogle for TypeScript
+declare global {
+  interface Window {
+    adsbygoogle: any[]
+  }
+}
 
 interface AdSenseBannerProps {
   slot?: string
@@ -10,28 +17,47 @@ interface AdSenseBannerProps {
 }
 
 export default function AdSenseBanner({ 
-  slot = "1234567890", 
+  slot = "3572195600", 
   format = "auto", 
   responsive = true,
   className = ""
 }: AdSenseBannerProps) {
+  const adRef = useRef<HTMLModElement>(null)
+  const adLoaded = useRef(false)
+
   useEffect(() => {
-    // Google AdSense integration placeholder
-    // This would be replaced with actual AdSense code
-    console.log("AdSense Banner Loaded:", { slot, format, responsive })
+    // Only load the ad once
+    if (adLoaded.current) return
+
+    const loadAd = () => {
+      try {
+        if (window.adsbygoogle && adRef.current) {
+          (window.adsbygoogle = window.adsbygoogle || []).push({})
+          adLoaded.current = true
+          console.log("AdSense Banner Loaded:", { slot, format, responsive })
+        }
+      } catch (error) {
+        console.error('AdSense ad failed to load:', error)
+      }
+    }
+
+    // Load ad after a short delay to ensure AdSense script is ready
+    const timer = setTimeout(loadAd, 100)
+    
+    return () => clearTimeout(timer)
   }, [slot, format, responsive])
 
   return (
     <div className={`bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg p-8 text-center ${className}`}>
-      <div className="text-gray-500">
-        <div className="text-sm font-medium mb-2">Advertisement Space</div>
-        <div className="text-xs text-gray-400 mb-2">
-          Google AdSense Integration
-        </div>
-        <div className="text-xs text-gray-400">
-          Slot: {slot} | Format: {format} | Responsive: {responsive ? "Yes" : "No"}
-        </div>
-      </div>
+      <ins 
+        ref={adRef}
+        className="adsbygoogle"
+        style={{ display: 'block' }}
+        data-ad-client="ca-pub-4768819231981592"
+        data-ad-slot={slot}
+        data-ad-format={format}
+        data-full-width-responsive={responsive ? "true" : "false"}
+      />
     </div>
   )
 }
