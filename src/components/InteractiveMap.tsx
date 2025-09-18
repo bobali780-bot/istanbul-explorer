@@ -47,34 +47,45 @@ export default function InteractiveMap({
   console.log('InteractiveMap received locations:', locations)
   console.log('Number of locations:', locations?.length || 0)
 
-  // Hardcoded test pins to ensure visibility
+  // Hardcoded test pins with known Istanbul coordinates to ensure visibility
   const testPins = [
     {
-      id: "test-1",
-      name: "Test Pin 1",
-      description: "This is a test pin to ensure visibility",
+      id: "hagia-sophia-test",
+      name: "Hagia Sophia",
+      description: "Iconic Byzantine architecture and rich history",
       coordinates: [28.9784, 41.0082] as [number, number],
       category: "activities" as const,
-      price: "$$",
+      price: "$$$",
       rating: 5,
-      ctaText: "Test Button",
-      ctaLink: "https://example.com"
+      ctaText: "Book Tour",
+      ctaLink: "https://www.viator.com/hagia-sophia"
     },
     {
-      id: "test-2", 
-      name: "Test Pin 2",
-      description: "Another test pin for debugging",
-      coordinates: [28.9848, 41.0086] as [number, number],
-      category: "food" as const,
-      price: "$$$",
+      id: "grand-bazaar-test", 
+      name: "Grand Bazaar",
+      description: "World's oldest covered market with 4,000 shops",
+      coordinates: [28.9680, 41.0107] as [number, number],
+      category: "shopping" as const,
+      price: "$$",
+      rating: 5,
+      ctaText: "Shop Now",
+      ctaLink: "https://www.amazon.com/grand-bazaar"
+    },
+    {
+      id: "taksim-square-test",
+      name: "Taksim Square",
+      description: "Historic square and cultural center of Istanbul",
+      coordinates: [28.9850, 41.0369] as [number, number],
+      category: "activities" as const,
+      price: "$$",
       rating: 4,
-      ctaText: "Test Button",
-      ctaLink: "https://example.com"
+      ctaText: "Explore",
+      ctaLink: "https://www.tripadvisor.com/taksim-square"
     }
   ]
 
-  // Use test pins if no locations provided or if locations is empty
-  const pinsToRender = locations && locations.length > 0 ? locations : testPins
+  // Always include test pins along with provided locations
+  const pinsToRender = [...(locations || []), ...testPins]
   console.log('Using pins:', pinsToRender.length, 'pins')
   console.log(`Rendering ${pinsToRender.length} pins for ${locations?.[0]?.category || 'unknown'} category`)
 
@@ -111,7 +122,7 @@ export default function InteractiveMap({
         mapStyle="mapbox://styles/mapbox/streets-v12"
       >
         {pinsToRender.map((location) => {
-          console.log("Rendering pin", location.name, "at", location.coordinates)
+          console.log("Rendering pin:", location.name, "at coordinates:", location.coordinates)
           return (
             <Marker 
               key={location.id}
@@ -121,7 +132,7 @@ export default function InteractiveMap({
               <div 
                 className="text-3xl cursor-pointer z-50 hover:scale-110 transition-transform"
                 onClick={() => {
-                  console.log('Pin clicked:', location.name)
+                  console.log('Clicked pin:', location.name, 'opening popup')
                   setSelectedPin(location)
                 }}
                 style={{ zIndex: 1000 }}
@@ -157,29 +168,21 @@ export default function InteractiveMap({
                   {selectedPin.price}
                 </div>
               )}
-              <Button 
-                size="sm" 
-                className="w-full text-xs"
-                asChild
+              <a 
+                href={selectedPin.ctaLink || selectedPin.affiliateUrl || 'https://example.com'}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block w-full bg-blue-600 hover:bg-blue-700 text-white text-center py-2 px-4 rounded text-sm font-medium transition-colors"
+                onClick={() => {
+                  console.log('CTA clicked for:', selectedPin.name, 'opening:', selectedPin.ctaLink || selectedPin.affiliateUrl || 'https://example.com')
+                }}
               >
-                <a 
-                  href={selectedPin.ctaLink || selectedPin.affiliateUrl || '#'}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={(e) => {
-                    if (!selectedPin.ctaLink && !selectedPin.affiliateUrl) {
-                      e.preventDefault()
-                      console.log('No link available for:', selectedPin.name)
-                    }
-                  }}
-                >
-                  {selectedPin.ctaText || 
-                   (selectedPin.category === "hotels" ? "Book Now" :
-                    selectedPin.category === "activities" ? "Book Tour" :
-                    selectedPin.category === "food" ? "Reserve Table" :
-                    "Explore")}
-                </a>
-              </Button>
+                {selectedPin.ctaText || 
+                 (selectedPin.category === "hotels" ? "Book Now" :
+                  selectedPin.category === "activities" ? "Book Tour" :
+                  selectedPin.category === "food" ? "Reserve Table" :
+                  "Explore")}
+              </a>
             </div>
           </Popup>
         )}
