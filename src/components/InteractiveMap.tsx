@@ -109,21 +109,23 @@ export default function InteractiveMap({
         style={{ width: "100%", height: "100%" }}
         mapStyle="mapbox://styles/mapbox/streets-v12"
       >
-        {pinsToRender.map((pin) => {
-          console.log('Rendering pin:', pin.name, 'at coordinates:', pin.coordinates)
+        {pinsToRender.map((location) => {
+          console.log("Rendering pin", location)
           return (
-            <Marker
-              key={pin.id}
-              longitude={pin.coordinates[0]}
-              latitude={pin.coordinates[1]}
+            <Marker 
+              key={location.id}
+              latitude={location.coordinates[1]} 
+              longitude={location.coordinates[0]}
             >
               <div 
-                className="w-8 h-8 bg-red-500 rounded-full cursor-pointer hover:scale-125 transition-transform border-2 border-white shadow-lg"
+                className="w-8 h-8 bg-red-600 border-2 border-white rounded-full shadow-xl cursor-pointer z-50"
                 onClick={() => {
-                  console.log('Pin clicked:', pin.name)
-                  setSelectedPin(pin)
+                  console.log('Pin clicked:', location.name)
+                  setSelectedPin(location)
                 }}
-              />
+              >
+                📍
+              </div>
             </Marker>
           )
         })}
