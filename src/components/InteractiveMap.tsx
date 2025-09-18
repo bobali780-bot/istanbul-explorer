@@ -76,6 +76,7 @@ export default function InteractiveMap({
   // Use test pins if no locations provided or if locations is empty
   const pinsToRender = locations && locations.length > 0 ? locations : testPins
   console.log('Using pins:', pinsToRender.length, 'pins')
+  console.log(`Rendering ${pinsToRender.length} pins for ${locations?.[0]?.category || 'unknown'} category`)
 
   // Show fallback if Mapbox token is missing
   if (!mapboxToken) {
@@ -110,7 +111,7 @@ export default function InteractiveMap({
         mapStyle="mapbox://styles/mapbox/streets-v12"
       >
         {pinsToRender.map((location) => {
-          console.log("Rendering pin", location)
+          console.log("Rendering pin", location.name, "at", location.coordinates)
           return (
             <Marker 
               key={location.id}
@@ -118,11 +119,12 @@ export default function InteractiveMap({
               longitude={location.coordinates[0]}
             >
               <div 
-                className="w-8 h-8 bg-red-600 border-2 border-white rounded-full shadow-xl cursor-pointer z-50"
+                className="text-3xl cursor-pointer z-50 hover:scale-110 transition-transform"
                 onClick={() => {
                   console.log('Pin clicked:', location.name)
                   setSelectedPin(location)
                 }}
+                style={{ zIndex: 1000 }}
               >
                 📍
               </div>
@@ -130,61 +132,55 @@ export default function InteractiveMap({
           )
         })}
 
-        {selectedPin && (
+        {selectedPin && selectedPin.coordinates && selectedPin.coordinates.length === 2 && (
           <Popup
             longitude={selectedPin.coordinates[0]}
             latitude={selectedPin.coordinates[1]}
             onClose={() => setSelectedPin(null)}
             closeButton={true}
             closeOnClick={false}
+            anchor="bottom"
+            offset={[0, -10]}
           >
-            <Card className="w-64 border-0 shadow-lg">
-              <CardContent className="p-4">
-                <div className="flex items-start justify-between mb-2">
-                  <h4 className="font-bold text-sm">{selectedPin.name}</h4>
-                  <Badge variant="outline" className="text-xs">
-                    {selectedPin.category}
-                  </Badge>
+            <div className="bg-white p-4 rounded-lg shadow-lg max-w-xs">
+              <div className="mb-2">
+                <h4 className="font-bold text-sm">{selectedPin.name || 'Location'}</h4>
+                <Badge variant="outline" className="text-xs">
+                  {selectedPin.category || 'location'}
+                </Badge>
+              </div>
+              <p className="text-xs text-gray-600 mb-3">
+                {selectedPin.description || 'No description available'}
+              </p>
+              {selectedPin.price && (
+                <div className="text-xs text-gray-500 mb-3">
+                  {selectedPin.price}
                 </div>
-                <p className="text-xs text-gray-600 mb-3">
-                  {selectedPin.description}
-                </p>
-                {selectedPin.rating && (
-                  <div className="flex items-center gap-1 mb-3">
-                    {[...Array(5)].map((_, i) => (
-                      <Star 
-                        key={i} 
-                        className={`w-3 h-3 ${i < selectedPin.rating! ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`} 
-                      />
-                    ))}
-                  </div>
-                )}
-                {selectedPin.price && (
-                  <div className="text-xs text-gray-500 mb-3">
-                    {selectedPin.price}
-                  </div>
-                )}
-                {(selectedPin.affiliateUrl || selectedPin.ctaLink) && (
-                  <Button 
-                    size="sm" 
-                    className="w-full text-xs"
-                    asChild
-                  >
-                    <a 
-                      href={selectedPin.ctaLink || selectedPin.affiliateUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {selectedPin.ctaText || 
-                       (selectedPin.category === "hotels" ? "Book Now" :
-                        selectedPin.category === "activities" ? "Book Tour" :
-                        selectedPin.category === "food" ? "Reserve Table" :
-                        "Shop Now")}
-                    </a>
-                  </Button>
-                )}
-              </CardContent>
-            </Card>
+              )}
+              <Button 
+                size="sm" 
+                className="w-full text-xs"
+                asChild
+              >
+                <a 
+                  href={selectedPin.ctaLink || selectedPin.affiliateUrl || '#'}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(e) => {
+                    if (!selectedPin.ctaLink && !selectedPin.affiliateUrl) {
+                      e.preventDefault()
+                      console.log('No link available for:', selectedPin.name)
+                    }
+                  }}
+                >
+                  {selectedPin.ctaText || 
+                   (selectedPin.category === "hotels" ? "Book Now" :
+                    selectedPin.category === "activities" ? "Book Tour" :
+                    selectedPin.category === "food" ? "Reserve Table" :
+                    "Explore")}
+                </a>
+              </Button>
+            </div>
           </Popup>
         )}
       </Map>
