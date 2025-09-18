@@ -77,8 +77,8 @@ export default function HomePage() {
           </h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {/* Activities */}
-            <Link href="/activities" className="block">
-              <Card className="group hover:shadow-2xl transition-all duration-300 cursor-pointer border-0 shadow-lg">
+            <Link href="/activities" className="block group">
+              <Card className="hover:shadow-2xl transition-all duration-300 cursor-pointer border-0 shadow-lg">
                 <div className="relative overflow-hidden rounded-lg">
                   <div className="h-48 bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center">
                     <Navigation className="w-16 h-16 text-white" />
@@ -88,7 +88,7 @@ export default function HomePage() {
                 <CardContent className="p-6">
                   <h3 className="text-xl font-bold mb-2">Activities</h3>
                   <p className="text-gray-600 mb-4">Tours, attractions, and experiences</p>
-                  <Button className="w-full group-hover:bg-blue-600 transition-colors">
+                  <Button className="w-full bg-blue-500 hover:bg-blue-500 group-hover:bg-blue-600 transition-colors">
                     Explore Activities
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
@@ -97,8 +97,8 @@ export default function HomePage() {
             </Link>
 
             {/* Food & Drink */}
-            <Link href="/food-drink" className="block">
-              <Card className="group hover:shadow-2xl transition-all duration-300 cursor-pointer border-0 shadow-lg">
+            <Link href="/food-drink" className="block group">
+              <Card className="hover:shadow-2xl transition-all duration-300 cursor-pointer border-0 shadow-lg">
                 <div className="relative overflow-hidden rounded-lg">
                   <div className="h-48 bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center">
                     <Utensils className="w-16 h-16 text-white" />
@@ -108,7 +108,7 @@ export default function HomePage() {
                 <CardContent className="p-6">
                   <h3 className="text-xl font-bold mb-2">Food & Drink</h3>
                   <p className="text-gray-600 mb-4">Restaurants, cafes, and local cuisine</p>
-                  <Button className="w-full group-hover:bg-orange-600 transition-colors">
+                  <Button className="w-full bg-orange-500 hover:bg-orange-500 group-hover:bg-orange-600 transition-colors">
                     Find Restaurants
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
@@ -117,8 +117,8 @@ export default function HomePage() {
             </Link>
 
             {/* Shopping */}
-            <Link href="/shopping" className="block">
-              <Card className="group hover:shadow-2xl transition-all duration-300 cursor-pointer border-0 shadow-lg">
+            <Link href="/shopping" className="block group">
+              <Card className="hover:shadow-2xl transition-all duration-300 cursor-pointer border-0 shadow-lg">
                 <div className="relative overflow-hidden rounded-lg">
                   <div className="h-48 bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center">
                     <ShoppingBag className="w-16 h-16 text-white" />
@@ -128,7 +128,7 @@ export default function HomePage() {
                 <CardContent className="p-6">
                   <h3 className="text-xl font-bold mb-2">Shopping</h3>
                   <p className="text-gray-600 mb-4">Markets, boutiques, and souvenirs</p>
-                  <Button className="w-full group-hover:bg-green-600 transition-colors">
+                  <Button className="w-full bg-green-500 hover:bg-green-500 group-hover:bg-green-600 transition-colors">
                     Shop Now
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
@@ -137,8 +137,8 @@ export default function HomePage() {
             </Link>
 
             {/* Hotels */}
-            <Link href="/hotels" className="block">
-              <Card className="group hover:shadow-2xl transition-all duration-300 cursor-pointer border-0 shadow-lg">
+            <Link href="/hotels" className="block group">
+              <Card className="hover:shadow-2xl transition-all duration-300 cursor-pointer border-0 shadow-lg">
                 <div className="relative overflow-hidden rounded-lg">
                   <div className="h-48 bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center">
                     <Bed className="w-16 h-16 text-white" />
@@ -148,7 +148,7 @@ export default function HomePage() {
                 <CardContent className="p-6">
                   <h3 className="text-xl font-bold mb-2">Hotels</h3>
                   <p className="text-gray-600 mb-4">Accommodations and stays</p>
-                  <Button className="w-full group-hover:bg-purple-600 transition-colors">
+                  <Button className="w-full bg-purple-500 hover:bg-purple-500 group-hover:bg-purple-600 transition-colors">
                     Book Hotels
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
