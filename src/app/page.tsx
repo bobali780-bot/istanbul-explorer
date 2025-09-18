@@ -107,10 +107,12 @@ export default function HomePage() {
               <CardContent className="p-6">
                 <h3 className="text-xl font-bold mb-2">Food & Drink</h3>
                 <p className="text-gray-600 mb-4">Restaurants, cafes, and local cuisine</p>
-                <Button className="w-full group-hover:bg-orange-600 transition-colors">
-                  Find Restaurants
-                  <ArrowRight className="w-4 h-4 ml-2" />
-                </Button>
+                <Link href="/food-drink">
+                  <Button className="w-full group-hover:bg-orange-600 transition-colors">
+                    Find Restaurants
+                    <ArrowRight className="w-4 h-4 ml-2" />
+                  </Button>
+                </Link>
               </CardContent>
             </Card>
 
