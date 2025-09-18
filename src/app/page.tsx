@@ -77,80 +77,84 @@ export default function HomePage() {
           </h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {/* Activities */}
-            <Card className="group hover:shadow-2xl transition-all duration-300 cursor-pointer border-0 shadow-lg">
-              <div className="relative overflow-hidden rounded-lg">
-                <div className="h-48 bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center">
-                  <Navigation className="w-16 h-16 text-white" />
+            <Link href="/activities" className="block">
+              <Card className="group hover:shadow-2xl transition-all duration-300 cursor-pointer border-0 shadow-lg">
+                <div className="relative overflow-hidden rounded-lg">
+                  <div className="h-48 bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center">
+                    <Navigation className="w-16 h-16 text-white" />
+                  </div>
+                  <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-all duration-300"></div>
                 </div>
-                <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-all duration-300"></div>
-              </div>
-              <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-2">Activities</h3>
-                <p className="text-gray-600 mb-4">Tours, attractions, and experiences</p>
-                <Link href="/activities">
+                <CardContent className="p-6">
+                  <h3 className="text-xl font-bold mb-2">Activities</h3>
+                  <p className="text-gray-600 mb-4">Tours, attractions, and experiences</p>
                   <Button className="w-full group-hover:bg-blue-600 transition-colors">
                     Explore Activities
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
-                </Link>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </Link>
 
             {/* Food & Drink */}
-            <Card className="group hover:shadow-2xl transition-all duration-300 cursor-pointer border-0 shadow-lg">
-              <div className="relative overflow-hidden rounded-lg">
-                <div className="h-48 bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center">
-                  <Utensils className="w-16 h-16 text-white" />
+            <Link href="/food-drink" className="block">
+              <Card className="group hover:shadow-2xl transition-all duration-300 cursor-pointer border-0 shadow-lg">
+                <div className="relative overflow-hidden rounded-lg">
+                  <div className="h-48 bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center">
+                    <Utensils className="w-16 h-16 text-white" />
+                  </div>
+                  <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-all duration-300"></div>
                 </div>
-                <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-all duration-300"></div>
-              </div>
-              <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-2">Food & Drink</h3>
-                <p className="text-gray-600 mb-4">Restaurants, cafes, and local cuisine</p>
-                <Link href="/food-drink">
+                <CardContent className="p-6">
+                  <h3 className="text-xl font-bold mb-2">Food & Drink</h3>
+                  <p className="text-gray-600 mb-4">Restaurants, cafes, and local cuisine</p>
                   <Button className="w-full group-hover:bg-orange-600 transition-colors">
                     Find Restaurants
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
-                </Link>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </Link>
 
             {/* Shopping */}
-            <Card className="group hover:shadow-2xl transition-all duration-300 cursor-pointer border-0 shadow-lg">
-              <div className="relative overflow-hidden rounded-lg">
-                <div className="h-48 bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center">
-                  <ShoppingBag className="w-16 h-16 text-white" />
+            <Link href="/shopping" className="block">
+              <Card className="group hover:shadow-2xl transition-all duration-300 cursor-pointer border-0 shadow-lg">
+                <div className="relative overflow-hidden rounded-lg">
+                  <div className="h-48 bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center">
+                    <ShoppingBag className="w-16 h-16 text-white" />
+                  </div>
+                  <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-all duration-300"></div>
                 </div>
-                <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-all duration-300"></div>
-              </div>
-              <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-2">Shopping</h3>
-                <p className="text-gray-600 mb-4">Markets, boutiques, and souvenirs</p>
-                <Button className="w-full group-hover:bg-green-600 transition-colors">
-                  Shop Now
-                  <ArrowRight className="w-4 h-4 ml-2" />
-                </Button>
-              </CardContent>
-            </Card>
+                <CardContent className="p-6">
+                  <h3 className="text-xl font-bold mb-2">Shopping</h3>
+                  <p className="text-gray-600 mb-4">Markets, boutiques, and souvenirs</p>
+                  <Button className="w-full group-hover:bg-green-600 transition-colors">
+                    Shop Now
+                    <ArrowRight className="w-4 h-4 ml-2" />
+                  </Button>
+                </CardContent>
+              </Card>
+            </Link>
 
             {/* Hotels */}
-            <Card className="group hover:shadow-2xl transition-all duration-300 cursor-pointer border-0 shadow-lg">
-              <div className="relative overflow-hidden rounded-lg">
-                <div className="h-48 bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center">
-                  <Bed className="w-16 h-16 text-white" />
+            <Link href="/hotels" className="block">
+              <Card className="group hover:shadow-2xl transition-all duration-300 cursor-pointer border-0 shadow-lg">
+                <div className="relative overflow-hidden rounded-lg">
+                  <div className="h-48 bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center">
+                    <Bed className="w-16 h-16 text-white" />
+                  </div>
+                  <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-all duration-300"></div>
                 </div>
-                <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-all duration-300"></div>
-              </div>
-              <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-2">Hotels</h3>
-                <p className="text-gray-600 mb-4">Accommodations and stays</p>
-                <Button className="w-full group-hover:bg-purple-600 transition-colors">
-                  Book Hotels
-                  <ArrowRight className="w-4 h-4 ml-2" />
-                </Button>
-              </CardContent>
-            </Card>
+                <CardContent className="p-6">
+                  <h3 className="text-xl font-bold mb-2">Hotels</h3>
+                  <p className="text-gray-600 mb-4">Accommodations and stays</p>
+                  <Button className="w-full group-hover:bg-purple-600 transition-colors">
+                    Book Hotels
+                    <ArrowRight className="w-4 h-4 ml-2" />
+                  </Button>
+                </CardContent>
+              </Card>
+            </Link>
           </div>
         </div>
       </section>
