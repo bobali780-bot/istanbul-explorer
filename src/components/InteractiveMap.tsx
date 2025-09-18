@@ -44,8 +44,12 @@ export default function InteractiveMap({
   const mapboxToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN
 
   const handleMarkerClick = useCallback((location: MapLocation) => {
+    console.log('Marker clicked:', location.name, 'Setting selectedLocation to:', location)
     setSelectedLocation(location)
   }, [])
+
+  // Debug log when selectedLocation changes
+  console.log('Current selectedLocation:', selectedLocation?.name || 'none')
 
   // Show fallback if Mapbox token is missing
   if (!mapboxToken) {
@@ -91,6 +95,7 @@ export default function InteractiveMap({
       <Map
         {...viewState}
         onMove={evt => setViewState(evt.viewState)}
+        onClick={() => setSelectedLocation(null)}
         mapboxAccessToken={mapboxToken}
         style={{ width: "100%", height: "100%" }}
         mapStyle="mapbox://styles/mapbox/streets-v12"
@@ -100,10 +105,19 @@ export default function InteractiveMap({
             key={location.id}
             longitude={location.coordinates[0]}
             latitude={location.coordinates[1]}
-            onClick={() => handleMarkerClick(location)}
           >
-            <div className="relative">
-              <div className={`w-8 h-8 rounded-full ${getCategoryColor(location.category)} flex items-center justify-center text-white text-sm cursor-pointer hover:scale-110 transition-transform`}>
+            <div 
+              className="relative cursor-pointer select-none"
+              onClick={(e) => {
+                e.stopPropagation()
+                handleMarkerClick(location)
+              }}
+              onTouchEnd={(e) => {
+                e.stopPropagation()
+                handleMarkerClick(location)
+              }}
+            >
+              <div className={`w-8 h-8 rounded-full ${getCategoryColor(location.category)} flex items-center justify-center text-white text-sm hover:scale-110 active:scale-95 transition-transform shadow-lg`}>
                 {getCategoryIcon(location.category)}
               </div>
               <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-800"></div>
@@ -120,8 +134,10 @@ export default function InteractiveMap({
             closeOnClick={false}
             className="mapbox-popup"
             maxWidth="300px"
+            anchor="bottom"
+            offset={[0, -10]}
           >
-            <Card className="w-72 border-0 shadow-xl">
+            <Card className="w-72 max-w-[90vw] border-0 shadow-xl">
               <CardContent className="p-4">
                 <div className="flex items-start justify-between mb-3">
                   <h4 className="font-bold text-base leading-tight">{selectedLocation.name}</h4>
