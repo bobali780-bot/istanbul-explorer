@@ -25,32 +25,18 @@ export default function InteractiveMap({ className = "" }: InteractiveMapProps) 
 
   const mapboxToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN
 
-  // Exactly 3 hardcoded pins with known Istanbul coordinates
+  // Temporarily using just one hardcoded safe pin for debugging
   const pins = [
     {
-      id: "hagia-sophia",
+      id: "hagia-sophia-test",
       name: "Hagia Sophia",
-      description: "Iconic Byzantine architecture and rich history",
       latitude: 41.0082,
-      longitude: 28.9784
-    },
-    {
-      id: "grand-bazaar",
-      name: "Grand Bazaar", 
-      description: "World's oldest covered market with 4,000 shops",
-      latitude: 41.0107,
-      longitude: 28.9680
-    },
-    {
-      id: "taksim-square",
-      name: "Taksim Square",
-      description: "Historic square and cultural center of Istanbul",
-      latitude: 41.0369,
-      longitude: 28.9850
+      longitude: 28.9784,
+      description: "Test pin - Iconic Byzantine architecture and rich history"
     }
   ]
 
-  console.log('Rendering 3 hardcoded pins:', pins.map(p => p.name))
+  console.log('Rendering 1 hardcoded test pin:', pins.map(p => p.name))
 
   // Show fallback if Mapbox token is missing
   if (!mapboxToken) {
@@ -100,6 +86,9 @@ export default function InteractiveMap({ className = "" }: InteractiveMapProps) 
                 onClick={(e) => {
                   e.stopPropagation()
                   console.log('Clicked pin:', pin.name)
+                  console.log("Pin object:", pin)
+                  console.log("Pin latitude:", pin.latitude, "type:", typeof pin.latitude)
+                  console.log("Pin longitude:", pin.longitude, "type:", typeof pin.longitude)
                   console.log("Opening popup for:", pin.name)
                   setSelectedPin(pin)
                 }}
@@ -111,13 +100,29 @@ export default function InteractiveMap({ className = "" }: InteractiveMapProps) 
           )
         })}
 
-        {selectedPin && 
-         selectedPin.latitude && 
-         selectedPin.longitude && 
-         typeof selectedPin.latitude === 'number' && 
-         typeof selectedPin.longitude === 'number' && 
-         !isNaN(selectedPin.latitude) && 
-         !isNaN(selectedPin.longitude) && (
+        {(() => {
+          console.log("Checking popup render conditions...")
+          console.log("selectedPin:", selectedPin)
+          
+          if (!selectedPin) {
+            console.log("No selectedPin - not rendering popup")
+            return null
+          }
+          
+          if (typeof selectedPin.latitude !== "number" || typeof selectedPin.longitude !== "number") {
+            console.log("Invalid coordinate types - not rendering popup")
+            console.log("latitude type:", typeof selectedPin.latitude, "value:", selectedPin.latitude)
+            console.log("longitude type:", typeof selectedPin.longitude, "value:", selectedPin.longitude)
+            return null
+          }
+          
+          if (isNaN(selectedPin.latitude) || isNaN(selectedPin.longitude)) {
+            console.log("NaN coordinates - not rendering popup")
+            return null
+          }
+          
+          console.log("All conditions met - rendering popup for:", selectedPin.name)
+          return (
           <Popup
             latitude={selectedPin.latitude}
             longitude={selectedPin.longitude}
@@ -151,7 +156,8 @@ export default function InteractiveMap({ className = "" }: InteractiveMapProps) 
               </a>
             </div>
           </Popup>
-        )}
+          )
+        })()}
       </Map>
     </div>
   )
