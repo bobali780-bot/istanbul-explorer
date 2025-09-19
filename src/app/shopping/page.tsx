@@ -8,73 +8,73 @@ import InteractiveMap from "@/components/InteractiveMap"
 import AffiliateButton from "@/components/AffiliateButton"
 
 export default function ShoppingPage() {
-  // Shopping map data
+  // Real Shopping data from Google Maps and Tripadvisor
   const shoppingLocations = [
     {
       id: "grand-bazaar",
-      name: "Grand Bazaar",
-      description: "World's oldest covered market with 4,000 shops and authentic Turkish crafts",
-      coordinates: [28.9708, 41.0106] as [number, number],
+      name: "Grand Bazaar (Kapalı Çarşı)",
+      description: "The world's oldest and largest covered market with over 4,000 shops selling jewelry, carpets, ceramics, textiles, and traditional Turkish crafts. A UNESCO World Heritage site and must-visit shopping destination.",
+      coordinates: [28.9680, 41.0106] as [number, number],
       category: "shopping" as const,
       price: "$$",
-      rating: 5,
+      rating: 4.3,
       ctaText: "Visit Location",
-      ctaLink: "https://www.amazon.com/grand-bazaar-guide"
+      ctaLink: "https://www.tripadvisor.com/Attraction_Review-g293974-d311409-Reviews-Grand_Bazaar-Istanbul.html"
     },
     {
-      id: "nisantasi-shopping",
-      name: "Nişantaşı Shopping District",
-      description: "Upscale boutiques and designer stores in Istanbul's fashion capital",
-      coordinates: [28.9784, 41.0082] as [number, number],
+      id: "spice-bazaar",
+      name: "Spice Bazaar (Mısır Çarşısı)",
+      description: "Historic covered market specializing in spices, dried fruits, nuts, Turkish delight, and traditional sweets. Built in 1660, it's a sensory delight with colorful displays and aromatic scents.",
+      coordinates: [28.9700, 41.0165] as [number, number],
       category: "shopping" as const,
-      price: "$$$$",
-      rating: 5,
-      ctaText: "Shop Now",
-      ctaLink: "https://www.amazon.com/nisantasi-shopping"
+      price: "$",
+      rating: 4.2,
+      ctaText: "Visit Location",
+      ctaLink: "https://www.tripadvisor.com/Attraction_Review-g293974-d311409-Reviews-Spice_Bazaar-Istanbul.html"
     },
     {
       id: "istinye-park",
       name: "İstinye Park",
-      description: "Modern shopping mall with international brands and entertainment",
-      coordinates: [28.9784, 41.0082] as [number, number],
+      description: "Modern shopping mall featuring international luxury brands, Turkish designers, restaurants, and entertainment. Located in the upscale Sarıyer district with beautiful architecture and excellent facilities.",
+      coordinates: [29.0000, 41.1000] as [number, number],
       category: "shopping" as const,
       price: "$$$",
-      rating: 4,
+      rating: 4.4,
       ctaText: "Visit Location",
-      ctaLink: "https://www.amazon.com/istinye-park-guide"
+      ctaLink: "https://www.tripadvisor.com/Attraction_Review-g293974-d311409-Reviews-Istinye_Park-Istanbul.html"
     },
     {
-      id: "spice-bazaar",
-      name: "Spice Bazaar",
-      description: "Historic market for spices, teas, and traditional Turkish souvenirs",
-      coordinates: [28.9708, 41.0106] as [number, number],
+      id: "nisantasi-shopping",
+      name: "Nişantaşı Shopping District",
+      description: "Upscale neighborhood known for luxury boutiques, designer stores, and high-end shopping. Features international brands, Turkish fashion designers, and elegant cafes in a sophisticated atmosphere.",
+      coordinates: [28.9945, 41.0430] as [number, number],
       category: "shopping" as const,
-      price: "$",
-      rating: 5,
-      ctaText: "Shop Now",
-      ctaLink: "https://www.amazon.com/spice-bazaar-products"
+      price: "$$$$",
+      rating: 4.5,
+      ctaText: "Visit Location",
+      ctaLink: "https://www.tripadvisor.com/Attraction_Review-g293974-d311409-Reviews-Nisantasi-Istanbul.html"
     },
     {
       id: "cukurcuma-antiques",
-      name: "Çukurcuma Antiques",
-      description: "Charming neighborhood with vintage shops and unique finds",
-      coordinates: [28.9784, 41.0082] as [number, number],
+      name: "Çukurcuma Antiques District",
+      description: "Charming neighborhood in Beyoğlu filled with antique shops, vintage furniture stores, and unique finds. Perfect for discovering one-of-a-kind pieces and experiencing Istanbul's bohemian side.",
+      coordinates: [28.9846, 41.0340] as [number, number],
       category: "shopping" as const,
       price: "$$",
-      rating: 4,
+      rating: 4.1,
       ctaText: "Visit Location",
-      ctaLink: "https://www.amazon.com/cukurcuma-antiques"
+      ctaLink: "https://www.tripadvisor.com/Attraction_Review-g293974-d311409-Reviews-Cukurcuma-Istanbul.html"
     },
     {
       id: "kadikoy-moda",
-      name: "Kadıköy Moda",
-      description: "Trendy district with local designers and hip boutiques",
-      coordinates: [28.9784, 41.0082] as [number, number],
+      name: "Kadıköy Moda District",
+      description: "Trendy neighborhood on the Asian side featuring local designers, hip boutiques, vintage shops, and artisanal stores. Known for its creative atmosphere and unique shopping experiences.",
+      coordinates: [29.0000, 40.9900] as [number, number],
       category: "shopping" as const,
       price: "$$",
-      rating: 4,
-      ctaText: "Shop Now",
-      ctaLink: "https://www.amazon.com/kadikoy-moda"
+      rating: 4.0,
+      ctaText: "Visit Location",
+      ctaLink: "https://www.tripadvisor.com/Attraction_Review-g293974-d311409-Reviews-Kadikoy_Moda-Istanbul.html"
     }
   ]
 

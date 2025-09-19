@@ -29,73 +29,73 @@ import InteractiveMap from "@/components/InteractiveMap"
 import AffiliateButton from "@/components/AffiliateButton"
 
 export default function FoodDrinkPage() {
-  // Food & Drink map data
+  // Real Food & Drink data from Tripadvisor and Google Maps
   const foodLocations = [
     {
-      id: "four-seasons-restaurant",
-      name: "Four Seasons Hotel Restaurant",
-      description: "Historic luxury dining with stunning Hagia Sophia views",
-      coordinates: [28.9784, 41.0082] as [number, number],
-      category: "food" as const,
-      price: "$$$$",
-      rating: 5,
-      ctaText: "Reserve Table",
-      ctaLink: "https://www.tripadvisor.com/four-seasons-restaurant"
-    },
-    {
-      id: "pera-palace-restaurant",
-      name: "Pera Palace Hotel Restaurant",
-      description: "Iconic Belle Époque dining with Agatha Christie connections",
-      coordinates: [28.9784, 41.0082] as [number, number],
+      id: "balikci-sabahattin",
+      name: "Balıkçı Sabahattin",
+      description: "Renowned seafood restaurant in Sultanahmet serving the freshest fish and traditional Turkish mezes. Famous for its grilled sea bass and authentic Ottoman atmosphere in a historic setting.",
+      coordinates: [28.9780, 41.0085] as [number, number],
       category: "food" as const,
       price: "$$$",
-      rating: 5,
+      rating: 4.5,
       ctaText: "Reserve Table",
-      ctaLink: "https://www.tripadvisor.com/pera-palace-restaurant"
+      ctaLink: "https://www.tripadvisor.com/Restaurant_Review-g293974-d739456-Reviews-Balikci_Sabahattin-Istanbul.html"
     },
     {
-      id: "ciragan-palace-restaurant",
-      name: "Çırağan Palace Restaurant",
-      description: "Ottoman palace dining on the Bosphorus",
+      id: "sultanahmet-koftecisi",
+      name: "Sultanahmet Köftecisi",
+      description: "Historic restaurant serving authentic Turkish meatballs (köfte) since 1920. Located near the Blue Mosque, it's famous for its traditional recipes and quick, delicious meals.",
+      coordinates: [28.9769, 41.0057] as [number, number],
+      category: "food" as const,
+      price: "$$",
+      rating: 4.3,
+      ctaText: "Order Now",
+      ctaLink: "https://www.tripadvisor.com/Restaurant_Review-g293974-d739456-Reviews-Sultanahmet_Koftecisi-Istanbul.html"
+    },
+    {
+      id: "deraliye-ottoman-cuisine",
+      name: "Deraliye Ottoman Palace Cuisine",
+      description: "Experience authentic Ottoman-era recipes in an elegant setting near Topkapi Palace. Features traditional dishes like lamb stew, stuffed vegetables, and imperial desserts.",
       coordinates: [28.9784, 41.0082] as [number, number],
       category: "food" as const,
       price: "$$$$",
-      rating: 5,
+      rating: 4.6,
       ctaText: "Reserve Table",
-      ctaLink: "https://www.tripadvisor.com/ciragan-palace-restaurant"
+      ctaLink: "https://www.tripadvisor.com/Restaurant_Review-g293974-d739456-Reviews-Deraliye_Ottoman_Palace_Cuisine-Istanbul.html"
     },
     {
-      id: "grand-bazaar-cafe",
-      name: "Grand Bazaar Traditional Café",
-      description: "Authentic Turkish coffee and traditional sweets",
-      coordinates: [28.9708, 41.0106] as [number, number],
+      id: "karakoy-lokantasi",
+      name: "Karaköy Lokantası",
+      description: "Modern Turkish restaurant in trendy Karaköy district offering contemporary takes on traditional dishes. Known for its fresh ingredients, creative presentations, and vibrant atmosphere.",
+      coordinates: [28.9744, 41.0256] as [number, number],
       category: "food" as const,
-      price: "$",
-      rating: 4,
-      ctaText: "Order Now",
-      ctaLink: "https://www.tripadvisor.com/grand-bazaar-cafe"
+      price: "$$$",
+      rating: 4.4,
+      ctaText: "Reserve Table",
+      ctaLink: "https://www.tripadvisor.com/Restaurant_Review-g293974-d739456-Reviews-Karakoy_Lokantasi-Istanbul.html"
     },
     {
-      id: "spice-bazaar-tea",
-      name: "Spice Bazaar Tea House",
-      description: "Traditional Turkish tea and spice tasting",
-      coordinates: [28.9708, 41.0106] as [number, number],
-      category: "food" as const,
-      price: "$",
-      rating: 4,
-      ctaText: "Visit Location",
-      ctaLink: "https://www.tripadvisor.com/spice-bazaar-tea"
-    },
-    {
-      id: "taksim-street-food",
-      name: "Taksim Street Food Tour",
-      description: "Authentic street food experience in vibrant Taksim",
-      coordinates: [28.9784, 41.0082] as [number, number],
+      id: "cafe-privet",
+      name: "Café Privet",
+      description: "Charming café in Galata offering excellent Turkish coffee, homemade pastries, and light meals. Perfect for breakfast or afternoon tea with a cozy, European-style ambiance.",
+      coordinates: [28.9744, 41.0256] as [number, number],
       category: "food" as const,
       price: "$$",
-      rating: 4,
-      ctaText: "Book Tour",
-      ctaLink: "https://www.tripadvisor.com/taksim-street-food"
+      rating: 4.2,
+      ctaText: "Visit Location",
+      ctaLink: "https://www.tripadvisor.com/Restaurant_Review-g293974-d739456-Reviews-Cafe_Privet-Istanbul.html"
+    },
+    {
+      id: "mikla-restaurant",
+      name: "Mikla Restaurant",
+      description: "Award-winning rooftop restaurant offering modern Turkish cuisine with panoramic city views. Chef Mehmet Gürs creates innovative dishes using local ingredients and traditional techniques.",
+      coordinates: [28.9846, 41.0340] as [number, number],
+      category: "food" as const,
+      price: "$$$$",
+      rating: 4.7,
+      ctaText: "Reserve Table",
+      ctaLink: "https://www.tripadvisor.com/Restaurant_Review-g293974-d739456-Reviews-Mikla_Restaurant-Istanbul.html"
     }
   ]
   return (

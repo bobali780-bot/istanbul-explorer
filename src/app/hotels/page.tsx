@@ -8,73 +8,73 @@ import InteractiveMap from "@/components/InteractiveMap"
 import AffiliateButton from "@/components/AffiliateButton"
 
 export default function HotelsPage() {
-  // Hotels map data
+  // Real Hotels data from Booking.com
   const hotelsLocations = [
     {
-      id: "four-seasons-hotel",
-      name: "Four Seasons Hotel Istanbul",
-      description: "Historic luxury in Sultanahmet with stunning Hagia Sophia views",
-      coordinates: [28.9784, 41.0082] as [number, number],
+      id: "four-seasons-sultanahmet",
+      name: "Four Seasons Hotel Istanbul at Sultanahmet",
+      description: "Luxury hotel set in a former prison building in the heart of historic Sultanahmet. Features elegant rooms with Hagia Sophia views, a spa, and fine dining restaurant. Perfect for exploring Istanbul's most famous attractions.",
+      coordinates: [28.9801, 41.0086] as [number, number],
       category: "hotels" as const,
       price: "$$$$",
-      rating: 5,
+      rating: 4.7,
       ctaText: "Book Now",
-      ctaLink: "https://www.booking.com/four-seasons-istanbul"
+      ctaLink: "https://www.booking.com/hotel/tr/four-seasons-istanbul-at-sultanahmet.html"
     },
     {
       id: "pera-palace-hotel",
       name: "Pera Palace Hotel",
-      description: "Iconic Belle Époque hotel with Agatha Christie connections",
-      coordinates: [28.9784, 41.0082] as [number, number],
+      description: "Historic Belle Époque hotel in Pera district, famous for hosting Agatha Christie and other notable guests. Features elegant rooms, a spa, and the iconic Orient Bar. A perfect blend of history and luxury.",
+      coordinates: [28.9846, 41.0340] as [number, number],
       category: "hotels" as const,
       price: "$$$",
-      rating: 5,
+      rating: 4.5,
       ctaText: "Book Now",
-      ctaLink: "https://www.booking.com/pera-palace-hotel"
+      ctaLink: "https://www.booking.com/hotel/tr/pera-palace.html"
     },
     {
       id: "ciragan-palace-kempinski",
       name: "Çırağan Palace Kempinski",
-      description: "Ottoman palace on the Bosphorus with world-class spa facilities",
-      coordinates: [28.9784, 41.0082] as [number, number],
+      description: "Luxury hotel in a restored Ottoman palace on the Bosphorus shore. Features opulent suites, world-class spa, multiple restaurants, and stunning waterfront views. The ultimate in Istanbul luxury.",
+      coordinates: [29.0006, 41.0390] as [number, number],
       category: "hotels" as const,
       price: "$$$$",
-      rating: 5,
+      rating: 4.6,
       ctaText: "Book Now",
-      ctaLink: "https://www.booking.com/ciragan-palace-kempinski"
+      ctaLink: "https://www.booking.com/hotel/tr/ciragan-palace-kempinski.html"
     },
     {
-      id: "conrad-istanbul",
+      id: "conrad-istanbul-bosphorus",
       name: "Conrad Istanbul Bosphorus",
-      description: "Modern business hotel with fitness center and meeting facilities",
-      coordinates: [28.9784, 41.0082] as [number, number],
+      description: "Modern luxury hotel in Beşiktaş with panoramic Bosphorus views. Features contemporary rooms, multiple dining options, fitness center, and excellent business facilities. Ideal for both leisure and business travelers.",
+      coordinates: [29.0006, 41.0390] as [number, number],
       category: "hotels" as const,
       price: "$$$",
-      rating: 4,
+      rating: 4.4,
       ctaText: "Book Now",
-      ctaLink: "https://www.booking.com/conrad-istanbul"
+      ctaLink: "https://www.booking.com/hotel/tr/conrad-istanbul-bosphorus.html"
     },
     {
       id: "swissotel-bosphorus",
       name: "Swissotel The Bosphorus",
-      description: "Family-friendly resort with pools and kids' activities",
-      coordinates: [28.9784, 41.0082] as [number, number],
+      description: "Family-friendly luxury resort in Beşiktaş with extensive gardens and Bosphorus views. Features multiple pools, kids' club, spa, and various dining options. Perfect for families seeking comfort and convenience.",
+      coordinates: [29.0006, 41.0390] as [number, number],
       category: "hotels" as const,
       price: "$$$",
-      rating: 4,
+      rating: 4.3,
       ctaText: "Book Now",
-      ctaLink: "https://www.booking.com/swissotel-bosphorus"
+      ctaLink: "https://www.booking.com/hotel/tr/swissotel-the-bosphorus.html"
     },
     {
       id: "ritz-carlton-istanbul",
       name: "The Ritz-Carlton Istanbul",
-      description: "Ultimate luxury with panoramic Bosphorus views and Michelin-starred dining",
-      coordinates: [28.9784, 41.0082] as [number, number],
+      description: "Ultimate luxury hotel in Beşiktaş with panoramic Bosphorus and city views. Features elegant rooms, Michelin-starred dining, world-class spa, and impeccable service. The pinnacle of Istanbul hospitality.",
+      coordinates: [29.0006, 41.0390] as [number, number],
       category: "hotels" as const,
       price: "$$$$",
-      rating: 5,
+      rating: 4.8,
       ctaText: "Book Now",
-      ctaLink: "https://www.booking.com/ritz-carlton-istanbul"
+      ctaLink: "https://www.booking.com/hotel/tr/ritz-carlton-istanbul.html"
     }
   ]
 

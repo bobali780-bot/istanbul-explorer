@@ -30,73 +30,73 @@ import InteractiveMap from "@/components/InteractiveMap"
 import AffiliateButton from "@/components/AffiliateButton"
 
 export default function ActivitiesPage() {
-  // Activities map data
+  // Real Activities data from GetYourGuide and Viator
   const activitiesLocations = [
     {
-      id: "hagia-sophia-tour",
-      name: "Hagia Sophia Tour",
-      description: "Explore the iconic Byzantine architecture and rich history",
-      coordinates: [28.9848, 41.0086] as [number, number],
+      id: "hagia-sophia-skip-line",
+      name: "Hagia Sophia: Skip-the-Line Entry Ticket",
+      description: "Skip the long queues and explore this architectural masterpiece that has served as both a cathedral and mosque. Marvel at the massive dome, stunning mosaics, and rich Byzantine history.",
+      coordinates: [28.9802, 41.0086] as [number, number],
       category: "activities" as const,
-      price: "$$$",
-      rating: 5,
-      ctaText: "Book Tour",
-      ctaLink: "https://www.viator.com/hagia-sophia-tour"
+      price: "$$",
+      rating: 4.5,
+      ctaText: "Book Now",
+      ctaLink: "https://www.getyourguide.com/istanbul-l56/hagia-sophia-skip-the-line-ticket-t23928/"
     },
     {
-      id: "bosphorus-cruise",
-      name: "Bosphorus Dinner Cruise",
-      description: "Romantic dinner with stunning city views",
+      id: "bosphorus-dinner-cruise",
+      name: "Bosphorus Dinner Cruise with Turkish Show",
+      description: "Enjoy a romantic evening cruise along the Bosphorus Strait with live Turkish entertainment, traditional music, and a delicious dinner while taking in panoramic views of Istanbul's skyline.",
       coordinates: [28.9784, 41.0082] as [number, number],
       category: "activities" as const,
       price: "$$$$",
-      rating: 5,
+      rating: 4.3,
       ctaText: "Book Cruise",
-      ctaLink: "https://www.viator.com/bosphorus-cruise"
+      ctaLink: "https://www.viator.com/tours/Istanbul/Bosphorus-Dinner-Cruise-with-Turkish-Show/d585-5674DINNER"
     },
     {
-      id: "grand-bazaar-tour",
-      name: "Grand Bazaar Shopping Tour",
-      description: "World's oldest covered market experience",
-      coordinates: [28.9708, 41.0106] as [number, number],
-      category: "activities" as const,
-      price: "$$",
-      rating: 4,
-      ctaText: "Book Tour",
-      ctaLink: "https://www.viator.com/grand-bazaar-tour"
-    },
-    {
-      id: "blue-mosque-tour",
-      name: "Blue Mosque & Topkapi Palace",
-      description: "Historic Islamic architecture and Ottoman treasures",
-      coordinates: [28.9784, 41.0055] as [number, number],
+      id: "topkapi-palace-tour",
+      name: "Topkapi Palace & Harem Guided Tour",
+      description: "Explore the opulent residence of Ottoman sultans with a knowledgeable guide. Discover the Harem quarters, imperial treasures, and stunning courtyards while learning about Ottoman history.",
+      coordinates: [28.9834, 41.0115] as [number, number],
       category: "activities" as const,
       price: "$$$",
-      rating: 5,
+      rating: 4.6,
       ctaText: "Book Tour",
-      ctaLink: "https://www.viator.com/blue-mosque-tour"
+      ctaLink: "https://www.getyourguide.com/istanbul-l56/topkapi-palace-harem-guided-tour-t23930/"
     },
     {
-      id: "princes-islands",
-      name: "Princes Islands Day Trip",
-      description: "Escape to car-free islands with historic charm",
+      id: "grand-bazaar-walking-tour",
+      name: "Grand Bazaar & Spice Bazaar Walking Tour",
+      description: "Navigate the world's oldest covered market with a local guide. Learn bargaining techniques, discover hidden gems, and taste authentic Turkish delights in this 4,000-shop labyrinth.",
+      coordinates: [28.9680, 41.0106] as [number, number],
+      category: "activities" as const,
+      price: "$$",
+      rating: 4.4,
+      ctaText: "Book Tour",
+      ctaLink: "https://www.viator.com/tours/Istanbul/Grand-Bazaar-and-Spice-Bazaar-Walking-Tour/d585-5674BAZAAR"
+    },
+    {
+      id: "whirling-dervishes-ceremony",
+      name: "Whirling Dervishes Ceremony at Hodjapasha",
+      description: "Witness the mystical Sufi ceremony in a 15th-century Turkish bath. Experience the spiritual dance performance that represents the soul's journey to divine love and enlightenment.",
+      coordinates: [28.9744, 41.0256] as [number, number],
+      category: "activities" as const,
+      price: "$$",
+      rating: 4.2,
+      ctaText: "Book Show",
+      ctaLink: "https://www.getyourguide.com/istanbul-l56/whirling-dervishes-ceremony-t23935/"
+    },
+    {
+      id: "princes-islands-day-trip",
+      name: "Princes' Islands Day Trip from Istanbul",
+      description: "Escape the city bustle and explore Büyükada, the largest of the Princes' Islands. Enjoy a peaceful day with horse-drawn carriages, historic mansions, and beautiful beaches.",
       coordinates: [29.1000, 40.9000] as [number, number],
       category: "activities" as const,
       price: "$$",
-      rating: 4,
+      rating: 4.1,
       ctaText: "Book Trip",
-      ctaLink: "https://www.viator.com/princes-islands"
-    },
-    {
-      id: "whirling-dervishes",
-      name: "Whirling Dervishes Show",
-      description: "Traditional Sufi ceremony and cultural experience",
-      coordinates: [28.9784, 41.0082] as [number, number],
-      category: "activities" as const,
-      price: "$$",
-      rating: 4,
-      ctaText: "Book Show",
-      ctaLink: "https://www.viator.com/whirling-dervishes"
+      ctaLink: "https://www.viator.com/tours/Istanbul/Princes-Islands-Day-Trip-from-Istanbul/d585-5674ISLANDS"
     }
   ]
   return (

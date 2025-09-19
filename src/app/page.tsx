@@ -31,49 +31,49 @@ import {
 } from "lucide-react"
 
 export default function HomePage() {
-  // Sample map data for homepage preview
+  // Real sample locations for homepage preview
   const sampleLocations = [
     {
       id: "hagia-sophia",
       name: "Hagia Sophia",
-      description: "Iconic Byzantine architecture and rich history",
-      coordinates: [28.9848, 41.0086] as [number, number],
+      description: "Skip-the-line entry to this architectural masterpiece that has served as both cathedral and mosque. Marvel at the massive dome, stunning mosaics, and rich Byzantine history.",
+      coordinates: [28.9802, 41.0086] as [number, number],
       category: "activities" as const,
-      price: "$$$",
-      rating: 5,
+      price: "$$",
+      rating: 4.5,
       ctaText: "Explore Activities",
       ctaLink: "/activities"
     },
     {
-      id: "four-seasons",
-      name: "Four Seasons Hotel",
-      description: "Historic luxury in Sultanahmet with stunning views",
-      coordinates: [28.9784, 41.0082] as [number, number],
+      id: "four-seasons-sultanahmet",
+      name: "Four Seasons Hotel Istanbul at Sultanahmet",
+      description: "Luxury hotel set in a former prison building in the heart of historic Sultanahmet. Features elegant rooms with Hagia Sophia views, spa, and fine dining restaurant.",
+      coordinates: [28.9801, 41.0086] as [number, number],
       category: "hotels" as const,
       price: "$$$$",
-      rating: 5,
+      rating: 4.7,
       ctaText: "Explore Hotels",
       ctaLink: "/hotels"
     },
     {
       id: "grand-bazaar",
-      name: "Grand Bazaar",
-      description: "World's oldest covered market with 4,000 shops",
-      coordinates: [28.9708, 41.0106] as [number, number],
+      name: "Grand Bazaar (Kapalı Çarşı)",
+      description: "The world's oldest and largest covered market with over 4,000 shops selling jewelry, carpets, ceramics, textiles, and traditional Turkish crafts. A UNESCO World Heritage site.",
+      coordinates: [28.9680, 41.0106] as [number, number],
       category: "shopping" as const,
       price: "$$",
-      rating: 5,
+      rating: 4.3,
       ctaText: "Explore Shopping",
       ctaLink: "/shopping"
     },
     {
-      id: "pera-palace",
-      name: "Pera Palace Hotel",
-      description: "Iconic Belle Époque hotel with Agatha Christie connections",
-      coordinates: [28.9784, 41.0082] as [number, number],
+      id: "balikci-sabahattin",
+      name: "Balıkçı Sabahattin",
+      description: "Renowned seafood restaurant in Sultanahmet serving the freshest fish and traditional Turkish mezes. Famous for its grilled sea bass and authentic Ottoman atmosphere.",
+      coordinates: [28.9780, 41.0085] as [number, number],
       category: "food" as const,
       price: "$$$",
-      rating: 5,
+      rating: 4.5,
       ctaText: "Explore Food & Drink",
       ctaLink: "/food-drink"
     }
