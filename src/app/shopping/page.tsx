@@ -20,7 +20,7 @@ export default function ShoppingPage() {
       price: "$$",
       rating: 4.3,
       ctaText: "Visit Location",
-      ctaLink: "https://www.tripadvisor.com/Attraction_Review-g293974-d311409-Reviews-Grand_Bazaar-Istanbul.html"
+      ctaLink: "https://www.viator.com/Istanbul-tours/City-Tours/d585-g12-c5330"
     },
     {
       id: "spice-bazaar",
@@ -31,7 +31,7 @@ export default function ShoppingPage() {
       price: "$",
       rating: 4.2,
       ctaText: "Visit Location",
-      ctaLink: "https://www.tripadvisor.com/Attraction_Review-g293974-d311409-Reviews-Spice_Bazaar-Istanbul.html"
+      ctaLink: "https://www.viator.com/Istanbul/d585"
     },
     {
       id: "istinye-park",
@@ -42,7 +42,7 @@ export default function ShoppingPage() {
       price: "$$$",
       rating: 4.4,
       ctaText: "Visit Location",
-      ctaLink: "https://www.tripadvisor.com/Attraction_Review-g293974-d311409-Reviews-Istinye_Park-Istanbul.html"
+      ctaLink: "https://www.tripadvisor.com/Restaurants-g293974-Istanbul.html"
     },
     {
       id: "nisantasi-shopping",
@@ -53,7 +53,7 @@ export default function ShoppingPage() {
       price: "$$$$",
       rating: 4.5,
       ctaText: "Visit Location",
-      ctaLink: "https://www.tripadvisor.com/Attraction_Review-g293974-d311409-Reviews-Nisantasi-Istanbul.html"
+      ctaLink: "https://www.booking.com/landmark/tr/metro-osmanbey.html"
     },
     {
       id: "cukurcuma-antiques",
@@ -64,7 +64,7 @@ export default function ShoppingPage() {
       price: "$$",
       rating: 4.1,
       ctaText: "Visit Location",
-      ctaLink: "https://www.tripadvisor.com/Attraction_Review-g293974-d311409-Reviews-Cukurcuma-Istanbul.html"
+      ctaLink: "https://www.booking.com/pool/city/tr/istanbul.en-gb.html"
     },
     {
       id: "kadikoy-moda",
@@ -75,7 +75,7 @@ export default function ShoppingPage() {
       price: "$$",
       rating: 4.0,
       ctaText: "Visit Location",
-      ctaLink: "https://www.tripadvisor.com/Attraction_Review-g293974-d311409-Reviews-Kadikoy_Moda-Istanbul.html"
+      ctaLink: "https://www.booking.com/district/tr/istanbul/istanbulcitycentre.html"
     }
   ]
 

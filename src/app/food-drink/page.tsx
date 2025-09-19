@@ -41,7 +41,7 @@ export default function FoodDrinkPage() {
       price: "$$$",
       rating: 4.5,
       ctaText: "Reserve Table",
-      ctaLink: "https://www.tripadvisor.com/Restaurant_Review-g293974-d739456-Reviews-Balikci_Sabahattin-Istanbul.html"
+      ctaLink: "https://www.tripadvisor.com/Restaurants-g293974-Istanbul.html"
     },
     {
       id: "sultanahmet-koftecisi",
@@ -52,7 +52,7 @@ export default function FoodDrinkPage() {
       price: "$$",
       rating: 4.3,
       ctaText: "Order Now",
-      ctaLink: "https://www.tripadvisor.com/Restaurant_Review-g293974-d739456-Reviews-Sultanahmet_Koftecisi-Istanbul.html"
+      ctaLink: "https://www.tripadvisor.com/Restaurants-g293974-zfg16556-Istanbul.html"
     },
     {
       id: "deraliye-ottoman-cuisine",
@@ -63,7 +63,7 @@ export default function FoodDrinkPage() {
       price: "$$$$",
       rating: 4.6,
       ctaText: "Reserve Table",
-      ctaLink: "https://www.tripadvisor.com/Restaurant_Review-g293974-d739456-Reviews-Deraliye_Ottoman_Palace_Cuisine-Istanbul.html"
+      ctaLink: "https://www.tripadvisor.com/Restaurants-g293974-zfp43-Istanbul.html"
     },
     {
       id: "karakoy-lokantasi",
@@ -74,7 +74,7 @@ export default function FoodDrinkPage() {
       price: "$$$",
       rating: 4.4,
       ctaText: "Reserve Table",
-      ctaLink: "https://www.tripadvisor.com/Restaurant_Review-g293974-d739456-Reviews-Karakoy_Lokantasi-Istanbul.html"
+      ctaLink: "https://www.tripadvisor.com/Restaurants-g293974-zfp10955-Istanbul.html"
     },
     {
       id: "cafe-privet",
@@ -85,7 +85,7 @@ export default function FoodDrinkPage() {
       price: "$$",
       rating: 4.2,
       ctaText: "Visit Location",
-      ctaLink: "https://www.tripadvisor.com/Restaurant_Review-g293974-d739456-Reviews-Cafe_Privet-Istanbul.html"
+      ctaLink: "https://www.tripadvisor.com/Restaurants-g293974-zfp58-Istanbul.html"
     },
     {
       id: "mikla-restaurant",
@@ -96,7 +96,7 @@ export default function FoodDrinkPage() {
       price: "$$$$",
       rating: 4.7,
       ctaText: "Reserve Table",
-      ctaLink: "https://www.tripadvisor.com/Restaurant_Review-g293974-d739456-Reviews-Mikla_Restaurant-Istanbul.html"
+      ctaLink: "https://www.tripadvisor.com/Restaurants-g293974-oa180-Istanbul.html"
     }
   ]
   return (

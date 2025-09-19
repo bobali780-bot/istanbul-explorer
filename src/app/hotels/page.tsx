@@ -20,7 +20,7 @@ export default function HotelsPage() {
       price: "$$$$",
       rating: 4.7,
       ctaText: "Book Now",
-      ctaLink: "https://www.booking.com/hotel/tr/four-seasons-istanbul-at-sultanahmet.html"
+      ctaLink: "https://www.booking.com/city/tr/istanbul.html"
     },
     {
       id: "pera-palace-hotel",
@@ -31,7 +31,7 @@ export default function HotelsPage() {
       price: "$$$",
       rating: 4.5,
       ctaText: "Book Now",
-      ctaLink: "https://www.booking.com/hotel/tr/pera-palace.html"
+      ctaLink: "https://www.booking.com/district/tr/istanbul/istanbulcitycentre.html"
     },
     {
       id: "ciragan-palace-kempinski",
@@ -42,7 +42,7 @@ export default function HotelsPage() {
       price: "$$$$",
       rating: 4.6,
       ctaText: "Book Now",
-      ctaLink: "https://www.booking.com/hotel/tr/ciragan-palace-kempinski.html"
+      ctaLink: "https://www.booking.com/budget/city/tr/istanbul.en-gb.html"
     },
     {
       id: "conrad-istanbul-bosphorus",
@@ -53,7 +53,7 @@ export default function HotelsPage() {
       price: "$$$",
       rating: 4.4,
       ctaText: "Book Now",
-      ctaLink: "https://www.booking.com/hotel/tr/conrad-istanbul-bosphorus.html"
+      ctaLink: "https://www.booking.com/district/tr/istanbul/oldcitysultanahmet.html"
     },
     {
       id: "swissotel-bosphorus",
@@ -64,7 +64,7 @@ export default function HotelsPage() {
       price: "$$$",
       rating: 4.3,
       ctaText: "Book Now",
-      ctaLink: "https://www.booking.com/hotel/tr/swissotel-the-bosphorus.html"
+      ctaLink: "https://www.booking.com/district/tr/istanbul/taksimsquare.html"
     },
     {
       id: "ritz-carlton-istanbul",
@@ -75,7 +75,7 @@ export default function HotelsPage() {
       price: "$$$$",
       rating: 4.8,
       ctaText: "Book Now",
-      ctaLink: "https://www.booking.com/hotel/tr/ritz-carlton-istanbul.html"
+      ctaLink: "https://www.booking.com/pool/city/tr/istanbul.en-gb.html"
     }
   ]
 

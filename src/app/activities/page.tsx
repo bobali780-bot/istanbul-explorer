@@ -42,7 +42,7 @@ export default function ActivitiesPage() {
       price: "$$",
       rating: 4.5,
       ctaText: "Book Now",
-      ctaLink: "https://www.getyourguide.com/istanbul-l56/hagia-sophia-skip-the-line-ticket-t23928/"
+      ctaLink: "https://www.viator.com/Istanbul-tours/City-Tours/d585-g12-c5330"
     },
     {
       id: "bosphorus-dinner-cruise",
@@ -53,7 +53,7 @@ export default function ActivitiesPage() {
       price: "$$$$",
       rating: 4.3,
       ctaText: "Book Cruise",
-      ctaLink: "https://www.viator.com/tours/Istanbul/Bosphorus-Dinner-Cruise-with-Turkish-Show/d585-5674DINNER"
+      ctaLink: "https://www.viator.com/Istanbul-tours/Day-Trips-and-Excursions/d585-g5"
     },
     {
       id: "topkapi-palace-tour",
@@ -64,7 +64,7 @@ export default function ActivitiesPage() {
       price: "$$$",
       rating: 4.6,
       ctaText: "Book Tour",
-      ctaLink: "https://www.getyourguide.com/istanbul-l56/topkapi-palace-harem-guided-tour-t23930/"
+      ctaLink: "https://www.viator.com/Istanbul-tours/Private-and-Custom-Tours/d585-g26"
     },
     {
       id: "grand-bazaar-walking-tour",
@@ -75,7 +75,7 @@ export default function ActivitiesPage() {
       price: "$$",
       rating: 4.4,
       ctaText: "Book Tour",
-      ctaLink: "https://www.viator.com/tours/Istanbul/Grand-Bazaar-and-Spice-Bazaar-Walking-Tour/d585-5674BAZAAR"
+      ctaLink: "https://www.viator.com/Istanbul-tours/Full-day-Tours/d585-g12-c94"
     },
     {
       id: "whirling-dervishes-ceremony",
@@ -86,7 +86,7 @@ export default function ActivitiesPage() {
       price: "$$",
       rating: 4.2,
       ctaText: "Book Show",
-      ctaLink: "https://www.getyourguide.com/istanbul-l56/whirling-dervishes-ceremony-t23935/"
+      ctaLink: "https://www.viator.com/Istanbul/d585"
     },
     {
       id: "princes-islands-day-trip",
@@ -97,7 +97,7 @@ export default function ActivitiesPage() {
       price: "$$",
       rating: 4.1,
       ctaText: "Book Trip",
-      ctaLink: "https://www.viator.com/tours/Istanbul/Princes-Islands-Day-Trip-from-Istanbul/d585-5674ISLANDS"
+      ctaLink: "https://www.viator.com/Istanbul/d585-ttd"
     }
   ]
   return (

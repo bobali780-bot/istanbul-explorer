@@ -287,8 +287,8 @@ export default function HomePage() {
                 </div>
                 <div className="mt-auto">
                   <AffiliateButton 
-                    href="https://www.getyourguide.com/istanbul-l56/hagia-sophia-skip-the-line-ticket-t23928/"
-                    affiliateType="getyourguide"
+                    href="https://www.viator.com/Istanbul-tours/City-Tours/d585-g12-c5330"
+                    affiliateType="viator"
                     trackingId="homepage-hagia-sophia"
                     locationName="Hagia Sophia Tour"
                     className="w-full bg-blue-600 hover:bg-blue-700"
@@ -321,7 +321,7 @@ export default function HomePage() {
                 </div>
                 <div className="mt-auto">
                   <AffiliateButton 
-                    href="https://www.viator.com/tours/Istanbul/Bosphorus-Dinner-Cruise-with-Turkish-Show/d585-5674DINNER"
+                    href="https://www.viator.com/Istanbul-tours/Day-Trips-and-Excursions/d585-g5"
                     affiliateType="viator"
                     trackingId="homepage-bosphorus-cruise"
                     locationName="Bosphorus Dinner Cruise"
@@ -355,8 +355,8 @@ export default function HomePage() {
                 </div>
                 <div className="mt-auto">
                   <AffiliateButton 
-                    href="https://www.tripadvisor.com/Attraction_Review-g293974-d311409-Reviews-Grand_Bazaar-Istanbul.html"
-                    affiliateType="tripadvisor"
+                    href="https://www.viator.com/Istanbul-tours/City-Tours/d585-g12-c5330"
+                    affiliateType="viator"
                     trackingId="homepage-grand-bazaar"
                     locationName="Grand Bazaar Shopping"
                     className="w-full bg-green-600 hover:bg-green-700"
@@ -389,8 +389,8 @@ export default function HomePage() {
                 </div>
                 <div className="mt-auto">
                   <AffiliateButton 
-                    href="https://www.getyourguide.com/istanbul-l56/topkapi-palace-harem-guided-tour-t23930/"
-                    affiliateType="getyourguide"
+                    href="https://www.viator.com/Istanbul-tours/Private-and-Custom-Tours/d585-g26"
+                    affiliateType="viator"
                     trackingId="homepage-topkapi-palace"
                     locationName="Topkapi Palace Tour"
                     className="w-full bg-purple-600 hover:bg-purple-700"
@@ -423,8 +423,8 @@ export default function HomePage() {
                 </div>
                 <div className="mt-auto">
                   <AffiliateButton 
-                    href="https://www.getyourguide.com/istanbul-l56/whirling-dervishes-ceremony-t23935/"
-                    affiliateType="getyourguide"
+                    href="https://www.viator.com/Istanbul-tours/Full-day-Tours/d585-g12-c94"
+                    affiliateType="viator"
                     trackingId="homepage-whirling-dervishes"
                     locationName="Whirling Dervishes Show"
                     className="w-full bg-teal-600 hover:bg-teal-700"
