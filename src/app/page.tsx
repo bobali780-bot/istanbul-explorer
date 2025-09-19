@@ -290,6 +290,7 @@ export default function HomePage() {
                     href="https://www.getyourguide.com/istanbul-l56/hagia-sophia-skip-the-line-ticket-t23928/"
                     affiliateType="getyourguide"
                     trackingId="homepage-hagia-sophia"
+                    locationName="Hagia Sophia Tour"
                     className="w-full bg-blue-600 hover:bg-blue-700"
                   >
                     Book Now
@@ -323,6 +324,7 @@ export default function HomePage() {
                     href="https://www.viator.com/tours/Istanbul/Bosphorus-Dinner-Cruise-with-Turkish-Show/d585-5674DINNER"
                     affiliateType="viator"
                     trackingId="homepage-bosphorus-cruise"
+                    locationName="Bosphorus Dinner Cruise"
                     className="w-full bg-orange-600 hover:bg-orange-700"
                   >
                     Book Cruise
@@ -356,6 +358,7 @@ export default function HomePage() {
                     href="https://www.tripadvisor.com/Attraction_Review-g293974-d311409-Reviews-Grand_Bazaar-Istanbul.html"
                     affiliateType="tripadvisor"
                     trackingId="homepage-grand-bazaar"
+                    locationName="Grand Bazaar Shopping"
                     className="w-full bg-green-600 hover:bg-green-700"
                   >
                     Visit Location
@@ -389,6 +392,7 @@ export default function HomePage() {
                     href="https://www.getyourguide.com/istanbul-l56/topkapi-palace-harem-guided-tour-t23930/"
                     affiliateType="getyourguide"
                     trackingId="homepage-topkapi-palace"
+                    locationName="Topkapi Palace Tour"
                     className="w-full bg-purple-600 hover:bg-purple-700"
                   >
                     Book Tour
@@ -422,6 +426,7 @@ export default function HomePage() {
                     href="https://www.getyourguide.com/istanbul-l56/whirling-dervishes-ceremony-t23935/"
                     affiliateType="getyourguide"
                     trackingId="homepage-whirling-dervishes"
+                    locationName="Whirling Dervishes Show"
                     className="w-full bg-teal-600 hover:bg-teal-700"
                   >
                     Book Show

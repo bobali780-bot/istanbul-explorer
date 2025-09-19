@@ -1,6 +1,5 @@
 "use client"
 
-import { Button } from "@/components/ui/button"
 import { ArrowRight } from "lucide-react"
 
 interface AffiliateButtonProps {
@@ -11,6 +10,7 @@ interface AffiliateButtonProps {
   className?: string
   affiliateType: "booking" | "viator" | "tripadvisor" | "shop" | "getyourguide"
   trackingId?: string
+  locationName?: string
 }
 
 export default function AffiliateButton({ 
@@ -20,13 +20,22 @@ export default function AffiliateButton({
   size = "default",
   className = "",
   affiliateType,
-  trackingId
+  trackingId,
+  locationName
 }: AffiliateButtonProps) {
+  // Validate href - if missing or invalid, render nothing
+  if (!href || href === "#" || href.trim() === "") {
+    console.warn(`AffiliateButton: Invalid href for ${locationName || 'unknown location'}:`, href)
+    return null
+  }
+
   const handleClick = () => {
     // Affiliate click tracking
     console.log("Affiliate Click:", {
+      locationName: locationName || 'unknown',
       type: affiliateType,
-      href,
+      originalHref: href,
+      finalHref: getAffiliateUrl(),
       trackingId,
       timestamp: new Date().toISOString()
     })
@@ -36,39 +45,49 @@ export default function AffiliateButton({
   }
 
   const getAffiliateUrl = () => {
-    // Generate affiliate URLs based on type
-    switch (affiliateType) {
-      case "booking":
-        return `https://www.booking.com/affiliate?url=${encodeURIComponent(href)}&aid=${trackingId || "istanbul-explorer"}`
-      case "viator":
-        return `https://www.viator.com/affiliate?url=${encodeURIComponent(href)}&aid=${trackingId || "istanbul-explorer"}`
-      case "tripadvisor":
-        return `https://www.tripadvisor.com/affiliate?url=${encodeURIComponent(href)}&aid=${trackingId || "istanbul-explorer"}`
-      case "shop":
-        return `https://www.amazon.com/affiliate?url=${encodeURIComponent(href)}&aid=${trackingId || "istanbul-explorer"}`
-      case "getyourguide":
-        return `https://www.getyourguide.com/affiliate?url=${encodeURIComponent(href)}&aid=${trackingId || "istanbul-explorer"}`
-      default:
-        return href
-    }
+    // For now, use the direct href instead of affiliate wrapping
+    // This ensures the links work immediately
+    return href
   }
+
+  // Get button styles based on variant
+  const getButtonStyles = () => {
+    const baseStyles = "inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+    
+    const sizeStyles = {
+      default: "h-10 px-4 py-2",
+      sm: "h-9 rounded-md px-3",
+      lg: "h-11 rounded-md px-8",
+      icon: "h-10 w-10"
+    }
+    
+    const variantStyles = {
+      default: "bg-primary text-primary-foreground hover:bg-primary/90",
+      destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
+      outline: "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
+      secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+      ghost: "hover:bg-accent hover:text-accent-foreground",
+      link: "text-primary underline-offset-4 hover:underline"
+    }
+    
+    return `${baseStyles} ${sizeStyles[size]} ${variantStyles[variant]}`
+  }
+
+  const finalHref = getAffiliateUrl()
+  
+  // Log the location name and final href for verification
+  console.log(`AffiliateButton: ${locationName || 'Unknown location'} -> ${finalHref}`)
 
   return (
     <a 
-      href={getAffiliateUrl()} 
+      href={finalHref} 
       target="_blank" 
       rel="noopener noreferrer"
       onClick={handleClick}
-      className="inline-block"
+      className={`${getButtonStyles()} ${className}`}
     >
-      <Button 
-        variant={variant}
-        size={size}
-        className={`inline-flex items-center ${className}`}
-      >
-        {children}
-        <ArrowRight className="w-4 h-4 ml-2" />
-      </Button>
+      {children}
+      <ArrowRight className="w-4 h-4 ml-2" />
     </a>
   )
 }

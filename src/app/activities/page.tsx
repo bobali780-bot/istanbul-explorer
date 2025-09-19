@@ -256,9 +256,15 @@ export default function ActivitiesPage() {
                     <MapPin className="w-4 h-4 mr-2" />
                     View on Map
                   </Button>
-                  <Button className="flex-1 bg-blue-600 hover:bg-blue-700">
-                    Book Now
-                  </Button>
+                  <AffiliateButton 
+                    href={activitiesLocations[0].ctaLink}
+                    affiliateType="getyourguide"
+                    trackingId="activities-hagia-sophia"
+                    locationName={activitiesLocations[0].name}
+                    className="flex-1 bg-blue-600 hover:bg-blue-700"
+                  >
+                    {activitiesLocations[0].ctaText}
+                  </AffiliateButton>
                 </div>
               </CardContent>
             </Card>
@@ -303,9 +309,15 @@ export default function ActivitiesPage() {
                     <MapPin className="w-4 h-4 mr-2" />
                     View on Map
                   </Button>
-                  <Button className="flex-1 bg-orange-600 hover:bg-orange-700">
-                    Book Now
-                  </Button>
+                  <AffiliateButton 
+                    href={activitiesLocations[1].ctaLink}
+                    affiliateType="viator"
+                    trackingId="activities-bosphorus-cruise"
+                    locationName={activitiesLocations[1].name}
+                    className="flex-1 bg-orange-600 hover:bg-orange-700"
+                  >
+                    {activitiesLocations[1].ctaText}
+                  </AffiliateButton>
                 </div>
               </CardContent>
             </Card>
@@ -350,9 +362,15 @@ export default function ActivitiesPage() {
                     <MapPin className="w-4 h-4 mr-2" />
                     View on Map
                   </Button>
-                  <Button className="flex-1 bg-green-600 hover:bg-green-700">
-                    Book Now
-                  </Button>
+                  <AffiliateButton 
+                    href={activitiesLocations[2].ctaLink}
+                    affiliateType="getyourguide"
+                    trackingId="activities-topkapi-palace"
+                    locationName={activitiesLocations[2].name}
+                    className="flex-1 bg-green-600 hover:bg-green-700"
+                  >
+                    {activitiesLocations[2].ctaText}
+                  </AffiliateButton>
                 </div>
               </CardContent>
             </Card>
@@ -403,9 +421,16 @@ export default function ActivitiesPage() {
                     <MapPin className="w-4 h-4 mr-1" />
                     Map
                   </Button>
-                  <Button size="sm" className="flex-1 bg-purple-600 hover:bg-purple-700">
-                    Book Now
-                  </Button>
+                  <AffiliateButton 
+                    href={activitiesLocations[3].ctaLink}
+                    affiliateType="viator"
+                    trackingId="activities-grand-bazaar"
+                    locationName={activitiesLocations[3].name}
+                    size="sm"
+                    className="flex-1 bg-purple-600 hover:bg-purple-700"
+                  >
+                    {activitiesLocations[3].ctaText}
+                  </AffiliateButton>
                 </div>
               </CardContent>
             </Card>
@@ -446,9 +471,16 @@ export default function ActivitiesPage() {
                     <MapPin className="w-4 h-4 mr-1" />
                     Map
                   </Button>
-                  <Button size="sm" className="flex-1 bg-pink-600 hover:bg-pink-700">
-                    Book Now
-                  </Button>
+                  <AffiliateButton 
+                    href={activitiesLocations[4].ctaLink}
+                    affiliateType="getyourguide"
+                    trackingId="activities-whirling-dervishes"
+                    locationName={activitiesLocations[4].name}
+                    size="sm"
+                    className="flex-1 bg-pink-600 hover:bg-pink-700"
+                  >
+                    {activitiesLocations[4].ctaText}
+                  </AffiliateButton>
                 </div>
               </CardContent>
             </Card>
@@ -489,9 +521,16 @@ export default function ActivitiesPage() {
                     <MapPin className="w-4 h-4 mr-1" />
                     Map
                   </Button>
-                  <Button size="sm" className="flex-1 bg-teal-600 hover:bg-teal-700">
-                    Book Now
-                  </Button>
+                  <AffiliateButton 
+                    href={activitiesLocations[5].ctaLink}
+                    affiliateType="viator"
+                    trackingId="activities-princes-islands"
+                    locationName={activitiesLocations[5].name}
+                    size="sm"
+                    className="flex-1 bg-teal-600 hover:bg-teal-700"
+                  >
+                    {activitiesLocations[5].ctaText}
+                  </AffiliateButton>
                 </div>
               </CardContent>
             </Card>
@@ -532,9 +571,16 @@ export default function ActivitiesPage() {
                     <MapPin className="w-4 h-4 mr-1" />
                     Map
                   </Button>
-                  <Button size="sm" className="flex-1 bg-amber-600 hover:bg-amber-700">
-                    Book Now
-                  </Button>
+                  <AffiliateButton 
+                    href={activitiesLocations[0].ctaLink}
+                    affiliateType="getyourguide"
+                    trackingId="activities-hagia-sophia-2"
+                    locationName={activitiesLocations[0].name}
+                    size="sm"
+                    className="flex-1 bg-amber-600 hover:bg-amber-700"
+                  >
+                    {activitiesLocations[0].ctaText}
+                  </AffiliateButton>
                 </div>
               </CardContent>
             </Card>
@@ -575,9 +621,16 @@ export default function ActivitiesPage() {
                     <MapPin className="w-4 h-4 mr-1" />
                     Map
                   </Button>
-                  <Button size="sm" className="flex-1 bg-indigo-600 hover:bg-indigo-700">
-                    Book Now
-                  </Button>
+                  <AffiliateButton 
+                    href={activitiesLocations[1].ctaLink}
+                    affiliateType="viator"
+                    trackingId="activities-bosphorus-cruise-2"
+                    locationName={activitiesLocations[1].name}
+                    size="sm"
+                    className="flex-1 bg-indigo-600 hover:bg-indigo-700"
+                  >
+                    {activitiesLocations[1].ctaText}
+                  </AffiliateButton>
                 </div>
               </CardContent>
             </Card>
@@ -618,9 +671,16 @@ export default function ActivitiesPage() {
                     <MapPin className="w-4 h-4 mr-1" />
                     Map
                   </Button>
-                  <Button size="sm" className="flex-1 bg-red-600 hover:bg-red-700">
-                    Book Now
-                  </Button>
+                  <AffiliateButton 
+                    href={activitiesLocations[2].ctaLink}
+                    affiliateType="getyourguide"
+                    trackingId="activities-topkapi-palace-2"
+                    locationName={activitiesLocations[2].name}
+                    size="sm"
+                    className="flex-1 bg-red-600 hover:bg-red-700"
+                  >
+                    {activitiesLocations[2].ctaText}
+                  </AffiliateButton>
                 </div>
               </CardContent>
             </Card>
