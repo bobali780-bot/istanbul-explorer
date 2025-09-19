@@ -86,7 +86,7 @@ export default function HomePage() {
   ]
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white">{/* Dynamic homepage v2 */}
       <GoogleAnalytics />
       {/* Hero Section */}
       <section className="relative h-screen flex items-center justify-center overflow-hidden">
