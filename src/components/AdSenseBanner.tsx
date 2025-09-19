@@ -17,7 +17,7 @@ interface AdSenseBannerProps {
 }
 
 export default function AdSenseBanner({
-  slot = "1234567890",
+  slot = "3173821922",
   format = "auto",
   responsive = true,
   className = ""
