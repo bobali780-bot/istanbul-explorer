@@ -16,9 +16,9 @@ interface AdSenseBannerProps {
   className?: string
 }
 
-export default function AdSenseBanner({ 
-  slot = "3572195600", 
-  format = "auto", 
+export default function AdSenseBanner({
+  slot = "1234567890",
+  format = "auto",
   responsive = true,
   className = ""
 }: AdSenseBannerProps) {
@@ -48,8 +48,8 @@ export default function AdSenseBanner({
   }, [slot, format, responsive])
 
   return (
-    <div className={`bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg p-8 text-center ${className}`}>
-      <ins 
+    <div className={`w-full max-w-4xl mx-auto ${className}`}>
+      <ins
         ref={adRef}
         className="adsbygoogle"
         style={{ display: 'block' }}
