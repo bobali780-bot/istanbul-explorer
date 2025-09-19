@@ -9,6 +9,7 @@ import AdSenseBanner from "@/components/AdSenseBanner"
 import AffiliateButton from "@/components/AffiliateButton"
 import InteractiveMap from "@/components/InteractiveMap"
 import GoogleAnalytics from "@/components/GoogleAnalytics"
+import { useFeaturedItems } from "@/hooks/useScrapedData"
 import { 
   MapPin, 
   Search, 
@@ -33,6 +34,9 @@ import {
 } from "lucide-react"
 
 export default function HomePage() {
+  // Get random featured items from APIs
+  const { featuredItems, loading, error } = useFeaturedItems()
+
   // Real sample locations for homepage preview
   const sampleLocations = [
     {
@@ -124,101 +128,224 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Quick Access Tiles */}
+      {/* Quick Access Tiles with Dynamic Featured Items */}
       <section className="py-20 bg-gray-50">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-gray-900">
             Explore Istanbul
           </h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {/* Activities */}
-            <Link href="/activities" className="block group">
-              <Card className="hover:shadow-2xl transition-all duration-300 cursor-pointer border-0 shadow-lg h-80 flex flex-col">
-                <div className="relative overflow-hidden rounded-lg">
-                  <div className="h-48 bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center">
-                    <Navigation className="w-16 h-16 text-white" />
+          {loading ? (
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {[1, 2, 3, 4].map((i) => (
+                <Card key={i} className="border-0 shadow-lg h-80 flex flex-col animate-pulse">
+                  <div className="h-48 bg-gray-300 rounded-t-lg"></div>
+                  <CardContent className="p-6 flex flex-col flex-1">
+                    <div className="h-6 bg-gray-300 rounded mb-2"></div>
+                    <div className="h-4 bg-gray-200 rounded mb-4"></div>
+                    <div className="mt-auto h-10 bg-gray-300 rounded"></div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          ) : (
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {/* Activities */}
+              <Card className="hover:shadow-2xl transition-all duration-300 cursor-pointer border-0 shadow-lg h-80 flex flex-col group">
+                {featuredItems.activities?.media?.[0]?.url ? (
+                  <div className="relative overflow-hidden rounded-t-lg">
+                    <img
+                      src={featuredItems.activities.media[0].url}
+                      alt={featuredItems.activities.name}
+                      className="h-48 w-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-br from-blue-500/80 to-blue-700/80 group-hover:from-blue-500/70 group-hover:to-blue-700/70 transition-all duration-300"></div>
+                    <Navigation className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-16 h-16 text-white" />
                   </div>
-                  <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-all duration-300"></div>
-                </div>
+                ) : (
+                  <div className="relative overflow-hidden rounded-t-lg">
+                    <div className="h-48 bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center">
+                      <Navigation className="w-16 h-16 text-white" />
+                    </div>
+                  </div>
+                )}
                 <CardContent className="p-6 flex flex-col flex-1">
                   <h3 className="text-xl font-bold mb-2">Activities</h3>
-                  <p className="text-gray-600 mb-4">Tours, attractions, and experiences</p>
+                  <p className="text-gray-600 mb-2 text-sm line-clamp-2">
+                    {featuredItems.activities?.description_short || "Tours, attractions, and experiences"}
+                  </p>
+                  {featuredItems.activities && (
+                    <p className="text-xs text-gray-500 mb-4 font-medium">
+                      Featured: {featuredItems.activities.name}
+                    </p>
+                  )}
                   <div className="mt-auto">
-                    <Button className="w-full bg-blue-500 hover:bg-blue-600 group-hover:bg-blue-600 transition-colors">
-                      Explore Activities
-                      <ArrowRight className="w-4 h-4 ml-2" />
+                    <Button
+                      asChild
+                      className="w-full bg-blue-500 hover:bg-blue-600 group-hover:bg-blue-600 transition-colors"
+                    >
+                      <a
+                        href={featuredItems.activities?.booking_link || "/activities"}
+                        target={featuredItems.activities?.booking_link ? "_blank" : "_self"}
+                        rel={featuredItems.activities?.booking_link ? "noopener noreferrer" : ""}
+                      >
+                        {featuredItems.activities?.booking_link ? "Book Now" : "Explore Activities"}
+                        <ArrowRight className="w-4 h-4 ml-2" />
+                      </a>
                     </Button>
                   </div>
                 </CardContent>
               </Card>
-            </Link>
 
-            {/* Food & Drink */}
-            <Link href="/food-drink" className="block group">
-              <Card className="hover:shadow-2xl transition-all duration-300 cursor-pointer border-0 shadow-lg h-80 flex flex-col">
-                <div className="relative overflow-hidden rounded-lg">
-                  <div className="h-48 bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center">
-                    <Utensils className="w-16 h-16 text-white" />
+              {/* Food & Drink */}
+              <Card className="hover:shadow-2xl transition-all duration-300 cursor-pointer border-0 shadow-lg h-80 flex flex-col group">
+                {featuredItems.restaurants?.media?.[0]?.url ? (
+                  <div className="relative overflow-hidden rounded-t-lg">
+                    <img
+                      src={featuredItems.restaurants.media[0].url}
+                      alt={featuredItems.restaurants.name}
+                      className="h-48 w-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-br from-orange-500/80 to-red-600/80 group-hover:from-orange-500/70 group-hover:to-red-600/70 transition-all duration-300"></div>
+                    <Utensils className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-16 h-16 text-white" />
                   </div>
-                  <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-all duration-300"></div>
-                </div>
+                ) : (
+                  <div className="relative overflow-hidden rounded-t-lg">
+                    <div className="h-48 bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center">
+                      <Utensils className="w-16 h-16 text-white" />
+                    </div>
+                  </div>
+                )}
                 <CardContent className="p-6 flex flex-col flex-1">
                   <h3 className="text-xl font-bold mb-2">Food & Drink</h3>
-                  <p className="text-gray-600 mb-4">Restaurants, cafes, and local cuisine</p>
+                  <p className="text-gray-600 mb-2 text-sm line-clamp-2">
+                    {featuredItems.restaurants?.description_short || "Restaurants, cafes, and local cuisine"}
+                  </p>
+                  {featuredItems.restaurants && (
+                    <p className="text-xs text-gray-500 mb-4 font-medium">
+                      Featured: {featuredItems.restaurants.name}
+                    </p>
+                  )}
                   <div className="mt-auto">
-                    <Button className="w-full bg-orange-500 hover:bg-orange-600 group-hover:bg-orange-600 transition-colors">
-                      Find Restaurants
-                      <ArrowRight className="w-4 h-4 ml-2" />
+                    <Button
+                      asChild
+                      className="w-full bg-orange-500 hover:bg-orange-600 group-hover:bg-orange-600 transition-colors"
+                    >
+                      <a
+                        href={featuredItems.restaurants?.booking_link || "/food-drink"}
+                        target={featuredItems.restaurants?.booking_link ? "_blank" : "_self"}
+                        rel={featuredItems.restaurants?.booking_link ? "noopener noreferrer" : ""}
+                      >
+                        {featuredItems.restaurants?.booking_link ? "Book Now" : "Find Restaurants"}
+                        <ArrowRight className="w-4 h-4 ml-2" />
+                      </a>
                     </Button>
                   </div>
                 </CardContent>
               </Card>
-            </Link>
 
-            {/* Shopping */}
-            <Link href="/shopping" className="block group">
-              <Card className="hover:shadow-2xl transition-all duration-300 cursor-pointer border-0 shadow-lg h-80 flex flex-col">
-                <div className="relative overflow-hidden rounded-lg">
-                  <div className="h-48 bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center">
-                    <ShoppingBag className="w-16 h-16 text-white" />
+              {/* Shopping */}
+              <Card className="hover:shadow-2xl transition-all duration-300 cursor-pointer border-0 shadow-lg h-80 flex flex-col group">
+                {featuredItems.shopping?.media?.[0]?.url ? (
+                  <div className="relative overflow-hidden rounded-t-lg">
+                    <img
+                      src={featuredItems.shopping.media[0].url}
+                      alt={featuredItems.shopping.name}
+                      className="h-48 w-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-br from-green-500/80 to-emerald-600/80 group-hover:from-green-500/70 group-hover:to-emerald-600/70 transition-all duration-300"></div>
+                    <ShoppingBag className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-16 h-16 text-white" />
                   </div>
-                  <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-all duration-300"></div>
-                </div>
+                ) : (
+                  <div className="relative overflow-hidden rounded-t-lg">
+                    <div className="h-48 bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center">
+                      <ShoppingBag className="w-16 h-16 text-white" />
+                    </div>
+                  </div>
+                )}
                 <CardContent className="p-6 flex flex-col flex-1">
                   <h3 className="text-xl font-bold mb-2">Shopping</h3>
-                  <p className="text-gray-600 mb-4">Markets, boutiques, and souvenirs</p>
+                  <p className="text-gray-600 mb-2 text-sm line-clamp-2">
+                    {featuredItems.shopping?.description_short || "Markets, boutiques, and souvenirs"}
+                  </p>
+                  {featuredItems.shopping && (
+                    <p className="text-xs text-gray-500 mb-4 font-medium">
+                      Featured: {featuredItems.shopping.name}
+                    </p>
+                  )}
                   <div className="mt-auto">
-                    <Button className="w-full bg-green-500 hover:bg-green-600 group-hover:bg-green-600 transition-colors">
-                      Shop Now
-                      <ArrowRight className="w-4 h-4 ml-2" />
+                    <Button
+                      asChild
+                      className="w-full bg-green-500 hover:bg-green-600 group-hover:bg-green-600 transition-colors"
+                    >
+                      <a
+                        href={featuredItems.shopping?.booking_link || "/shopping"}
+                        target={featuredItems.shopping?.booking_link ? "_blank" : "_self"}
+                        rel={featuredItems.shopping?.booking_link ? "noopener noreferrer" : ""}
+                      >
+                        {featuredItems.shopping?.booking_link ? "Visit Now" : "Shop Now"}
+                        <ArrowRight className="w-4 h-4 ml-2" />
+                      </a>
                     </Button>
                   </div>
                 </CardContent>
               </Card>
-            </Link>
 
-            {/* Hotels */}
-            <Link href="/hotels" className="block group">
-              <Card className="hover:shadow-2xl transition-all duration-300 cursor-pointer border-0 shadow-lg h-80 flex flex-col">
-                <div className="relative overflow-hidden rounded-lg">
-                  <div className="h-48 bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center">
-                    <Bed className="w-16 h-16 text-white" />
+              {/* Hotels */}
+              <Card className="hover:shadow-2xl transition-all duration-300 cursor-pointer border-0 shadow-lg h-80 flex flex-col group">
+                {featuredItems.hotels?.media?.[0]?.url ? (
+                  <div className="relative overflow-hidden rounded-t-lg">
+                    <img
+                      src={featuredItems.hotels.media[0].url}
+                      alt={featuredItems.hotels.name}
+                      className="h-48 w-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-br from-purple-500/80 to-indigo-600/80 group-hover:from-purple-500/70 group-hover:to-indigo-600/70 transition-all duration-300"></div>
+                    <Bed className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-16 h-16 text-white" />
                   </div>
-                  <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-all duration-300"></div>
-                </div>
+                ) : (
+                  <div className="relative overflow-hidden rounded-t-lg">
+                    <div className="h-48 bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center">
+                      <Bed className="w-16 h-16 text-white" />
+                    </div>
+                  </div>
+                )}
                 <CardContent className="p-6 flex flex-col flex-1">
                   <h3 className="text-xl font-bold mb-2">Hotels</h3>
-                  <p className="text-gray-600 mb-4">Accommodations and stays</p>
+                  <p className="text-gray-600 mb-2 text-sm line-clamp-2">
+                    {featuredItems.hotels?.description_short || "Accommodations and stays"}
+                  </p>
+                  {featuredItems.hotels && (
+                    <p className="text-xs text-gray-500 mb-4 font-medium">
+                      Featured: {featuredItems.hotels.name}
+                    </p>
+                  )}
                   <div className="mt-auto">
-                    <Button className="w-full bg-purple-500 hover:bg-purple-600 group-hover:bg-purple-600 transition-colors">
-                      Book Hotels
-                      <ArrowRight className="w-4 h-4 ml-2" />
+                    <Button
+                      asChild
+                      className="w-full bg-purple-500 hover:bg-purple-600 group-hover:bg-purple-600 transition-colors"
+                    >
+                      <a
+                        href={featuredItems.hotels?.booking_link || "/hotels"}
+                        target={featuredItems.hotels?.booking_link ? "_blank" : "_self"}
+                        rel={featuredItems.hotels?.booking_link ? "noopener noreferrer" : ""}
+                      >
+                        {featuredItems.hotels?.booking_link ? "Book Now" : "Book Hotels"}
+                        <ArrowRight className="w-4 h-4 ml-2" />
+                      </a>
                     </Button>
                   </div>
                 </CardContent>
               </Card>
-            </Link>
-          </div>
+            </div>
+          )}
+
+          {error && (
+            <div className="text-center mt-8">
+              <p className="text-yellow-600 bg-yellow-50 border border-yellow-200 rounded-lg p-4 inline-block">
+                ⚠️ Using fallback data - some content may not be current
+              </p>
+            </div>
+          )}
         </div>
       </section>
 

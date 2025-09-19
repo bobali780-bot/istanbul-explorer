@@ -1,3 +1,5 @@
+"use client"
+
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -7,10 +9,14 @@ import { Star, Search, MapPin, Wifi, Car, Coffee, Dumbbell, Waves, Shield, Heart
 import InteractiveMap from "@/components/InteractiveMap"
 import AffiliateButton from "@/components/AffiliateButton"
 import AdSenseBanner from "@/components/AdSenseBanner"
+import { useHotels } from "@/hooks/useScrapedData"
 
 export default function HotelsPage() {
-  // Real Hotels data from Booking.com
-  const hotelsLocations = [
+  // Use scraped data from Firecrawl (only on client side)
+  const { hotels: scrapedHotels, loading, error } = useHotels()
+  
+  // Static data for build time
+  const staticHotelsLocations = [
     {
       id: "four-seasons-sultanahmet",
       name: "Four Seasons Hotel Istanbul at Sultanahmet",
@@ -78,6 +84,43 @@ export default function HotelsPage() {
       ctaLink: "https://www.booking.com/pool/city/tr/istanbul.en-gb.html"
     }
   ]
+
+  // Use static data during build, scraped data at runtime
+  const hotelsLocations = scrapedHotels.length > 0
+    ? scrapedHotels.map((item, index) => ({
+        id: `hotel-${index}`,
+        name: item.name,
+        description: item.description,
+        coordinates: item.coordinates || [28.9784, 41.0082] as [number, number],
+        category: "hotels" as const,
+        price: item.price || "$$$",
+        rating: item.rating || 4.0,
+        ctaText: "Book Now",
+        ctaLink: item.url
+      }))
+    : staticHotelsLocations
+
+  // Log scraping results
+  if (scrapedHotels.length > 0) {
+    console.log(`✅ Scraped ${scrapedHotels.length} hotels from Booking.com`)
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <div className="container mx-auto px-4 py-8">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
+            <p className="text-gray-600">Loading hotel data...</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    console.error('❌ Error loading hotel data:', error)
+  }
 
   return (
     <div className="min-h-screen bg-white">

@@ -1,3 +1,5 @@
+"use client"
+
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -7,10 +9,14 @@ import { Star, Search, MapPin, ShoppingBag, Store, Crown, Gift, Sparkles, Heart,
 import InteractiveMap from "@/components/InteractiveMap"
 import AffiliateButton from "@/components/AffiliateButton"
 import AdSenseBanner from "@/components/AdSenseBanner"
+import { useShopping } from "@/hooks/useScrapedData"
 
 export default function ShoppingPage() {
-  // Real Shopping data from Google Maps and Tripadvisor
-  const shoppingLocations = [
+  // Use scraped data from Firecrawl (only on client side)
+  const { shopping: scrapedShopping, loading, error } = useShopping()
+  
+  // Static data for build time
+  const staticShoppingLocations = [
     {
       id: "grand-bazaar",
       name: "Grand Bazaar (Kapalı Çarşı)",
@@ -78,6 +84,43 @@ export default function ShoppingPage() {
       ctaLink: "https://www.booking.com/district/tr/istanbul/istanbulcitycentre.html"
     }
   ]
+
+  // Use static data during build, scraped data at runtime
+  const shoppingLocations = scrapedShopping.length > 0
+    ? scrapedShopping.map((item, index) => ({
+        id: `shopping-${index}`,
+        name: item.name,
+        description: item.description,
+        coordinates: item.coordinates || [28.9784, 41.0082] as [number, number],
+        category: "shopping" as const,
+        price: item.price || "$$",
+        rating: item.rating || 4.0,
+        ctaText: "Visit Location",
+        ctaLink: item.url
+      }))
+    : staticShoppingLocations
+
+  // Log scraping results
+  if (scrapedShopping.length > 0) {
+    console.log(`✅ Scraped ${scrapedShopping.length} shops from TripAdvisor`)
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <div className="container mx-auto px-4 py-8">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mx-auto mb-4"></div>
+            <p className="text-gray-600">Loading shopping data...</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    console.error('❌ Error loading shopping data:', error)
+  }
 
   return (
     <div className="min-h-screen bg-white">

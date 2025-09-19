@@ -28,10 +28,14 @@ import {
 import InteractiveMap from "@/components/InteractiveMap"
 import AffiliateButton from "@/components/AffiliateButton"
 import AdSenseBanner from "@/components/AdSenseBanner"
+import { useRestaurants } from "@/hooks/useScrapedData"
 
 export default function FoodDrinkPage() {
-  // Real Food & Drink data from Tripadvisor and Google Maps
-  const foodLocations = [
+  // Use scraped data from Firecrawl (only on client side)
+  const { restaurants: scrapedRestaurants, loading, error } = useRestaurants()
+  
+  // Static data for build time
+  const staticFoodLocations = [
     {
       id: "balikci-sabahattin",
       name: "Balıkçı Sabahattin",
@@ -99,6 +103,44 @@ export default function FoodDrinkPage() {
       ctaLink: "https://www.tripadvisor.com/Restaurants-g293974-oa180-Istanbul.html"
     }
   ]
+
+  // Use static data during build, scraped data at runtime
+  const foodLocations = scrapedRestaurants.length > 0
+    ? scrapedRestaurants.map((item, index) => ({
+        id: `restaurant-${index}`,
+        name: item.name,
+        description: item.description,
+        coordinates: item.coordinates || [28.9784, 41.0082] as [number, number],
+        category: "food" as const,
+        price: item.price || "$$",
+        rating: item.rating || 4.0,
+        ctaText: "Reserve Table",
+        ctaLink: item.url
+      }))
+    : staticFoodLocations
+
+  // Log scraping results
+  if (scrapedRestaurants.length > 0) {
+    console.log(`✅ Scraped ${scrapedRestaurants.length} restaurants from TripAdvisor`)
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <div className="container mx-auto px-4 py-8">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600 mx-auto mb-4"></div>
+            <p className="text-gray-600">Loading restaurant data...</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    console.error('❌ Error loading restaurant data:', error)
+  }
+
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Banner */}
