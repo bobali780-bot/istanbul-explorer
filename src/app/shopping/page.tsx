@@ -233,9 +233,15 @@ export default function ShoppingPage() {
                     <MapPin className="w-4 h-4" />
                     <span>Sultanahmet • Historic • Authentic</span>
                   </div>
-                  <Button className="w-full bg-amber-600 hover:bg-amber-700">
-                    Visit Location
-                  </Button>
+                  <AffiliateButton 
+                    href={shoppingLocations[0].ctaLink}
+                    affiliateType="tripadvisor"
+                    trackingId="shopping-grand-bazaar"
+                    locationName={shoppingLocations[0].name}
+                    className="w-full bg-amber-600 hover:bg-amber-700"
+                  >
+                    {shoppingLocations[0].ctaText}
+                  </AffiliateButton>
                 </CardContent>
               </Card>
 
@@ -294,9 +300,15 @@ export default function ShoppingPage() {
                     <MapPin className="w-4 h-4" />
                     <span>İstinye • Modern • International</span>
                   </div>
-                  <Button className="w-full bg-blue-600 hover:bg-blue-700">
-                    Visit Location
-                  </Button>
+                  <AffiliateButton 
+                    href={shoppingLocations[1].ctaLink}
+                    affiliateType="tripadvisor"
+                    trackingId="shopping-spice-bazaar"
+                    locationName={shoppingLocations[1].name}
+                    className="w-full bg-blue-600 hover:bg-blue-700"
+                  >
+                    {shoppingLocations[1].ctaText}
+                  </AffiliateButton>
                 </CardContent>
               </Card>
 
@@ -355,9 +367,15 @@ export default function ShoppingPage() {
                     <MapPin className="w-4 h-4" />
                     <span>Çukurcuma • Vintage • Unique</span>
                   </div>
-                  <Button className="w-full bg-purple-600 hover:bg-purple-700">
-                    Visit Location
-                  </Button>
+                  <AffiliateButton 
+                    href={shoppingLocations[2].ctaLink}
+                    affiliateType="tripadvisor"
+                    trackingId="shopping-istinye-park"
+                    locationName={shoppingLocations[2].name}
+                    className="w-full bg-purple-600 hover:bg-purple-700"
+                  >
+                    {shoppingLocations[2].ctaText}
+                  </AffiliateButton>
                 </CardContent>
               </Card>
 
@@ -422,9 +440,15 @@ export default function ShoppingPage() {
                     </div>
                     <Badge variant="outline">$$</Badge>
                   </div>
-                  <Button className="w-full bg-yellow-600 hover:bg-yellow-700">
-                    Visit Location
-                  </Button>
+                  <AffiliateButton 
+                    href={shoppingLocations[3].ctaLink}
+                    affiliateType="tripadvisor"
+                    trackingId="shopping-nisantasi"
+                    locationName={shoppingLocations[3].name}
+                    className="w-full bg-yellow-600 hover:bg-yellow-700"
+                  >
+                    {shoppingLocations[3].ctaText}
+                  </AffiliateButton>
                 </CardContent>
               </Card>
 
@@ -475,9 +499,15 @@ export default function ShoppingPage() {
                     </div>
                     <Badge variant="outline">$$</Badge>
                   </div>
-                  <Button className="w-full bg-emerald-600 hover:bg-emerald-700">
-                    Visit Location
-                  </Button>
+                  <AffiliateButton 
+                    href={shoppingLocations[4].ctaLink}
+                    affiliateType="tripadvisor"
+                    trackingId="shopping-cukurcuma"
+                    locationName={shoppingLocations[4].name}
+                    className="w-full bg-emerald-600 hover:bg-emerald-700"
+                  >
+                    {shoppingLocations[4].ctaText}
+                  </AffiliateButton>
                 </CardContent>
               </Card>
             </div>

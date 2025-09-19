@@ -259,9 +259,15 @@ export default function FoodDrinkPage() {
                     <MapPin className="w-4 h-4 mr-2" />
                     View on Map
                   </Button>
-                  <Button className="flex-1 bg-orange-600 hover:bg-orange-700">
-                    Reserve Table
-                  </Button>
+                  <AffiliateButton 
+                    href={foodLocations[0].ctaLink}
+                    affiliateType="tripadvisor"
+                    trackingId="food-balikci-sabahattin"
+                    locationName={foodLocations[0].name}
+                    className="flex-1 bg-orange-600 hover:bg-orange-700"
+                  >
+                    {foodLocations[0].ctaText}
+                  </AffiliateButton>
                 </div>
               </CardContent>
             </Card>
@@ -353,9 +359,15 @@ export default function FoodDrinkPage() {
                     <MapPin className="w-4 h-4 mr-2" />
                     View on Map
                   </Button>
-                  <Button className="flex-1 bg-green-600 hover:bg-green-700">
-                    Reserve Table
-                  </Button>
+                  <AffiliateButton 
+                    href={foodLocations[1].ctaLink}
+                    affiliateType="tripadvisor"
+                    trackingId="food-sultanahmet-koftecisi"
+                    locationName={foodLocations[1].name}
+                    className="flex-1 bg-green-600 hover:bg-green-700"
+                  >
+                    {foodLocations[1].ctaText}
+                  </AffiliateButton>
                 </div>
               </CardContent>
             </Card>
@@ -406,9 +418,16 @@ export default function FoodDrinkPage() {
                     <MapPin className="w-4 h-4 mr-1" />
                     Map
                   </Button>
-                  <Button size="sm" className="flex-1 bg-red-600 hover:bg-red-700">
-                    Reserve Table
-                  </Button>
+                  <AffiliateButton 
+                    href={foodLocations[2].ctaLink}
+                    affiliateType="tripadvisor"
+                    trackingId="food-deraliye-ottoman"
+                    locationName={foodLocations[2].name}
+                    size="sm"
+                    className="flex-1 bg-red-600 hover:bg-red-700"
+                  >
+                    {foodLocations[2].ctaText}
+                  </AffiliateButton>
                 </div>
               </CardContent>
             </Card>
@@ -535,9 +554,16 @@ export default function FoodDrinkPage() {
                     <MapPin className="w-4 h-4 mr-1" />
                     Map
                   </Button>
-                  <Button size="sm" className="flex-1 bg-teal-600 hover:bg-teal-700">
-                    Reserve Table
-                  </Button>
+                  <AffiliateButton 
+                    href={foodLocations[3].ctaLink}
+                    affiliateType="tripadvisor"
+                    trackingId="food-karakoy-lokantasi"
+                    locationName={foodLocations[3].name}
+                    size="sm"
+                    className="flex-1 bg-teal-600 hover:bg-teal-700"
+                  >
+                    {foodLocations[3].ctaText}
+                  </AffiliateButton>
                 </div>
               </CardContent>
             </Card>
@@ -578,9 +604,16 @@ export default function FoodDrinkPage() {
                     <MapPin className="w-4 h-4 mr-1" />
                     Map
                   </Button>
-                  <Button size="sm" className="flex-1 bg-yellow-600 hover:bg-yellow-700">
-                    Reserve Table
-                  </Button>
+                  <AffiliateButton 
+                    href={foodLocations[4].ctaLink}
+                    affiliateType="tripadvisor"
+                    trackingId="food-cafe-privet"
+                    locationName={foodLocations[4].name}
+                    size="sm"
+                    className="flex-1 bg-yellow-600 hover:bg-yellow-700"
+                  >
+                    {foodLocations[4].ctaText}
+                  </AffiliateButton>
                 </div>
               </CardContent>
             </Card>
@@ -621,9 +654,16 @@ export default function FoodDrinkPage() {
                     <MapPin className="w-4 h-4 mr-1" />
                     Map
                   </Button>
-                  <Button size="sm" className="flex-1 bg-pink-600 hover:bg-pink-700">
-                    Order Takeout
-                  </Button>
+                  <AffiliateButton 
+                    href={foodLocations[5].ctaLink}
+                    affiliateType="tripadvisor"
+                    trackingId="food-mikla-restaurant"
+                    locationName={foodLocations[5].name}
+                    size="sm"
+                    className="flex-1 bg-pink-600 hover:bg-pink-700"
+                  >
+                    {foodLocations[5].ctaText}
+                  </AffiliateButton>
                 </div>
               </CardContent>
             </Card>

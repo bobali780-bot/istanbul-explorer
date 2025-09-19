@@ -239,9 +239,15 @@ export default function HotelsPage() {
                     <Coffee className="w-4 h-4" />
                     <span>Free WiFi • Parking • Breakfast</span>
                   </div>
-                  <Button className="w-full bg-blue-600 hover:bg-blue-700">
-                    Book Now
-                  </Button>
+                  <AffiliateButton 
+                    href={hotelsLocations[0].ctaLink}
+                    affiliateType="booking"
+                    trackingId="hotels-four-seasons"
+                    locationName={hotelsLocations[0].name}
+                    className="w-full bg-blue-600 hover:bg-blue-700"
+                  >
+                    {hotelsLocations[0].ctaText}
+                  </AffiliateButton>
                 </CardContent>
               </Card>
 
@@ -270,9 +276,15 @@ export default function HotelsPage() {
                     <Coffee className="w-4 h-4" />
                     <span>Spa • Breakfast • Historic</span>
                   </div>
-                  <Button className="w-full bg-purple-600 hover:bg-purple-700">
-                    Book Now
-                  </Button>
+                  <AffiliateButton 
+                    href={hotelsLocations[1].ctaLink}
+                    affiliateType="booking"
+                    trackingId="hotels-pera-palace"
+                    locationName={hotelsLocations[1].name}
+                    className="w-full bg-purple-600 hover:bg-purple-700"
+                  >
+                    {hotelsLocations[1].ctaText}
+                  </AffiliateButton>
                 </CardContent>
               </Card>
 
@@ -302,9 +314,15 @@ export default function HotelsPage() {
                     <Coffee className="w-4 h-4" />
                     <span>Free WiFi • Breakfast • Social</span>
                   </div>
-                  <Button className="w-full bg-green-600 hover:bg-green-700">
-                    Book Now
-                  </Button>
+                  <AffiliateButton 
+                    href={hotelsLocations[2].ctaLink}
+                    affiliateType="booking"
+                    trackingId="hotels-ciragan-palace"
+                    locationName={hotelsLocations[2].name}
+                    className="w-full bg-green-600 hover:bg-green-700"
+                  >
+                    {hotelsLocations[2].ctaText}
+                  </AffiliateButton>
                 </CardContent>
               </Card>
 
@@ -334,9 +352,15 @@ export default function HotelsPage() {
                     <Coffee className="w-4 h-4" />
                     <span>Spa • Parking • Breakfast</span>
                   </div>
-                  <Button className="w-full bg-orange-600 hover:bg-orange-700">
-                    Book Now
-                  </Button>
+                  <AffiliateButton 
+                    href={hotelsLocations[3].ctaLink}
+                    affiliateType="booking"
+                    trackingId="hotels-conrad-istanbul"
+                    locationName={hotelsLocations[3].name}
+                    className="w-full bg-orange-600 hover:bg-orange-700"
+                  >
+                    {hotelsLocations[3].ctaText}
+                  </AffiliateButton>
                 </CardContent>
               </Card>
 
@@ -366,9 +390,15 @@ export default function HotelsPage() {
                     <Coffee className="w-4 h-4" />
                     <span>Free WiFi • Gym • Breakfast</span>
                   </div>
-                  <Button className="w-full bg-indigo-600 hover:bg-indigo-700">
-                    Book Now
-                  </Button>
+                  <AffiliateButton 
+                    href={hotelsLocations[4].ctaLink}
+                    affiliateType="booking"
+                    trackingId="hotels-swissotel-bosphorus"
+                    locationName={hotelsLocations[4].name}
+                    className="w-full bg-indigo-600 hover:bg-indigo-700"
+                  >
+                    {hotelsLocations[4].ctaText}
+                  </AffiliateButton>
                 </CardContent>
               </Card>
 
@@ -398,9 +428,15 @@ export default function HotelsPage() {
                     <Coffee className="w-4 h-4" />
                     <span>Pool • Parking • Breakfast</span>
                   </div>
-                  <Button className="w-full bg-teal-600 hover:bg-teal-700">
-                    Book Now
-                  </Button>
+                  <AffiliateButton 
+                    href={hotelsLocations[5].ctaLink}
+                    affiliateType="booking"
+                    trackingId="hotels-ritz-carlton"
+                    locationName={hotelsLocations[5].name}
+                    className="w-full bg-teal-600 hover:bg-teal-700"
+                  >
+                    {hotelsLocations[5].ctaText}
+                  </AffiliateButton>
                 </CardContent>
               </Card>
             </div>
