@@ -28,6 +28,7 @@ import {
 } from "lucide-react"
 import InteractiveMap from "@/components/InteractiveMap"
 import AffiliateButton from "@/components/AffiliateButton"
+import AdSenseBanner from "@/components/AdSenseBanner"
 
 export default function ActivitiesPage() {
   // Real Activities data from GetYourGuide and Viator
@@ -665,11 +666,11 @@ export default function ActivitiesPage() {
         </div>
       </section>
 
-      {/* AdSense Banner Placeholder */}
+      {/* AdSense Banner */}
       <section className="py-8 bg-gray-100">
         <div className="container mx-auto px-4">
-          <div className="h-24 bg-gray-200 rounded-lg flex items-center justify-center">
-            <p className="text-gray-500 text-sm">Google AdSense Banner Placeholder</p>
+          <div className="max-w-4xl mx-auto">
+            <AdSenseBanner slot="activities-page" format="auto" />
           </div>
         </div>
       </section>

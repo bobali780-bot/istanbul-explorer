@@ -9,7 +9,7 @@ interface AffiliateButtonProps {
   variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link"
   size?: "default" | "sm" | "lg" | "icon"
   className?: string
-  affiliateType: "booking" | "viator" | "tripadvisor" | "shop"
+  affiliateType: "booking" | "viator" | "tripadvisor" | "shop" | "getyourguide"
   trackingId?: string
 }
 
@@ -46,6 +46,8 @@ export default function AffiliateButton({
         return `https://www.tripadvisor.com/affiliate?url=${encodeURIComponent(href)}&aid=${trackingId || "istanbul-explorer"}`
       case "shop":
         return `https://www.amazon.com/affiliate?url=${encodeURIComponent(href)}&aid=${trackingId || "istanbul-explorer"}`
+      case "getyourguide":
+        return `https://www.getyourguide.com/affiliate?url=${encodeURIComponent(href)}&aid=${trackingId || "istanbul-explorer"}`
       default:
         return href
     }

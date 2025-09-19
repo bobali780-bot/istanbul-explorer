@@ -27,7 +27,9 @@ import {
   Utensils,
   ShoppingBag,
   Bed,
-  Camera
+  Camera,
+  Building,
+  Music
 } from "lucide-react"
 
 export default function HomePage() {
@@ -285,8 +287,8 @@ export default function HomePage() {
                 </div>
                 <div className="mt-auto">
                   <AffiliateButton 
-                    href="https://www.viator.com/hagia-sophia-tour"
-                    affiliateType="viator"
+                    href="https://www.getyourguide.com/istanbul-l56/hagia-sophia-skip-the-line-ticket-t23928/"
+                    affiliateType="getyourguide"
                     trackingId="homepage-hagia-sophia"
                     className="w-full bg-blue-600 hover:bg-blue-700"
                   >
@@ -318,12 +320,12 @@ export default function HomePage() {
                 </div>
                 <div className="mt-auto">
                   <AffiliateButton 
-                    href="https://www.tripadvisor.com/bosphorus-dinner-cruise"
-                    affiliateType="tripadvisor"
+                    href="https://www.viator.com/tours/Istanbul/Bosphorus-Dinner-Cruise-with-Turkish-Show/d585-5674DINNER"
+                    affiliateType="viator"
                     trackingId="homepage-bosphorus-cruise"
                     className="w-full bg-orange-600 hover:bg-orange-700"
                   >
-                    Reserve Table
+                    Book Cruise
                   </AffiliateButton>
                 </div>
               </CardContent>
@@ -351,12 +353,78 @@ export default function HomePage() {
                 </div>
                 <div className="mt-auto">
                   <AffiliateButton 
-                    href="https://www.amazon.com/grand-bazaar-shopping-guide"
-                    affiliateType="shop"
+                    href="https://www.tripadvisor.com/Attraction_Review-g293974-d311409-Reviews-Grand_Bazaar-Istanbul.html"
+                    affiliateType="tripadvisor"
                     trackingId="homepage-grand-bazaar"
                     className="w-full bg-green-600 hover:bg-green-700"
                   >
-                    Shop Now
+                    Visit Location
+                  </AffiliateButton>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Experience 4 */}
+            <Card className="group hover:shadow-2xl transition-all duration-300 border-0 shadow-lg h-80 flex flex-col">
+              <div className="relative overflow-hidden rounded-t-lg">
+                <div className="h-48 bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center">
+                  <Building className="w-16 h-16 text-white" />
+                </div>
+                <Badge className="absolute top-4 left-4 bg-yellow-500 text-black">#4</Badge>
+              </div>
+              <CardContent className="p-6 flex flex-col flex-1">
+                <h3 className="text-xl font-bold mb-2">Topkapi Palace Tour</h3>
+                <p className="text-gray-600 mb-4">Explore the opulent residence of Ottoman sultans</p>
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-1">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                    ))}
+                    <span className="text-sm text-gray-600 ml-2">4.6 (1,890)</span>
+                  </div>
+                  <Badge variant="outline">$$$</Badge>
+                </div>
+                <div className="mt-auto">
+                  <AffiliateButton 
+                    href="https://www.getyourguide.com/istanbul-l56/topkapi-palace-harem-guided-tour-t23930/"
+                    affiliateType="getyourguide"
+                    trackingId="homepage-topkapi-palace"
+                    className="w-full bg-purple-600 hover:bg-purple-700"
+                  >
+                    Book Tour
+                  </AffiliateButton>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Experience 5 */}
+            <Card className="group hover:shadow-2xl transition-all duration-300 border-0 shadow-lg h-80 flex flex-col">
+              <div className="relative overflow-hidden rounded-t-lg">
+                <div className="h-48 bg-gradient-to-br from-teal-500 to-cyan-600 flex items-center justify-center">
+                  <Music className="w-16 h-16 text-white" />
+                </div>
+                <Badge className="absolute top-4 left-4 bg-yellow-500 text-black">#5</Badge>
+              </div>
+              <CardContent className="p-6 flex flex-col flex-1">
+                <h3 className="text-xl font-bold mb-2">Whirling Dervishes Show</h3>
+                <p className="text-gray-600 mb-4">Traditional Sufi ceremony and cultural experience</p>
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-1">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                    ))}
+                    <span className="text-sm text-gray-600 ml-2">4.2 (956)</span>
+                  </div>
+                  <Badge variant="outline">$$</Badge>
+                </div>
+                <div className="mt-auto">
+                  <AffiliateButton 
+                    href="https://www.getyourguide.com/istanbul-l56/whirling-dervishes-ceremony-t23935/"
+                    affiliateType="getyourguide"
+                    trackingId="homepage-whirling-dervishes"
+                    className="w-full bg-teal-600 hover:bg-teal-700"
+                  >
+                    Book Show
                   </AffiliateButton>
                 </div>
               </CardContent>

@@ -6,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Star, Search, MapPin, ShoppingBag, Store, Crown, Gift, Sparkles, Heart, Star as StarIcon } from "lucide-react"
 import InteractiveMap from "@/components/InteractiveMap"
 import AffiliateButton from "@/components/AffiliateButton"
+import AdSenseBanner from "@/components/AdSenseBanner"
 
 export default function ShoppingPage() {
   // Real Shopping data from Google Maps and Tripadvisor
@@ -521,16 +522,11 @@ export default function ShoppingPage() {
         </div>
       </section>
 
-      {/* AdSense Banner Placeholder */}
+      {/* AdSense Banner */}
       <section className="py-8 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
-            <div className="bg-gray-200 rounded-lg h-32 flex items-center justify-center">
-              <div className="text-center">
-                <p className="text-gray-500 font-medium">Advertisement Space</p>
-                <p className="text-sm text-gray-400">Google AdSense integration</p>
-              </div>
-            </div>
+            <AdSenseBanner slot="shopping-page" format="auto" />
           </div>
         </div>
       </section>
