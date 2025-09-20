@@ -99,6 +99,7 @@ export default function ActivitiesPage() {
                     alt={activity.title}
                     width={400}
                     height={256}
+                    unoptimized
                     className="h-64 w-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
