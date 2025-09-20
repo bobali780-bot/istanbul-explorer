@@ -37,9 +37,10 @@ export default async function ActivityPage({ params }: ActivityPageProps) {
       {/* Hero Section */}
       <section className="relative h-[80vh] flex items-end overflow-hidden">
         <div className="absolute inset-0">
-          <img
+          <Image
             src={activity.image}
             alt={activity.title}
+            fill
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>

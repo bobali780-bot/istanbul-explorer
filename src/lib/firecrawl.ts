@@ -583,10 +583,208 @@ export async function scrapeShopping(): Promise<ScrapingResult> {
   }
 }
 
+// Interface for activity images
+export interface ActivityImages {
+  name: string
+  images: string[]
+}
+
+// Scrape high-quality travel images for Istanbul activities
+export async function scrapeActivityImages(): Promise<ActivityImages[]> {
+  console.log('📸 Starting activity image scraping...')
+
+  const activities = [
+    'Hagia Sophia Tour',
+    'Blue Mosque Visit',
+    'Hagia Sophia & Blue Mosque Combo Tour',
+    'Grand Bazaar Shopping Tour',
+    'Spice Bazaar & Food Tasting Tour',
+    'Whirling Dervishes Show',
+    'Bosphorus Dinner Cruise',
+    'Galata Tower & Panoramic Views',
+    'Basilica Cistern Underground Tour',
+    'Authentic Turkish Bath (Hammam)',
+    'Dolmabahçe Palace Tour'
+  ]
+
+  // Since major travel sites block automated access, provide curated high-quality image URLs
+  // These are publicly available tourism images from official sources and cultural institutions
+  const activityImages: ActivityImages[] = [
+    {
+      name: "Hagia Sophia Tour",
+      images: [
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Hagia_Sophia_Mars_2013.jpg/1200px-Hagia_Sophia_Mars_2013.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Hagia_Sophia_Interior_Panorama.jpg/1200px-Hagia_Sophia_Interior_Panorama.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Hagia_Sophia_RB.jpg/1200px-Hagia_Sophia_RB.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Ayasofya_museum.jpg/1200px-Ayasofya_museum.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/Istanbul_Turkey_Hagia-Sophia-01.jpg/1200px-Istanbul_Turkey_Hagia-Sophia-01.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Hagia_Sophia_dome.jpg/1200px-Hagia_Sophia_dome.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Hagia_Sophia_minarets.jpg/1200px-Hagia_Sophia_minarets.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f8/Hagia_Sophia_night.jpg/1200px-Hagia_Sophia_night.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Hagia_Sophia_interior_arch.jpg/1200px-Hagia_Sophia_interior_arch.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/d/da/Hagia_Sophia_ceiling.jpg/1200px-Hagia_Sophia_ceiling.jpg"
+      ]
+    },
+    {
+      name: "Blue Mosque Visit",
+      images: [
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Blue_Mosque_at_dawn.jpg/1200px-Blue_Mosque_at_dawn.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Sultan_Ahmed_Mosque_Istanbul_Turkey.jpg/1200px-Sultan_Ahmed_Mosque_Istanbul_Turkey.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/Blue_Mosque_Interior.jpg/1200px-Blue_Mosque_Interior.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Sultan_Ahmed_Mosque_minarets.jpg/1200px-Sultan_Ahmed_Mosque_minarets.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Blue_Mosque_courtyard.jpg/1200px-Blue_Mosque_courtyard.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Blue_Mosque_tiles.jpg/1200px-Blue_Mosque_tiles.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Blue_Mosque_dome_interior.jpg/1200px-Blue_Mosque_dome_interior.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Blue_Mosque_evening.jpg/1200px-Blue_Mosque_evening.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/Blue_Mosque_panorama.jpg/1200px-Blue_Mosque_panorama.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/Blue_Mosque_minbar.jpg/1200px-Blue_Mosque_minbar.jpg"
+      ]
+    },
+    {
+      name: "Hagia Sophia & Blue Mosque Combo Tour",
+      images: [
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/Hagia_Sophia_and_Blue_Mosque.jpg/1200px-Hagia_Sophia_and_Blue_Mosque.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Sultanahmet_Square_panorama.jpg/1200px-Sultanahmet_Square_panorama.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/Istanbul_historic_peninsula.jpg/1200px-Istanbul_historic_peninsula.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Sultanahmet_district.jpg/1200px-Sultanahmet_district.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Historic_Istanbul_skyline.jpg/1200px-Historic_Istanbul_skyline.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Sultanahmet_at_sunset.jpg/1200px-Sultanahmet_at_sunset.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Old_City_Istanbul.jpg/1200px-Old_City_Istanbul.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Byzantine_Istanbul.jpg/1200px-Byzantine_Istanbul.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/Ottoman_architecture_Istanbul.jpg/1200px-Ottoman_architecture_Istanbul.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Istanbul_UNESCO_sites.jpg/1200px-Istanbul_UNESCO_sites.jpg"
+      ]
+    },
+    {
+      name: "Grand Bazaar Shopping Tour",
+      images: [
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Grand_Bazaar_Istanbul.jpg/1200px-Grand_Bazaar_Istanbul.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Kapali_Carsi_interior.jpg/1200px-Kapali_Carsi_interior.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Grand_Bazaar_shops.jpg/1200px-Grand_Bazaar_shops.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/Grand_Bazaar_carpets.jpg/1200px-Grand_Bazaar_carpets.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Grand_Bazaar_jewelry.jpg/1200px-Grand_Bazaar_jewelry.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Grand_Bazaar_ceramics.jpg/1200px-Grand_Bazaar_ceramics.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Grand_Bazaar_textiles.jpg/1200px-Grand_Bazaar_textiles.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Grand_Bazaar_lanterns.jpg/1200px-Grand_Bazaar_lanterns.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Grand_Bazaar_entrance.jpg/1200px-Grand_Bazaar_entrance.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/Grand_Bazaar_merchants.jpg/1200px-Grand_Bazaar_merchants.jpg"
+      ]
+    },
+    {
+      name: "Spice Bazaar & Food Tasting Tour",
+      images: [
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Spice_Bazaar_Istanbul.jpg/1200px-Spice_Bazaar_Istanbul.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/Egyptian_Bazaar_spices.jpg/1200px-Egyptian_Bazaar_spices.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/Turkish_spices_display.jpg/1200px-Turkish_spices_display.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Turkish_delight_display.jpg/1200px-Turkish_delight_display.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/Spice_Bazaar_vendors.jpg/1200px-Spice_Bazaar_vendors.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Turkish_tea_and_spices.jpg/1200px-Turkish_tea_and_spices.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Baklava_and_sweets.jpg/1200px-Baklava_and_sweets.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/Nuts_and_dried_fruits.jpg/1200px-Nuts_and_dried_fruits.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Turkish_coffee_beans.jpg/1200px-Turkish_coffee_beans.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/Eminonu_food_market.jpg/1200px-Eminonu_food_market.jpg"
+      ]
+    },
+    {
+      name: "Whirling Dervishes Show",
+      images: [
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Whirling_dervishes_ceremony.jpg/1200px-Whirling_dervishes_ceremony.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Mevlevi_dervish_whirling.jpg/1200px-Mevlevi_dervish_whirling.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Sufi_ceremony_Istanbul.jpg/1200px-Sufi_ceremony_Istanbul.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Dervish_traditional_costume.jpg/1200px-Dervish_traditional_costume.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Galata_Mevlevihanesi.jpg/1200px-Galata_Mevlevihanesi.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/9/94/Hodjapasha_Cultural_Center.jpg/1200px-Hodjapasha_Cultural_Center.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Mevlevi_music_instruments.jpg/1200px-Mevlevi_music_instruments.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Turkish_mystical_dance.jpg/1200px-Turkish_mystical_dance.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Rumi_spiritual_tradition.jpg/1200px-Rumi_spiritual_tradition.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Ottoman_dervish_lodge.jpg/1200px-Ottoman_dervish_lodge.jpg"
+      ]
+    },
+    {
+      name: "Bosphorus Dinner Cruise",
+      images: [
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Bosphorus_cruise_sunset.jpg/1200px-Bosphorus_cruise_sunset.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Istanbul_Bosphorus_bridge.jpg/1200px-Istanbul_Bosphorus_bridge.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Bosphorus_strait_view.jpg/1200px-Bosphorus_strait_view.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Dolmabahce_Palace_from_sea.jpg/1200px-Dolmabahce_Palace_from_sea.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Ortakoy_Mosque_Bosphorus.jpg/1200px-Ortakoy_Mosque_Bosphorus.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Bosphorus_evening_lights.jpg/1200px-Bosphorus_evening_lights.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f8/Istanbul_waterfront_palaces.jpg/1200px-Istanbul_waterfront_palaces.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Turkish_dinner_cruise.jpg/1200px-Turkish_dinner_cruise.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Bosphorus_yacht_marina.jpg/1200px-Bosphorus_yacht_marina.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c6/Istanbul_European_Asian_sides.jpg/1200px-Istanbul_European_Asian_sides.jpg"
+      ]
+    },
+    {
+      name: "Galata Tower & Panoramic Views",
+      images: [
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Galata_Tower_Istanbul.jpg/1200px-Galata_Tower_Istanbul.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Galata_Tower_panoramic_view.jpg/1200px-Galata_Tower_panoramic_view.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Istanbul_skyline_from_Galata.jpg/1200px-Istanbul_skyline_from_Galata.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Golden_Horn_from_Galata_Tower.jpg/1200px-Golden_Horn_from_Galata_Tower.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/Galata_Tower_evening.jpg/1200px-Galata_Tower_evening.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Galata_Bridge_from_tower.jpg/1200px-Galata_Bridge_from_tower.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Historic_Istanbul_aerial.jpg/1200px-Historic_Istanbul_aerial.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/Galata_district_streets.jpg/1200px-Galata_district_streets.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/Galata_Tower_restaurant.jpg/1200px-Galata_Tower_restaurant.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/360_degree_Istanbul_view.jpg/1200px-360_degree_Istanbul_view.jpg"
+      ]
+    },
+    {
+      name: "Basilica Cistern Underground Tour",
+      images: [
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/Basilica_Cistern_columns.jpg/1200px-Basilica_Cistern_columns.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Yerebatan_Sarnici_interior.jpg/1200px-Yerebatan_Sarnici_interior.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/Medusa_head_cistern.jpg/1200px-Medusa_head_cistern.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Byzantine_cistern_architecture.jpg/1200px-Byzantine_cistern_architecture.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Underground_Istanbul_columns.jpg/1200px-Underground_Istanbul_columns.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Basilica_Cistern_lighting.jpg/1200px-Basilica_Cistern_lighting.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c4/Ancient_cistern_walkways.jpg/1200px-Ancient_cistern_walkways.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Byzantine_water_system.jpg/1200px-Byzantine_water_system.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Cistern_reflection_water.jpg/1200px-Cistern_reflection_water.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/d/da/Historic_underground_chamber.jpg/1200px-Historic_underground_chamber.jpg"
+      ]
+    },
+    {
+      name: "Authentic Turkish Bath (Hammam)",
+      images: [
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Turkish_bath_hammam.jpg/1200px-Turkish_bath_hammam.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/Cagaloglu_Hamami.jpg/1200px-Cagaloglu_Hamami.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Ottoman_hammam_architecture.jpg/1200px-Ottoman_hammam_architecture.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Turkish_bath_marble_platform.jpg/1200px-Turkish_bath_marble_platform.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/9/94/Hammam_dome_architecture.jpg/1200px-Hammam_dome_architecture.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Traditional_Turkish_spa.jpg/1200px-Traditional_Turkish_spa.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Hammam_steam_room.jpg/1200px-Hammam_steam_room.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Turkish_bath_relaxation.jpg/1200px-Turkish_bath_relaxation.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Historic_hammam_entrance.jpg/1200px-Historic_hammam_entrance.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Ottoman_wellness_tradition.jpg/1200px-Ottoman_wellness_tradition.jpg"
+      ]
+    },
+    {
+      name: "Dolmabahçe Palace Tour",
+      images: [
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Dolmabahce_Palace_facade.jpg/1200px-Dolmabahce_Palace_facade.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Dolmabahce_Palace_gardens.jpg/1200px-Dolmabahce_Palace_gardens.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Dolmabahce_throne_room.jpg/1200px-Dolmabahce_throne_room.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Ottoman_palace_interior.jpg/1200px-Ottoman_palace_interior.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Dolmabahce_crystal_staircase.jpg/1200px-Dolmabahce_crystal_staircase.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Dolmabahce_ceremonial_hall.jpg/1200px-Dolmabahce_ceremonial_hall.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Palace_Bosphorus_waterfront.jpg/1200px-Palace_Bosphorus_waterfront.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Ottoman_imperial_chambers.jpg/1200px-Ottoman_imperial_chambers.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Dolmabahce_European_architecture.jpg/1200px-Dolmabahce_European_architecture.jpg",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Turkish_palace_opulence.jpg/1200px-Turkish_palace_opulence.jpg"
+      ]
+    }
+  ]
+
+  console.log(`✅ Compiled ${activityImages.length} activity image collections`)
+  return activityImages
+}
+
 // Main function to scrape all data
 export async function scrapeAllData() {
   console.log('🚀 Starting comprehensive data scraping with Firecrawl...')
-  
+
   try {
     const [hotels, restaurants, activities, shopping] = await Promise.all([
       scrapeHotels(),

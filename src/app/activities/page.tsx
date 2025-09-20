@@ -94,9 +94,11 @@ export default function ActivitiesPage() {
             {top10Activities.map((activity, index) => (
               <Card key={activity.slug} className="group hover:shadow-2xl transition-all duration-300 border-0 shadow-lg overflow-hidden">
                 <div className="relative overflow-hidden">
-                  <img
+                  <Image
                     src={activity.image}
                     alt={activity.title}
+                    width={400}
+                    height={256}
                     className="h-64 w-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
