@@ -1,15 +1,30 @@
 "use client"
 
-// Force deployment update
-import Link from "next/link"
-import Image from "next/image"
+import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Star, Clock, MapPin, ArrowRight } from "lucide-react"
-import { top10Activities } from "@/data/activities"
+import ActivityCard from "@/components/ActivityCard"
+import { getActivities } from "@/lib/api"
+import type { Activity } from "@/lib/supabase"
 
 export default function ActivitiesPage() {
+  const [activities, setActivities] = useState<Activity[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    async function fetchActivities() {
+      try {
+        const data = await getActivities()
+        setActivities(data)
+      } catch (error) {
+        console.error('Error fetching activities:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchActivities()
+  }, [])
+
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
@@ -90,85 +105,26 @@ export default function ActivitiesPage() {
             Top 10 Must-Do Activities in Istanbul
           </h2>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto place-items-center">
-            {top10Activities.map((activity, index) => (
-              <Card key={activity.slug} className="group hover:shadow-2xl transition-all duration-300 border-0 shadow-lg overflow-hidden">
-                <div className="relative overflow-hidden">
-                  <Image
-                    src={activity.image}
-                    alt={activity.title}
-                    width={400}
-                    height={256}
-                    unoptimized
-                    className="h-64 w-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
-                  <Badge className="absolute top-4 left-4 bg-yellow-500 text-black font-bold">
-                    #{index + 1}
-                  </Badge>
-                  {activity.rating && (
-                    <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-full px-2 py-1 flex items-center gap-1">
-                      <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                      <span className="text-sm font-semibold">{activity.rating}</span>
-                    </div>
-                  )}
-                </div>
-
-                <CardContent className="p-6">
-                  <CardHeader className="p-0 mb-4">
-                    <CardTitle className="text-xl font-bold group-hover:text-blue-600 transition-colors">
-                      {activity.title}
-                    </CardTitle>
-                    <CardDescription className="text-gray-600 line-clamp-2">
-                      {activity.shortOverview}
-                    </CardDescription>
-                  </CardHeader>
-
-                  <div className="space-y-3 mb-6">
-                    <div className="flex items-center justify-between text-sm text-gray-600">
-                      <div className="flex items-center gap-1">
-                        <Clock className="w-4 h-4" />
-                        <span>{activity.duration || "Varies"}</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <MapPin className="w-4 h-4" />
-                        <span>{activity.location}</span>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                      <Badge variant="outline" className="text-lg font-semibold min-w-[100px] text-center px-4 py-2">
-                        {activity.priceRange}
-                      </Badge>
-                      {activity.reviewCount && (
-                        <span className="text-sm text-gray-500">
-                          {activity.reviewCount.toLocaleString()} reviews
-                        </span>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="flex gap-2">
-                    <Button asChild className="flex-1 bg-blue-600 hover:bg-blue-700">
-                      <a
-                        href={activity.bookingLink}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        Book Now
-                        <ArrowRight className="w-4 h-4 ml-2" />
-                      </a>
-                    </Button>
-                    <Button asChild variant="outline" className="flex-1">
-                      <Link href={`/activities/${activity.slug}`}>
-                        Learn More
-                      </Link>
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+          {loading ? (
+            <div className="col-span-full text-center py-12">
+              <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto"></div>
+              <p className="mt-4 text-gray-600">Loading activities...</p>
+            </div>
+          ) : activities.length === 0 ? (
+            <div className="col-span-full text-center py-12">
+              <p className="text-gray-600">No activities found. Please add some activities to your Supabase database.</p>
+            </div>
+          ) : (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto place-items-center">
+              {activities.map((activity, index) => (
+                <ActivityCard
+                  key={activity.slug}
+                  activity={activity}
+                  index={index}
+                />
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

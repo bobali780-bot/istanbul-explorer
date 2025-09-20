@@ -1,12 +1,16 @@
+"use client"
+
+import { useEffect, useState } from "react"
 import { notFound } from "next/navigation"
-import Image from "next/image"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { Star, Clock, MapPin, Calendar, Users, ArrowLeft, ExternalLink, Camera, Info } from "lucide-react"
-import { getActivityBySlug, getAllActivitySlugs, top10Activities } from "@/data/activities"
+import ActivityGallery from "@/components/ActivityGallery"
+import { getActivityBySlug, getAllActivitySlugs } from "@/lib/api"
+import type { Activity } from "@/lib/supabase"
 
 interface ActivityPageProps {
   params: Promise<{
@@ -14,86 +18,105 @@ interface ActivityPageProps {
   }>
 }
 
-export async function generateStaticParams() {
-  const slugs = getAllActivitySlugs()
-  return slugs.map((slug) => ({
-    slug: slug,
-  }))
-}
+export default function ActivityPage({ params }: ActivityPageProps) {
+  const [activity, setActivity] = useState<Activity | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [slug, setSlug] = useState<string>('')
 
-export default async function ActivityPage({ params }: ActivityPageProps) {
-  const { slug } = await params
-  const activity = getActivityBySlug(slug)
+  useEffect(() => {
+    async function fetchActivity() {
+      try {
+        const resolvedParams = await params
+        setSlug(resolvedParams.slug)
+
+        const data = await getActivityBySlug(resolvedParams.slug)
+        if (!data) {
+          notFound()
+        }
+        setActivity(data)
+      } catch (error) {
+        console.error('Error fetching activity:', error)
+        notFound()
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchActivity()
+  }, [params])
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+      </div>
+    )
+  }
 
   if (!activity) {
     notFound()
   }
 
-  const activityIndex = top10Activities.findIndex(a => a.slug === slug)
-  const ranking = activityIndex + 1
-
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <section className="relative h-[80vh] flex items-end overflow-hidden">
-        <div className="absolute inset-0">
-          <Image
-            src={activity.image}
-            alt={activity.title}
-            fill
-            unoptimized
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
-        </div>
-
-        <div className="relative z-10 w-full p-8 text-white">
-          <div className="container mx-auto max-w-4xl">
-            <Link href="/activities" className="inline-flex items-center gap-2 text-white/80 hover:text-white mb-6 transition-colors">
+      <section className="relative">
+        {/* Navigation */}
+        <div className="relative z-10 p-8">
+          <div className="container mx-auto max-w-6xl">
+            <Link href="/activities" className="inline-flex items-center gap-2 text-gray-700 hover:text-gray-900 mb-6 transition-colors">
               <ArrowLeft className="w-4 h-4" />
               Back to Activities
             </Link>
+          </div>
+        </div>
 
-            <div className="space-y-4">
-              <div className="flex flex-wrap items-center gap-4">
-                <Badge className="bg-yellow-500 text-black font-bold text-lg px-4 py-2">
-                  #{ranking}
-                </Badge>
-                {activity.rating && (
-                  <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-4 py-2">
-                    <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-                    <span className="font-semibold text-lg">{activity.rating}</span>
-                    {activity.reviewCount && (
-                      <span className="text-sm text-white/80">
-                        ({activity.reviewCount.toLocaleString()} reviews)
-                      </span>
-                    )}
-                  </div>
-                )}
+        {/* Activity Gallery */}
+        <div className="container mx-auto px-8 max-w-6xl mb-8">
+          <ActivityGallery images={activity.activity_images} activityName={activity.name} />
+        </div>
+
+        {/* Activity Info */}
+        <div className="container mx-auto px-8 max-w-6xl">
+          <div className="space-y-6">
+            <div className="flex flex-wrap items-center gap-4">
+              <Badge className="bg-yellow-500 text-black font-bold text-lg px-4 py-2">
+                #{activity.id}
+              </Badge>
+              {activity.rating && (
+                <div className="flex items-center gap-2 bg-gray-100 rounded-full px-4 py-2">
+                  <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
+                  <span className="font-semibold text-lg">{activity.rating}</span>
+                  {activity.review_count && (
+                    <span className="text-sm text-gray-600">
+                      ({activity.review_count.toLocaleString()} reviews)
+                    </span>
+                  )}
+                </div>
+              )}
+            </div>
+
+            <h1 className="text-4xl md:text-6xl font-bold leading-tight text-gray-900">
+              {activity.name}
+            </h1>
+
+            <p className="text-xl md:text-2xl text-gray-600 max-w-4xl">
+              {activity.short_overview || activity.description}
+            </p>
+
+            <div className="flex flex-wrap items-center gap-6 text-lg">
+              <div className="flex items-center gap-2 text-gray-700">
+                <Clock className="w-5 h-5" />
+                <span>{activity.duration || "Varies"}</span>
               </div>
-
-              <h1 className="text-4xl md:text-6xl font-bold leading-tight">
-                {activity.title}
-              </h1>
-
-              <p className="text-xl md:text-2xl text-gray-200 max-w-3xl">
-                {activity.shortOverview}
-              </p>
-
-              <div className="flex flex-wrap items-center gap-6 text-lg">
-                <div className="flex items-center gap-2">
-                  <Clock className="w-5 h-5" />
-                  <span>{activity.duration || "Varies"}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <MapPin className="w-5 h-5" />
-                  <span>{activity.location}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Badge variant="outline" className="text-lg font-semibold bg-white/20 backdrop-blur-sm border-white/30 text-white">
-                    {activity.priceRange}
-                  </Badge>
-                </div>
+              <div className="flex items-center gap-2 text-gray-700">
+                <MapPin className="w-5 h-5" />
+                <span>{activity.location}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Badge variant="outline" className="text-lg font-semibold px-4 py-2">
+                  {activity.price_range}
+                </Badge>
               </div>
             </div>
           </div>
@@ -110,27 +133,32 @@ export default async function ActivityPage({ params }: ActivityPageProps) {
               <div>
                 <h2 className="text-3xl font-bold mb-6 text-gray-900">About This Experience</h2>
                 <div className="prose prose-lg max-w-none text-gray-600 space-y-4">
-                  {activity.fullDescription.split('\n\n').map((paragraph, index) => (
+                  {activity.full_description && activity.full_description.split('\n\n').map((paragraph, index) => (
                     <p key={index}>{paragraph}</p>
                   ))}
+                  {!activity.full_description && activity.description && (
+                    <p>{activity.description}</p>
+                  )}
                 </div>
               </div>
 
               {/* What to Expect */}
-              <div>
-                <h3 className="text-2xl font-bold mb-6 text-gray-900 flex items-center gap-2">
-                  <Info className="w-6 h-6 text-blue-600" />
-                  What to Expect
-                </h3>
-                <div className="grid md:grid-cols-2 gap-6">
-                  {activity.highlights.map((highlight, index) => (
-                    <div key={index} className="flex items-start gap-3">
-                      <div className="w-2 h-2 bg-blue-600 rounded-full mt-2 flex-shrink-0"></div>
-                      <p className="text-gray-600">{highlight}</p>
-                    </div>
-                  ))}
+              {activity.highlights && activity.highlights.length > 0 && (
+                <div>
+                  <h3 className="text-2xl font-bold mb-6 text-gray-900 flex items-center gap-2">
+                    <Info className="w-6 h-6 text-blue-600" />
+                    What to Expect
+                  </h3>
+                  <div className="grid md:grid-cols-2 gap-6">
+                    {activity.highlights.map((highlight, index) => (
+                      <div key={index} className="flex items-start gap-3">
+                        <div className="w-2 h-2 bg-blue-600 rounded-full mt-2 flex-shrink-0"></div>
+                        <p className="text-gray-600">{highlight}</p>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* Trending Now Section */}
               <div>
@@ -142,7 +170,7 @@ export default async function ActivityPage({ params }: ActivityPageProps) {
                 </h3>
                 <div className="bg-gradient-to-r from-pink-50 to-purple-50 border border-pink-200 rounded-lg p-6">
                   <p className="text-gray-700 mb-4">
-                    See what travelers are sharing about {activity.title} on social media:
+                    See what travelers are sharing about {activity.name} on social media:
                   </p>
                   <div className="grid md:grid-cols-3 gap-4">
                     <div className="bg-white rounded-lg p-4 border">
@@ -152,7 +180,7 @@ export default async function ActivityPage({ params }: ActivityPageProps) {
                         </div>
                         <span className="font-semibold text-sm">TikTok</span>
                       </div>
-                      <p className="text-xs text-gray-600">Search: #{activity.title.replace(/\s+/g, '').toLowerCase()}istanbul</p>
+                      <p className="text-xs text-gray-600">Search: #{activity.name.replace(/\s+/g, '').toLowerCase()}istanbul</p>
                     </div>
                     <div className="bg-white rounded-lg p-4 border">
                       <div className="flex items-center gap-2 mb-2">
@@ -161,7 +189,7 @@ export default async function ActivityPage({ params }: ActivityPageProps) {
                         </div>
                         <span className="font-semibold text-sm">Instagram</span>
                       </div>
-                      <p className="text-xs text-gray-600">Search: #{activity.title.replace(/\s+/g, '').toLowerCase()}turkey</p>
+                      <p className="text-xs text-gray-600">Search: #{activity.name.replace(/\s+/g, '').toLowerCase()}turkey</p>
                     </div>
                     <div className="bg-white rounded-lg p-4 border">
                       <div className="flex items-center gap-2 mb-2">
@@ -170,21 +198,21 @@ export default async function ActivityPage({ params }: ActivityPageProps) {
                         </div>
                         <span className="font-semibold text-sm">YouTube</span>
                       </div>
-                      <p className="text-xs text-gray-600">Search: &ldquo;{activity.title} Istanbul vlog&rdquo;</p>
+                      <p className="text-xs text-gray-600">Search: &ldquo;{activity.name} Istanbul vlog&rdquo;</p>
                     </div>
                   </div>
                 </div>
               </div>
 
               {/* Reviews Section */}
-              {activity.reviews && activity.reviews.length > 0 && (
+              {activity.activity_reviews && activity.activity_reviews.length > 0 && (
                 <div>
                   <h3 className="text-2xl font-bold mb-6 text-gray-900 flex items-center gap-2">
                     <Star className="w-6 h-6 text-yellow-500 fill-current" />
                     Traveler Reviews
                   </h3>
                   <div className="space-y-4 mb-6">
-                    {activity.reviews.map((review, index) => (
+                    {activity.activity_reviews.map((review, index) => (
                       <div key={index} className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
                         <div className="flex items-center justify-between mb-3">
                           <div className="flex items-center gap-3">
@@ -195,7 +223,7 @@ export default async function ActivityPage({ params }: ActivityPageProps) {
                             </div>
                             <div>
                               <p className="font-semibold text-gray-900">{review.author}</p>
-                              <p className="text-sm text-gray-500">{review.date}</p>
+                              <p className="text-sm text-gray-500">{review.review_date}</p>
                             </div>
                           </div>
                           <div className="flex items-center gap-1">
@@ -218,11 +246,11 @@ export default async function ActivityPage({ params }: ActivityPageProps) {
                       </div>
                     ))}
                   </div>
-                  {activity.tripAdvisorUrl && (
+                  {activity.trip_advisor_url && (
                     <div className="text-center">
                       <Button asChild variant="outline" size="lg">
                         <a
-                          href={activity.tripAdvisorUrl}
+                          href={activity.trip_advisor_url}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="inline-flex items-center gap-2"
@@ -239,25 +267,6 @@ export default async function ActivityPage({ params }: ActivityPageProps) {
                 </div>
               )}
 
-              {/* Practical Information */}
-              {activity.practicalInfo.included && activity.practicalInfo.included.length > 0 && (
-                <div>
-                  <h3 className="text-2xl font-bold mb-6 text-gray-900 flex items-center gap-2">
-                    <Camera className="w-6 h-6 text-green-600" />
-                    What&apos;s Included
-                  </h3>
-                  <div className="bg-green-50 border border-green-200 rounded-lg p-6">
-                    <ul className="space-y-3">
-                      {activity.practicalInfo.included.map((item, index) => (
-                        <li key={index} className="flex items-start gap-3 text-green-800">
-                          <div className="w-2 h-2 bg-green-600 rounded-full mt-2 flex-shrink-0"></div>
-                          <span>{item}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-              )}
             </div>
 
             {/* Sidebar */}
@@ -274,7 +283,7 @@ export default async function ActivityPage({ params }: ActivityPageProps) {
                   <CardContent className="space-y-6">
                     <div className="text-center">
                       <div className="text-3xl font-bold text-blue-600 mb-2">
-                        {activity.priceRange}
+                        {activity.price_range}
                       </div>
                       <p className="text-sm text-gray-600">
                         Per person • Instant confirmation
@@ -287,7 +296,7 @@ export default async function ActivityPage({ params }: ActivityPageProps) {
                       className="w-full bg-blue-600 hover:bg-blue-700 text-lg py-6"
                     >
                       <a
-                        href={activity.bookingLink}
+                        href={activity.booking_url}
                         target="_blank"
                         rel="noopener noreferrer"
                       >
@@ -328,12 +337,12 @@ export default async function ActivityPage({ params }: ActivityPageProps) {
                         <span className="text-gray-600">Type</span>
                         <span className="font-semibold">Cultural Experience</span>
                       </div>
-                      {activity.openingHours && (
+                      {activity.opening_hours && (
                         <>
                           <Separator />
                           <div className="flex justify-between items-center">
                             <span className="text-gray-600">Hours</span>
-                            <span className="font-semibold text-right">{activity.openingHours}</span>
+                            <span className="font-semibold text-right">{activity.opening_hours}</span>
                           </div>
                         </>
                       )}
@@ -359,7 +368,7 @@ export default async function ActivityPage({ params }: ActivityPageProps) {
                           <span className="text-3xl font-bold">{activity.rating}</span>
                         </div>
                         <p className="text-gray-600">
-                          Based on {activity.reviewCount?.toLocaleString()} reviews
+                          Based on {activity.review_count?.toLocaleString()} reviews
                         </p>
                         <div className="text-sm text-gray-500">
                           Excellent rating on booking platforms
@@ -379,7 +388,7 @@ export default async function ActivityPage({ params }: ActivityPageProps) {
         <div className="container mx-auto px-4 text-center">
           <div className="max-w-2xl mx-auto text-white">
             <h2 className="text-3xl md:text-4xl font-bold mb-6">
-              Ready to Experience {activity.title}?
+              Ready to Experience {activity.name}?
             </h2>
             <p className="text-xl mb-8 text-blue-100">
               Join thousands of travelers who have made unforgettable memories in Istanbul.
@@ -391,7 +400,7 @@ export default async function ActivityPage({ params }: ActivityPageProps) {
                 className="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-8 py-4"
               >
                 <a
-                  href={activity.bookingLink}
+                  href={activity.booking_url}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
