@@ -2,6 +2,10 @@ import { supabase, type Activity } from './supabase'
 
 export async function getActivities(): Promise<Activity[]> {
   try {
+    // Return empty array during build if environment variables are not set
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+      return []
+    }
     const { data, error } = await supabase
       .from('activities')
       .select(`
@@ -64,6 +68,10 @@ export async function getActivities(): Promise<Activity[]> {
 
 export async function getActivityBySlug(slug: string): Promise<Activity | null> {
   try {
+    // Return null during build if environment variables are not set
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+      return null
+    }
     const { data, error } = await supabase
       .from('activities')
       .select(`
@@ -127,6 +135,10 @@ export async function getActivityBySlug(slug: string): Promise<Activity | null> 
 
 export async function getAllActivitySlugs(): Promise<string[]> {
   try {
+    // Return empty array during build if environment variables are not set
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+      return []
+    }
     const { data, error } = await supabase
       .from('activities')
       .select('slug')
