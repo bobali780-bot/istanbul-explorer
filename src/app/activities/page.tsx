@@ -24,10 +24,12 @@ export default function ActivitiesPage() {
         const result = await response.json()
         console.log('Client: API response:', result)
 
-        if (result.success) {
+        if (result.success && result.activities && result.activities.length > 0) {
+          console.log('Client: Setting activities:', result.activities.length)
           setActivities(result.activities)
+          setLoading(false) // Force loading to false
         } else {
-          throw new Error(result.error || 'API returned error')
+          throw new Error(result.error || 'API returned no activities')
         }
       } catch (error) {
         console.error('Error fetching activities:', error)
@@ -37,7 +39,10 @@ export default function ActivitiesPage() {
           console.log('Client: Trying direct API call fallback...')
           const data = await getActivities()
           console.log('Client: Direct API success:', data.length)
-          setActivities(data)
+          if (data && data.length > 0) {
+            setActivities(data)
+            setLoading(false) // Force loading to false
+          }
         } catch (fallbackError) {
           console.error('Fallback also failed:', fallbackError)
         }
