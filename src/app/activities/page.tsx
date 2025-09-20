@@ -90,7 +90,7 @@ export default function ActivitiesPage() {
             Top 10 Must-Do Activities in Istanbul
           </h2>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto place-items-center">
             {top10Activities.map((activity, index) => (
               <Card key={activity.slug} className="group hover:shadow-2xl transition-all duration-300 border-0 shadow-lg overflow-hidden">
                 <div className="relative overflow-hidden">
@@ -134,7 +134,7 @@ export default function ActivitiesPage() {
                     </div>
 
                     <div className="flex items-center justify-between">
-                      <Badge variant="outline" className="text-lg font-semibold">
+                      <Badge variant="outline" className="text-lg font-semibold min-w-[100px] text-center px-4 py-2">
                         {activity.priceRange}
                       </Badge>
                       {activity.reviewCount && (

@@ -130,6 +130,113 @@ export default async function ActivityPage({ params }: ActivityPageProps) {
                 </div>
               </div>
 
+              {/* Trending Now Section */}
+              <div>
+                <h3 className="text-2xl font-bold mb-6 text-gray-900 flex items-center gap-2">
+                  <svg className="w-6 h-6 text-pink-600" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12.017 0L18.648 10.158L24 8.052L20.106 15.806L24 23.561L18.648 21.455L12.017 31.612L5.386 21.455L0 23.561L3.894 15.806L0 8.052L5.386 10.158L12.017 0Z" />
+                  </svg>
+                  Trending Now
+                </h3>
+                <div className="bg-gradient-to-r from-pink-50 to-purple-50 border border-pink-200 rounded-lg p-6">
+                  <p className="text-gray-700 mb-4">
+                    See what travelers are sharing about {activity.title} on social media:
+                  </p>
+                  <div className="grid md:grid-cols-3 gap-4">
+                    <div className="bg-white rounded-lg p-4 border">
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="w-6 h-6 bg-black rounded flex items-center justify-center">
+                          <span className="text-white text-xs font-bold">TT</span>
+                        </div>
+                        <span className="font-semibold text-sm">TikTok</span>
+                      </div>
+                      <p className="text-xs text-gray-600">Search: #{activity.title.replace(/\s+/g, '').toLowerCase()}istanbul</p>
+                    </div>
+                    <div className="bg-white rounded-lg p-4 border">
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="w-6 h-6 bg-gradient-to-r from-purple-500 to-pink-500 rounded flex items-center justify-center">
+                          <span className="text-white text-xs font-bold">IG</span>
+                        </div>
+                        <span className="font-semibold text-sm">Instagram</span>
+                      </div>
+                      <p className="text-xs text-gray-600">Search: #{activity.title.replace(/\s+/g, '').toLowerCase()}turkey</p>
+                    </div>
+                    <div className="bg-white rounded-lg p-4 border">
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="w-6 h-6 bg-red-600 rounded flex items-center justify-center">
+                          <span className="text-white text-xs font-bold">YT</span>
+                        </div>
+                        <span className="font-semibold text-sm">YouTube</span>
+                      </div>
+                      <p className="text-xs text-gray-600">Search: &ldquo;{activity.title} Istanbul vlog&rdquo;</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Reviews Section */}
+              {activity.reviews && activity.reviews.length > 0 && (
+                <div>
+                  <h3 className="text-2xl font-bold mb-6 text-gray-900 flex items-center gap-2">
+                    <Star className="w-6 h-6 text-yellow-500 fill-current" />
+                    Traveler Reviews
+                  </h3>
+                  <div className="space-y-4 mb-6">
+                    {activity.reviews.map((review, index) => (
+                      <div key={index} className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                              <span className="text-blue-600 font-semibold text-sm">
+                                {review.author.split(' ').map(n => n[0]).join('')}
+                              </span>
+                            </div>
+                            <div>
+                              <p className="font-semibold text-gray-900">{review.author}</p>
+                              <p className="text-sm text-gray-500">{review.date}</p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            {[...Array(5)].map((_, i) => (
+                              <Star
+                                key={i}
+                                className={`w-4 h-4 ${
+                                  i < review.rating
+                                    ? 'text-yellow-400 fill-current'
+                                    : 'text-gray-300'
+                                }`}
+                              />
+                            ))}
+                            <span className="ml-1 text-sm font-semibold text-gray-700">
+                              {review.rating}/5
+                            </span>
+                          </div>
+                        </div>
+                        <p className="text-gray-700 leading-relaxed">{review.comment}</p>
+                      </div>
+                    ))}
+                  </div>
+                  {activity.tripAdvisorUrl && (
+                    <div className="text-center">
+                      <Button asChild variant="outline" size="lg">
+                        <a
+                          href={activity.tripAdvisorUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-2"
+                        >
+                          <div className="w-5 h-5 bg-green-600 rounded flex items-center justify-center">
+                            <span className="text-white text-xs font-bold">T</span>
+                          </div>
+                          Read more reviews on TripAdvisor
+                          <ExternalLink className="w-4 h-4" />
+                        </a>
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              )}
+
               {/* Practical Information */}
               {activity.practicalInfo.included && activity.practicalInfo.included.length > 0 && (
                 <div>

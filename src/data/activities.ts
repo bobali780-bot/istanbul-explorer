@@ -19,6 +19,13 @@ export type Activity = {
     meetingPoint?: string
     accessibility?: string
   }
+  tripAdvisorUrl?: string
+  reviews?: {
+    author: string
+    rating: number
+    comment: string
+    date: string
+  }[]
 }
 
 export const top10Activities: Activity[] = [
@@ -30,11 +37,12 @@ export const top10Activities: Activity[] = [
     image: "https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?ixlib=rb-4.0.3&auto=format&fit=crop&w=2071&q=80",
     rating: 4.7,
     reviewCount: 28947,
-    priceRange: "From $25",
+    priceRange: "$25",
     duration: "1-2 hours",
     openingHours: "9:00 AM - 6:00 PM (varies by season)",
     location: "Sultanahmet Square, Fatih",
     bookingLink: "https://www.getyourguide.com/hagia-sophia-l2705/",
+    tripAdvisorUrl: "https://www.tripadvisor.com/Attraction_Review-g293974-d293976-Reviews-Hagia_Sophia-Istanbul.html",
     highlights: [
       "Skip-the-line entry to avoid crowds",
       "Expert guide with historical insights",
@@ -48,7 +56,27 @@ export const top10Activities: Activity[] = [
       included: ["Skip-the-line tickets", "Professional guide", "Historical commentary"],
       meetingPoint: "Sultanahmet Square (exact location sent with booking)",
       accessibility: "Wheelchair accessible with assistance"
-    }
+    },
+    reviews: [
+      {
+        author: "Sarah M.",
+        rating: 5,
+        comment: "Absolutely breathtaking! The history and architecture are incredible. Our guide was very knowledgeable and the skip-the-line access saved us hours.",
+        date: "December 2024"
+      },
+      {
+        author: "David K.",
+        rating: 5,
+        comment: "A must-see in Istanbul. The combination of Christian and Islamic art is fascinating. Highly recommend getting a guide.",
+        date: "November 2024"
+      },
+      {
+        author: "Maria L.",
+        rating: 4,
+        comment: "Beautiful mosque with incredible history. Can get crowded but worth the visit. The mosaics are stunning.",
+        date: "October 2024"
+      }
+    ]
   },
   {
     slug: "blue-mosque-visit",
@@ -58,11 +86,12 @@ export const top10Activities: Activity[] = [
     image: "https://images.unsplash.com/photo-1541432901042-2d8bd64b4a9b?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
     rating: 4.6,
     reviewCount: 34521,
-    priceRange: "Free (guided tours from $15)",
+    priceRange: "Free",
     duration: "45 minutes - 1 hour",
     openingHours: "8:30 AM - 6:00 PM (closed during prayer times)",
     location: "Sultanahmet Square, Fatih",
     bookingLink: "https://www.viator.com/Istanbul-attractions/Blue-Mosque-Sultan-Ahmet-Camii/d585-a910",
+    tripAdvisorUrl: "https://www.tripadvisor.com/Attraction_Review-g293974-d293978-Reviews-Blue_Mosque-Istanbul.html",
     highlights: [
       "Six magnificent minarets",
       "20,000+ handmade blue tiles",
@@ -72,263 +101,423 @@ export const top10Activities: Activity[] = [
     ],
     practicalInfo: {
       duration: "45 minutes - 1 hour",
-      bestTime: "Between prayer times (check schedule)",
-      included: ["Free entry", "Optional guided tour available"],
+      bestTime: "Early morning before crowds",
+      included: ["Free entry", "Audio guide available"],
       meetingPoint: "Main entrance on Sultanahmet Square",
-      accessibility: "Ground floor accessible, modest dress required"
-    }
+      accessibility: "Wheelchair accessible"
+    },
+    reviews: [
+      {
+        author: "Jennifer R.",
+        rating: 5,
+        comment: "Stunning architecture and the blue tiles are absolutely gorgeous. Remember to dress modestly and bring shoe covers.",
+        date: "December 2024"
+      },
+      {
+        author: "Ahmed H.",
+        rating: 4,
+        comment: "Beautiful mosque, very peaceful inside. Best visited early in the morning to avoid crowds.",
+        date: "November 2024"
+      },
+      {
+        author: "Elena P.",
+        rating: 5,
+        comment: "The six minarets are spectacular! Free entry makes this a must-visit. The interior is breathtaking.",
+        date: "October 2024"
+      }
+    ]
   },
   {
-    slug: "hagia-sophia-blue-mosque-combo",
-    title: "Hagia Sophia & Blue Mosque Combo",
-    shortOverview: "Get both iconic landmarks in one tour with guided access and historical insights.",
-    fullDescription: "Experience Istanbul's two most iconic landmarks in one comprehensive tour that tells the story of the city's transformation from Byzantine to Ottoman capital. This combo tour provides skip-the-line access to Hagia Sophia and includes a guided visit to the Blue Mosque, offering a complete picture of Istanbul's religious and architectural heritage. Your expert guide will explain the historical rivalry and cultural exchange between these facing monuments, from the Byzantine Empire through the Ottoman period to modern Turkey. The tour includes time for photography, detailed explanations of architectural features, and insights into daily life in historic Istanbul.",
+    slug: "topkapi-palace-tour",
+    title: "Topkapi Palace & Harem Tour",
+    shortOverview: "Explore the opulent Ottoman palace with its treasures, courtyards, and famous Harem quarters.",
+    fullDescription: "Topkapi Palace served as the primary residence of Ottoman sultans for over 400 years, from 1465 to 1856. This sprawling palace complex offers visitors a glimpse into the lavish lifestyle of Ottoman royalty. The palace features four main courtyards, each with distinct functions and stunning architecture. Highlights include the Imperial Treasury with its precious jewels and artifacts, the Sacred Relics collection, and the famous Harem quarters where the sultan's family lived. The palace also offers spectacular views of the Bosphorus and Golden Horn, making it both historically significant and visually stunning.",
     image: "https://images.unsplash.com/photo-1578915629189-4a7c2e1c9d4c?ixlib=rb-4.0.3&auto=format&fit=crop&w=2074&q=80",
-    rating: 4.8,
-    reviewCount: 15623,
-    priceRange: "From $45",
-    duration: "2.5-3 hours",
-    openingHours: "Various tour times available",
-    location: "Sultanahmet Square area",
-    bookingLink: "https://www.hagia-sophia-tickets.com/hagia-sophia-blue-mosque/",
+    rating: 4.5,
+    reviewCount: 22340,
+    priceRange: "$50",
+    duration: "2-3 hours",
+    openingHours: "9:00 AM - 5:00 PM (closed Tuesdays)",
+    location: "Sultanahmet, Fatih",
+    bookingLink: "https://www.getyourguide.com/topkapi-palace-l3534/",
+    tripAdvisorUrl: "https://www.tripadvisor.com/Attraction_Review-g293974-d293977-Reviews-Topkapi_Palace-Istanbul.html",
     highlights: [
-      "Skip-the-line access to both monuments",
-      "Expert guide for historical context",
-      "Compare Byzantine and Ottoman architecture",
-      "Small group sizes for personalized experience",
-      "Photography opportunities at both sites"
+      "Four historic courtyards to explore",
+      "Imperial Treasury with precious jewels",
+      "Harem quarters with intricate decorations",
+      "Panoramic views of Bosphorus",
+      "Sacred Relics collection"
     ],
     practicalInfo: {
-      duration: "2.5-3 hours",
-      bestTime: "Morning tours recommended",
-      included: ["Hagia Sophia skip-the-line tickets", "Professional guide", "Blue Mosque visit"],
-      meetingPoint: "Sultanahmet Square (exact location provided)",
-      accessibility: "Moderate walking required, dress code for mosque"
-    }
+      duration: "2-3 hours",
+      bestTime: "Early morning to avoid crowds",
+      included: ["Palace entry", "Harem access", "Audio guide"],
+      meetingPoint: "Palace main entrance",
+      accessibility: "Limited wheelchair access due to historic structure"
+    },
+    reviews: [
+      {
+        author: "Robert T.",
+        rating: 5,
+        comment: "Incredible palace with so much history. The Harem tour is definitely worth the extra cost. Amazing views!",
+        date: "December 2024"
+      },
+      {
+        author: "Lisa M.",
+        rating: 4,
+        comment: "Beautiful palace grounds and fascinating exhibits. Can be crowded but the audio guide helps navigate efficiently.",
+        date: "November 2024"
+      },
+      {
+        author: "Carlos S.",
+        rating: 5,
+        comment: "The treasury room is absolutely stunning. Don't miss the Harem - it's beautifully preserved.",
+        date: "October 2024"
+      }
+    ]
   },
   {
-    slug: "grand-bazaar-walking-tour",
-    title: "Grand Bazaar Walking Tour",
-    shortOverview: "Wander this massive historic market for sights, scents, and authentic shopping experiences.",
-    fullDescription: "Step into one of the world's oldest and largest covered markets, where 4,000 shops sprawl across 61 streets in a labyrinthine maze of commerce and culture. Built in the 15th century, the Grand Bazaar has been the beating heart of Istanbul's trade for over 500 years. Your guided walking tour reveals hidden corners, explains the bazaar's unique guild system, and introduces you to master craftsmen practicing traditional arts. Learn to navigate like a local, discover authentic Turkish carpets, jewelry, ceramics, and spices, and master the art of friendly bargaining. The tour includes visits to historic hans (caravanserais) and insights into Istanbul's role as a crossroads of world trade.",
+    slug: "grand-bazaar-shopping-tour",
+    title: "Grand Bazaar Shopping Tour",
+    shortOverview: "Navigate the world's oldest covered market with 4,000 shops selling carpets, jewelry, and souvenirs.",
+    fullDescription: "The Grand Bazaar is one of the oldest and largest covered markets in the world, dating back to 1461. With over 4,000 shops spread across 61 covered streets, this labyrinthine marketplace offers an authentic Turkish shopping experience. Vendors sell everything from handwoven carpets and Turkish ceramics to gold jewelry and traditional textiles. Beyond shopping, the bazaar is an architectural marvel with its painted ceilings, ornate doorways, and historic ambiance. A guided tour helps navigate the maze-like structure while learning about Turkish craftsmanship, haggling techniques, and the bazaar's 500-year history.",
     image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
-    rating: 4.5,
+    rating: 4.3,
     reviewCount: 15280,
-    priceRange: "Free entry (guided tours from $25)",
-    duration: "2-4 hours",
+    priceRange: "Free",
+    duration: "2-3 hours",
     openingHours: "Monday-Saturday 8:30 AM - 7:00 PM (closed Sundays)",
     location: "Beyazıt-Fatih, Grand Bazaar",
     bookingLink: "https://www.getyourguide.com/grand-bazaar-l3535/",
+    tripAdvisorUrl: "https://www.tripadvisor.com/Attraction_Review-g293974-d293981-Reviews-Grand_Bazaar-Istanbul.html",
     highlights: [
-      "Navigate 4,000 shops across 61 covered streets",
-      "Learn traditional crafts and bargaining techniques",
-      "Visit historic caravanserais and hidden courtyards",
-      "Meet local artisans and multi-generational merchants",
-      "Small group tours limited to 5 people"
+      "4,000 shops in historic covered market",
+      "Authentic Turkish carpets and ceramics",
+      "Traditional haggling experience",
+      "Historic Ottoman architecture",
+      "Famous Turkish coffee shops"
     ],
     practicalInfo: {
-      duration: "2-4 hours",
-      bestTime: "Early morning weekdays for fewer crowds",
-      included: ["Professional local guide", "Market navigation tips", "Cultural and historical insights"],
-      meetingPoint: "Grand Bazaar main entrance (Beyazıt Gate)",
-      accessibility: "Uneven surfaces, comfortable walking shoes essential"
-    }
+      duration: "2-3 hours",
+      bestTime: "Weekday mornings for fewer crowds",
+      included: ["Free entry", "Shopping guidance available"],
+      meetingPoint: "Main entrance (Beyazıt Gate)",
+      accessibility: "Some areas wheelchair accessible"
+    },
+    reviews: [
+      {
+        author: "Anna K.",
+        rating: 4,
+        comment: "Amazing shopping experience! The variety is incredible. Don't forget to haggle - it's expected and fun!",
+        date: "December 2024"
+      },
+      {
+        author: "Michael B.",
+        rating: 4,
+        comment: "Historic atmosphere is wonderful. Can be overwhelming with so many options, but that's part of the charm.",
+        date: "November 2024"
+      },
+      {
+        author: "Sophie L.",
+        rating: 5,
+        comment: "Found beautiful handmade carpets and jewelry. The vendors are friendly and the coffee shops are great for breaks.",
+        date: "October 2024"
+      }
+    ]
   },
   {
-    slug: "spice-bazaar-experience",
-    title: "Spice Bazaar Experience",
-    shortOverview: "Taste colors and flavors among spice vendors and experience authentic Turkish culinary culture.",
-    fullDescription: "The Egyptian Spice Bazaar, dating from 1664, offers a sensory journey through Turkish culinary traditions and the ancient spice trade routes. This L-shaped covered market fills the air with the aromas of cardamom, saffron, sumac, and countless other spices that once made Istanbul wealthy. Your guided experience includes tastings of traditional Turkish delights, explanations of spice uses in Ottoman cuisine, and meetings with vendors whose families have operated here for generations. Learn about the health benefits of various spices, discover ingredients for authentic Turkish cooking, and understand the bazaar's role in the historic Silk Road trade network.",
-    image: "https://images.unsplash.com/photo-1551334787-21e6bd773b07?ixlib=rb-4.0.3&auto=format&fit=crop&w=2069&q=80",
-    rating: 4.6,
-    reviewCount: 11240,
-    priceRange: "Free entry (guided tours from $20)",
-    duration: "1.5-2 hours",
-    openingHours: "Daily 8:00 AM - 7:30 PM (Sunday 9:30 AM - 6:30 PM)",
-    location: "Eminönü, near Golden Horn",
-    bookingLink: "https://www.getyourguide.com/spice-bazaar-istanbul-l4996/",
+    slug: "bosphorus-cruise",
+    title: "Bosphorus Dinner Cruise",
+    shortOverview: "Sail between Europe and Asia while enjoying Turkish cuisine and live entertainment.",
+    fullDescription: "A Bosphorus cruise offers the perfect way to see Istanbul from the water, sailing along the strait that divides Europe and Asia. The dinner cruise includes a traditional Turkish meal with live folk performances, belly dancing, and sometimes whirling dervishes. As you sail, you'll pass magnificent Ottoman palaces, historic fortresses, and charming waterfront neighborhoods. The cruise provides unique perspectives of landmarks like Dolmabahçe Palace, Bosphorus Bridge, and the Asian shoreline. Evening cruises are particularly magical as the city lights reflect on the water and the call to prayer echoes across the water.",
+    image: "https://images.unsplash.com/photo-1541968618652-3f6c82ba5803?ixlib=rb-4.0.3&auto=format&fit=crop&w=2071&q=80",
+    rating: 4.4,
+    reviewCount: 14290,
+    priceRange: "$45",
+    duration: "3-4 hours",
+    openingHours: "Evening cruises: 7:00 PM - 11:00 PM",
+    location: "Eminönü Pier or Kabataş",
+    bookingLink: "https://www.getyourguide.com/istanbul-l56/istanbul-bosphorus-dinner-cruise-show-with-private-table-t415437/",
+    tripAdvisorUrl: "https://www.tripadvisor.com/Attraction_Review-g293974-d12455662-Reviews-Bosphorus_Dinner_Cruise-Istanbul.html",
     highlights: [
-      "Taste exotic spices, Turkish delights, and local delicacies",
-      "Learn about Ottoman culinary traditions and Silk Road history",
-      "Meet multi-generational spice vendors and artisans",
-      "Discover authentic ingredients for Turkish cooking",
-      "Combine with Grand Bazaar tours for full market experience"
+      "Sail between Europe and Asia",
+      "Traditional Turkish dinner included",
+      "Live folk performances and belly dancing",
+      "Views of Ottoman palaces and bridges",
+      "Romantic evening atmosphere"
     ],
     practicalInfo: {
-      duration: "1.5-2 hours",
-      bestTime: "Early morning for freshest aromas and fewer crowds",
-      included: ["Professional guide", "Spice tastings", "Turkish delight samples", "Historical insights"],
-      meetingPoint: "Spice Bazaar main entrance",
-      accessibility: "Ground level access, narrow aisles, comfortable shoes recommended"
-    }
-  },
-  {
-    slug: "whirling-dervishes-show",
-    title: "Whirling Dervishes Show",
-    shortOverview: "Attend a Sufi dervish performance, rich with mysticism and spiritual cultural history.",
-    fullDescription: "Experience the mesmerizing spiritual dance of the Whirling Dervishes in an authentic Istanbul setting. This centuries-old Sufi ceremony, known as Sema, represents a mystical journey toward spiritual perfection through rhythmic spinning, live music, and chanting. Performed by members of the Mevlevi order founded by the 13th-century poet Rumi, the ceremony takes place in historic venues such as restored Ottoman-era buildings or traditional cultural centers. The hour-long performance includes seven distinct musical and dance phases, each with deep spiritual meaning. Witness this UNESCO-recognized cultural practice that combines meditation, music, and movement in a profound expression of Islamic mysticism.",
-    image: "https://images.unsplash.com/photo-1539650116574-75c0c6d44651?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
-    rating: 4.3,
-    reviewCount: 7234,
-    priceRange: "From $35",
-    duration: "1 hour",
-    openingHours: "Evening performances (times vary)",
-    location: "Various historic venues",
-    bookingLink: "https://www.viator.com/Istanbul-tours/Cultural-Tours/d585-g6-c26",
-    highlights: [
-      "UNESCO-recognized cultural performance",
-      "Historic Ottoman-era venues",
-      "Live traditional music accompaniment",
-      "Seven mystical dance phases",
-      "Insight into Sufi spiritual practices"
-    ],
-    practicalInfo: {
-      duration: "1 hour",
-      bestTime: "Evening performances",
-      included: ["Performance tickets", "Cultural program notes", "Historical context"],
-      meetingPoint: "Venue entrance (location varies)",
-      accessibility: "Seated viewing, quiet contemplation expected"
-    }
-  },
-  {
-    slug: "topkapi-palace-harem-tour",
-    title: "Topkapi Palace & Harem Tour",
-    shortOverview: "Tour the sumptuous seat of Ottoman power, including its private chambers and treasury.",
-    fullDescription: "Explore the magnificent Topkapi Palace, home to Ottoman sultans for over 400 years and the administrative center of a vast empire. This sprawling complex overlooks the Bosphorus and Golden Horn from its strategic hilltop position. Your comprehensive tour includes the Imperial Treasury with its famous Topkapi Dagger and 86-carat Spoonmaker's Diamond, the Sacred Relics rooms housing Islamic artifacts, and the fascinating Harem quarters where the sultan's family lived in seclusion. Wander through ornate courtyards, marvel at intricate tilework and calligraphy, and learn about court life, palace intrigue, and the powerful women who influenced Ottoman politics from behind closed doors.",
-    image: "https://images.unsplash.com/photo-1577717903315-1691ae25ab3f?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
-    rating: 4.7,
-    reviewCount: 22340,
-    priceRange: "From €45 ($50)",
-    duration: "2.5-3 hours",
-    openingHours: "9:00 AM - 5:00 PM (closed Tuesdays)",
-    location: "Sultanahmet, Sarayburnu",
-    bookingLink: "https://www.getyourguide.com/topkapi-palace-l3534/",
-    highlights: [
-      "Imperial Treasury with Topkapi Dagger and Spoonmaker's Diamond",
-      "Harem quarters with guided access and historical insights",
-      "Panoramic Bosphorus and Golden Horn views",
-      "Sacred Islamic relics collection",
-      "Skip-the-line tickets with audio guide included"
-    ],
-    practicalInfo: {
-      duration: "2.5-3 hours",
-      bestTime: "9:00 AM - midday to avoid afternoon tour groups",
-      included: ["Palace entrance", "Harem access", "Audio guide system", "Skip-the-line tickets"],
-      meetingPoint: "Topkapi Palace first gate entrance",
-      accessibility: "Steep paths and stairs, comfortable shoes essential"
-    }
+      duration: "3-4 hours",
+      bestTime: "Evening for romantic ambiance",
+      included: ["3-course dinner", "Live entertainment", "Hotel pickup available"],
+      meetingPoint: "Eminönü Pier (location sent with booking)",
+      accessibility: "Most boats wheelchair accessible"
+    },
+    reviews: [
+      {
+        author: "Catherine W.",
+        rating: 5,
+        comment: "Magical evening! The food was delicious and the entertainment was fantastic. Amazing views of the city from the water.",
+        date: "December 2024"
+      },
+      {
+        author: "James D.",
+        rating: 4,
+        comment: "Great way to see Istanbul from a different perspective. The belly dancing show was entertaining and dinner was good.",
+        date: "November 2024"
+      },
+      {
+        author: "Isabella F.",
+        rating: 5,
+        comment: "Perfect romantic evening! The sunset views were incredible and the live music added to the atmosphere.",
+        date: "October 2024"
+      }
+    ]
   },
   {
     slug: "galata-tower-visit",
-    title: "Galata Tower Visit",
-    shortOverview: "Climb the iconic tower for panoramic views over Istanbul's skyline and Golden Horn.",
-    fullDescription: "Ascend the 67-meter Galata Tower, a medieval stone tower that has dominated Istanbul's skyline for over 700 years. Built by the Genoese in 1348, this cylindrical tower served as a lighthouse, fire watchtower, and prison throughout its history. Today, it offers some of the most spectacular 360-degree views in Istanbul. From the observation deck, see the Golden Horn, Bosphorus, Historic Peninsula, and modern city sprawling across seven hills. The tower provides perfect photo opportunities at sunrise or sunset, with the city's minarets, domes, and bridges creating a stunning panoramic backdrop. Learn about the tower's role in Istanbul's maritime history and its significance in the city's Galata district development.",
-    image: "https://images.unsplash.com/photo-1580500550469-8e8b930b6f10?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
-    rating: 4.3,
+    title: "Galata Tower & Panoramic Views",
+    shortOverview: "Climb the medieval tower for 360-degree panoramic views of Istanbul's historic skyline.",
+    fullDescription: "The Galata Tower, built by the Genoese in 1348, stands as one of Istanbul's most recognizable landmarks. This medieval stone tower offers breathtaking 360-degree panoramic views of the city, including the Golden Horn, Bosphorus, and the historic peninsula. The tower has served various purposes throughout history - as a watchtower, prison, and observatory. Today, visitors can take an elevator to the observation deck to enjoy spectacular views, especially during sunset. The surrounding Galata district is also worth exploring, with its narrow cobblestone streets, trendy cafes, and art galleries creating a bohemian atmosphere.",
+    image: "https://images.unsplash.com/photo-1551334787-21e6bd773b07?ixlib=rb-4.0.3&auto=format&fit=crop&w=2069&q=80",
+    rating: 4.2,
     reviewCount: 25670,
-    priceRange: "30 Euros ($33)",
-    duration: "30 minutes - 1 hour",
+    priceRange: "$33",
+    duration: "1-2 hours",
     openingHours: "8:30 AM - 11:00 PM (last entry 10:00 PM)",
     location: "Galata, Beyoğlu",
     bookingLink: "https://www.getyourguide.com/galata-tower-l3949/",
+    tripAdvisorUrl: "https://www.tripadvisor.com/Attraction_Review-g293974-d293993-Reviews-Galata_Tower-Istanbul.html",
     highlights: [
-      "360-degree panoramic views of Istanbul's skyline",
-      "700-year-old Genoese medieval architecture",
-      "Golden Horn, Bosphorus, and Historic Peninsula vistas",
-      "Perfect sunset photography opportunities",
-      "Skip-the-line tickets available to avoid queues"
+      "360-degree panoramic city views",
+      "Historic medieval architecture",
+      "Sunset views over the Golden Horn",
+      "Express elevator to observation deck",
+      "Trendy Galata neighborhood to explore"
     ],
     practicalInfo: {
-      duration: "30 minutes - 1 hour",
-      bestTime: "Before sunset for best lighting and fewer crowds",
-      included: ["Tower entrance", "Express elevator to 7th floor", "Observation deck access"],
-      meetingPoint: "Galata Tower main entrance",
-      accessibility: "Express elevator available, two flights of stairs to top"
-    }
-  },
-  {
-    slug: "turkish-bath-hammam-experience",
-    title: "Turkish Bath (Hammam) Experience",
-    shortOverview: "Relax in a traditional hammam with steam, scrub, and massage - a timeless Ottoman ritual.",
-    fullDescription: "Immerse yourself in the ancient Ottoman tradition of the Turkish bath, a ritual that has remained unchanged for centuries. Your authentic hammam experience takes place in a historic bathhouse with marble interiors, domed ceilings, and traditional star-shaped lighting. The process begins in the warm room (sicaklik) where you'll sweat on heated marble slabs, followed by a vigorous full-body scrub (kese) that removes dead skin and impurities. Enjoy a relaxing foam massage with traditional olive oil soap, then cool down gradually while sipping Turkish tea. This therapeutic ritual promotes circulation, relaxation, and skin health while connecting you to Istanbul's Ottoman heritage and Turkish hospitality traditions.",
-    image: "https://images.unsplash.com/photo-1596178065887-1198b6148b2b?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
-    rating: 4.6,
-    reviewCount: 8340,
-    priceRange: "From $24-60",
-    duration: "1.5-2 hours",
-    openingHours: "Daily 6:00 AM - 10:00 PM (separate hours for men/women)",
-    location: "Historic hammams including Çemberlitaş and Acemoglu",
-    bookingLink: "https://www.getyourguide.com/istanbul-l56/thermal-turkish-hammam-spas-tc2060/",
-    highlights: [
-      "Authentic Ottoman hammam ritual in historic settings",
-      "Traditional kese scrub and foam massage treatments",
-      "Acemoglu Hammam offers rare mixed-gender option for couples",
-      "Çemberlitaş Hammam - centuries-old traditional experience",
-      "Clay mask, body scrub, and relaxing foam wash included"
-    ],
-    practicalInfo: {
-      duration: "1.5-2 hours",
-      bestTime: "Afternoon or evening, book in advance",
-      included: ["Hammam entrance", "Traditional kese scrub", "Foam massage", "Clay mask treatment"],
-      meetingPoint: "Hammam reception area",
-      accessibility: "Historic buildings with stairs, separate or mixed facilities available"
-    }
+      duration: "1-2 hours",
+      bestTime: "1 hour before sunset for golden hour",
+      included: ["Tower entry", "Elevator access", "Observation deck"],
+      meetingPoint: "Tower entrance on Galata Square",
+      accessibility: "Elevator access available"
+    },
+    reviews: [
+      {
+        author: "Oliver G.",
+        rating: 4,
+        comment: "Fantastic views of the entire city! Can get crowded at sunset but worth the wait. The neighborhood is charming too.",
+        date: "December 2024"
+      },
+      {
+        author: "Emma J.",
+        rating: 5,
+        comment: "Best views in Istanbul! The 360-degree panorama is incredible. Go at sunset for the most beautiful photos.",
+        date: "November 2024"
+      },
+      {
+        author: "Marco R.",
+        rating: 4,
+        comment: "Great historical tower with amazing views. The area around it has nice cafes and shops to explore after.",
+        date: "October 2024"
+      }
+    ]
   },
   {
     slug: "basilica-cistern-visit",
-    title: "Basilica Cistern Visit",
-    shortOverview: "Explore the magnificent underground Byzantine cistern with ancient columns and mystical atmosphere.",
-    fullDescription: "Descend into the largest surviving underground cistern of the Byzantines in Istanbul, a subterranean marvel that has captured imaginations for centuries. Built in 532 AD during the reign of Emperor Justinian I, this cathedral-sized cistern stretches 143 meters long and 65 meters wide, supported by 336 marble columns arranged in 12 rows. The cistern's mystical atmosphere is enhanced by soft lighting that illuminates the forest of columns reflected in the shallow water. Don't miss the famous upside-down Medusa head columns, the Weeping Column with its mysterious tears, and the opportunity to walk on elevated wooden platforms through this underground palace. The cistern has appeared in numerous films including James Bond's 'From Russia with Love' and Dan Brown's 'Inferno'.",
-    image: "https://images.unsplash.com/photo-1541432901042-2d8bd64b4a9b?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
-    rating: 4.6,
+    title: "Basilica Cistern Underground Tour",
+    shortOverview: "Explore the mysterious underground cistern with its 336 columns and Medusa head sculptures.",
+    fullDescription: "The Basilica Cistern, built in the 6th century during the reign of Byzantine Emperor Justinian I, is the largest of several hundred ancient cisterns beneath Istanbul. This underground marvel features 336 marble columns in 12 rows, each 9 meters high, creating a cathedral-like atmosphere enhanced by atmospheric lighting and classical music. The cistern's most famous features are the two Medusa head sculptures used as column bases, their origins and positioning remaining mysterious. Recent renovations have added walkways and improved lighting, making this subterranean wonder more accessible while preserving its otherworldly ambiance.",
+    image: "https://images.unsplash.com/photo-1596178065887-1198b6148b2b?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
+    rating: 4.3,
     reviewCount: 19850,
-    priceRange: "From €25 ($28)",
-    duration: "1-1.5 hours",
+    priceRange: "$28",
+    duration: "45 minutes - 1 hour",
     openingHours: "9:00 AM - 6:30 PM (Night shift 7:30 PM - 10:00 PM)",
-    location: "Sultanahmet, near Hagia Sophia",
+    location: "Sultanahmet, Fatih",
     bookingLink: "https://www.getyourguide.com/basilica-cistern-l3947/",
+    tripAdvisorUrl: "https://www.tripadvisor.com/Attraction_Review-g293974-d293979-Reviews-Basilica_Cistern-Istanbul.html",
     highlights: [
-      "336 ancient marble columns in mystical underground setting",
-      "Famous upside-down Medusa head columns",
-      "Weeping Column with mysterious water drops",
-      "Skip-the-line tickets to avoid queues",
-      "Featured in James Bond and Dan Brown films"
+      "336 ancient marble columns",
+      "Mysterious Medusa head sculptures",
+      "Atmospheric lighting and music",
+      "1,500-year-old Byzantine engineering",
+      "Featured in James Bond film"
     ],
     practicalInfo: {
-      duration: "1-1.5 hours",
-      bestTime: "March-May and September-October for best weather",
-      included: ["Cistern entrance", "Audio guide in 7 languages", "Elevated walkway access"],
-      meetingPoint: "Basilica Cistern entrance near Hagia Sophia",
-      accessibility: "Stairs to enter, closed comfortable shoes essential (slippery floors)"
-    }
+      duration: "45 minutes - 1 hour",
+      bestTime: "Early morning or evening sessions",
+      included: ["Skip-the-line entry", "Audio guide", "Atmospheric lighting"],
+      meetingPoint: "Cistern entrance on Yerebatan Street",
+      accessibility: "Wheelchair accessible with ramps"
+    },
+    reviews: [
+      {
+        author: "Rachel N.",
+        rating: 5,
+        comment: "Absolutely magical underground experience! The Medusa heads are fascinating and the atmosphere is otherworldly.",
+        date: "December 2024"
+      },
+      {
+        author: "Thomas A.",
+        rating: 4,
+        comment: "Impressive ancient engineering! The lighting creates a mystical atmosphere. Don't miss the Medusa sculptures.",
+        date: "November 2024"
+      },
+      {
+        author: "Priya S.",
+        rating: 4,
+        comment: "Cool escape from the heat above ground. The columns are impressive and the history is fascinating.",
+        date: "October 2024"
+      }
+    ]
   },
   {
-    slug: "bosphorus-dinner-cruise",
-    title: "Bosphorus Dinner Cruise",
-    shortOverview: "Evening cruise with views, lights, skyline and dinner on the water between two continents.",
-    fullDescription: "Sail between Europe and Asia on a magical Bosphorus dinner cruise that showcases Istanbul's illuminated skyline from the water. This evening journey takes you along the strait that divides two continents, past Ottoman palaces, Byzantine fortresses, and modern mansions lining the shores. As the sun sets, watch the city transform with glittering lights reflecting on the water while enjoying a multi-course Turkish dinner featuring fresh seafood, traditional mezes, and regional specialties. The cruise passes iconic landmarks including Dolmabahçe Palace, Ortaköy Mosque, Bosphorus Bridge, and Maiden's Tower, all beautifully lit against the night sky. Live Turkish folk music and traditional performances often accompany dinner, creating an unforgettable cultural experience.",
-    image: "https://images.unsplash.com/photo-1541968618652-3f6c82ba5803?ixlib=rb-4.0.3&auto=format&fit=crop&w=2071&q=80",
-    rating: 4.5,
-    reviewCount: 14290,
-    priceRange: "From $30-55",
-    duration: "3 hours",
-    openingHours: "Evening departures (sunset timing)",
-    location: "Various Bosphorus piers",
-    bookingLink: "https://www.getyourguide.com/istanbul-l56/istanbul-bosphorus-dinner-cruise-show-with-private-table-t415437/",
+    slug: "spice-bazaar-food-tour",
+    title: "Spice Bazaar & Food Tasting Tour",
+    shortOverview: "Taste exotic spices, Turkish delights, and traditional foods in the aromatic Egyptian Bazaar.",
+    fullDescription: "The Spice Bazaar, also known as the Egyptian Bazaar, is a sensory explosion of colors, aromas, and flavors that has been the heart of Istanbul's spice trade for over 350 years. This L-shaped covered market features 88 shops selling everything from Turkish delight and baklava to exotic spices, herbal teas, and Turkish coffee. A guided food tour takes you through the best vendors, offering tastings of lokum (Turkish delight), different varieties of honey, dried fruits, nuts, and aromatic spices like saffron and sumac. The bazaar also features traditional Turkish breakfast items and fresh Turkish coffee roasted on-site.",
+    image: "https://images.unsplash.com/photo-1580500550469-8e8b930b6f10?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
+    rating: 4.4,
+    reviewCount: 11240,
+    priceRange: "$35",
+    duration: "2 hours",
+    openingHours: "Daily 8:00 AM - 7:30 PM (Sunday 9:30 AM - 6:30 PM)",
+    location: "Eminönü, near Golden Horn",
+    bookingLink: "https://www.getyourguide.com/spice-bazaar-istanbul-l4996/",
+    tripAdvisorUrl: "https://www.tripadvisor.com/Attraction_Review-g293974-d293982-Reviews-Spice_Bazaar-Istanbul.html",
     highlights: [
-      "Sail between Europe and Asia continents",
-      "3-course Turkish dinner with vegetarian options",
-      "Live cultural performances including dervishes, folk dances, and belly dancing",
-      "Pass illuminated landmarks: Maiden's Tower, Galata Tower, Bosphorus Bridges",
-      "Private tables and VIP options available"
+      "Exotic spices from around the world",
+      "Turkish delight and baklava tastings",
+      "Traditional Turkish coffee and tea",
+      "Historic 350-year-old covered market",
+      "Aromatic herbs and natural remedies"
     ],
     practicalInfo: {
-      duration: "3 hours",
-      bestTime: "Evening departure for sunset views and illuminated city",
-      included: ["3-course dinner cruise", "Live entertainment shows", "Soft drinks", "Private table seating"],
-      meetingPoint: "Departure pier (location specified with booking confirmation)",
-      accessibility: "Boat boarding assistance available, multiple deck viewing areas"
-    }
+      duration: "2 hours",
+      bestTime: "Morning for freshest selections",
+      included: ["Food tastings", "Spice explanations", "Shopping guidance"],
+      meetingPoint: "Main entrance facing New Mosque",
+      accessibility: "Wheelchair accessible main areas"
+    },
+    reviews: [
+      {
+        author: "Helen C.",
+        rating: 5,
+        comment: "Incredible variety of spices and the tastings were delicious! Great way to learn about Turkish cuisine and culture.",
+        date: "December 2024"
+      },
+      {
+        author: "Giuseppe M.",
+        rating: 4,
+        comment: "Wonderful sensory experience! The Turkish delight was amazing and I bought lots of spices to take home.",
+        date: "November 2024"
+      },
+      {
+        author: "Amy Z.",
+        rating: 5,
+        comment: "The aromas are incredible! Our guide was very knowledgeable about the different spices and their uses.",
+        date: "October 2024"
+      }
+    ]
+  },
+  {
+    slug: "turkish-hammam-experience",
+    title: "Authentic Turkish Bath (Hammam)",
+    shortOverview: "Relax in a traditional hammam with steam, scrub, and massage in historic Ottoman baths.",
+    fullDescription: "The Turkish bath, or hammam, is a centuries-old tradition that combines cleansing, relaxation, and social interaction. These historic bathhouses feature marble platforms heated from below, creating a steamy environment perfect for deep cleansing and relaxation. The traditional hammam experience includes time in the steam room, followed by an exfoliating scrub (kese) performed by an attendant, and finally a soap massage with olive oil soap bubbles. Many Istanbul hammams date back to Ottoman times and feature beautiful architecture with domed ceilings, marble details, and traditional tilework. This authentic experience offers insight into Turkish culture while providing ultimate relaxation.",
+    image: "https://images.unsplash.com/photo-1577717903315-1691ae25ab3f?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
+    rating: 4.3,
+    reviewCount: 8340,
+    priceRange: "$45",
+    duration: "1.5-2 hours",
+    openingHours: "Daily 8:00 AM - 11:00 PM (separate hours for men/women)",
+    location: "Çemberlitaş or Beyoğlu",
+    bookingLink: "https://www.getyourguide.com/istanbul-l56/thermal-turkish-hammam-spas-tc2060/",
+    tripAdvisorUrl: "https://www.tripadvisor.com/Attraction_Review-g293974-d12633198-Reviews-Turkish_Bath_Hammam-Istanbul.html",
+    highlights: [
+      "Traditional Ottoman-era bathhouses",
+      "Full body exfoliating scrub (kese)",
+      "Relaxing soap bubble massage",
+      "Historic marble and tile architecture",
+      "Authentic Turkish cultural experience"
+    ],
+    practicalInfo: {
+      duration: "1.5-2 hours",
+      bestTime: "Afternoon for most relaxing experience",
+      included: ["Steam session", "Body scrub", "Soap massage", "Tea/refreshments"],
+      meetingPoint: "Hammam reception (varies by location)",
+      accessibility: "Some locations have accessibility features"
+    },
+    reviews: [
+      {
+        author: "Jessica Y.",
+        rating: 5,
+        comment: "Incredibly relaxing and authentic experience! The scrub was intense but left my skin feeling amazing. Beautiful historic setting.",
+        date: "December 2024"
+      },
+      {
+        author: "Paul H.",
+        rating: 4,
+        comment: "Traditional Turkish experience that's both cultural and relaxing. The marble heated floors are amazing.",
+        date: "November 2024"
+      },
+      {
+        author: "Natasha V.",
+        rating: 4,
+        comment: "Unique cultural experience! The staff was professional and the historic bathhouse is beautiful.",
+        date: "October 2024"
+      }
+    ]
+  },
+  {
+    slug: "dolmabahce-palace-tour",
+    title: "Dolmabahçe Palace Tour",
+    shortOverview: "Visit the lavish 19th-century palace where Ottoman sultans lived in European-style luxury.",
+    fullDescription: "Dolmabahçe Palace represents the final period of the Ottoman Empire, built in the mid-19th century as sultans sought to modernize and adopt European architectural styles. This opulent palace stretches 600 meters along the Bosphorus and features 285 rooms, 46 halls, and 6 baths, all decorated with a stunning mix of Baroque, Rococo, and Neoclassical styles. The palace is famous for its crystal chandeliers, including a 4.5-ton Bohemian crystal chandelier, gold leaf decorations, and priceless artworks. Atatürk, the founder of modern Turkey, spent his final years here, and visitors can see his preserved quarters and the exact time of his death marked on all palace clocks.",
+    image: "https://images.unsplash.com/photo-1539650116574-75c0c6d44651?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
+    rating: 4.4,
+    reviewCount: 16750,
+    priceRange: "$42",
+    duration: "1.5-2 hours",
+    openingHours: "9:00 AM - 4:00 PM (closed Mondays and Thursdays)",
+    location: "Beşiktaş, along the Bosphorus",
+    bookingLink: "https://www.getyourguide.com/dolmabahce-palace-l2706/",
+    tripAdvisorUrl: "https://www.tripadvisor.com/Attraction_Review-g293974-d293988-Reviews-Dolmabahce_Palace-Istanbul.html",
+    highlights: [
+      "285 rooms of European-style luxury",
+      "4.5-ton Bohemian crystal chandelier",
+      "Atatürk's preserved living quarters",
+      "Stunning Bosphorus waterfront location",
+      "Mix of Baroque and Ottoman architecture"
+    ],
+    practicalInfo: {
+      duration: "1.5-2 hours",
+      bestTime: "Morning for cooler temperatures",
+      included: ["Palace tour", "Audio guide", "Gardens access"],
+      meetingPoint: "Palace main entrance on Dolmabahçe Street",
+      accessibility: "Limited wheelchair access due to historic structure"
+    },
+    reviews: [
+      {
+        author: "Victoria B.",
+        rating: 5,
+        comment: "Absolutely stunning palace! The crystal chandeliers are incredible and the Bosphorus views are amazing. Rich history throughout.",
+        date: "December 2024"
+      },
+      {
+        author: "Andrew L.",
+        rating: 4,
+        comment: "Impressive European-style palace with fascinating history. The Atatürk exhibits are particularly moving.",
+        date: "November 2024"
+      },
+      {
+        author: "Sophia K.",
+        rating: 4,
+        comment: "Beautiful palace with incredible luxury and detail. The gardens and waterfront setting are gorgeous.",
+        date: "October 2024"
+      }
+    ]
   }
 ]
 
