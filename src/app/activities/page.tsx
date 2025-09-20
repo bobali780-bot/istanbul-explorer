@@ -13,10 +13,34 @@ export default function ActivitiesPage() {
   useEffect(() => {
     async function fetchActivities() {
       try {
-        const data = await getActivities()
-        setActivities(data)
+        console.log('Client: Starting fetch...')
+
+        // Try API route first
+        const response = await fetch('/api/activities')
+        if (!response.ok) {
+          throw new Error(`API request failed: ${response.status}`)
+        }
+
+        const result = await response.json()
+        console.log('Client: API response:', result)
+
+        if (result.success) {
+          setActivities(result.activities)
+        } else {
+          throw new Error(result.error || 'API returned error')
+        }
       } catch (error) {
         console.error('Error fetching activities:', error)
+
+        // Fallback to direct API call
+        try {
+          console.log('Client: Trying direct API call fallback...')
+          const data = await getActivities()
+          console.log('Client: Direct API success:', data.length)
+          setActivities(data)
+        } catch (fallbackError) {
+          console.error('Fallback also failed:', fallbackError)
+        }
       } finally {
         setLoading(false)
       }
