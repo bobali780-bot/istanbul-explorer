@@ -609,7 +609,7 @@ export default function HomePage() {
       <section className="py-8 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
-            <AdSenseBanner slot="1234567890" format="auto" />
+            <AdSenseBanner format="auto" />
           </div>
         </div>
       </section>
