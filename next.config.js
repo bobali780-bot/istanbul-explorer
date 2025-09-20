@@ -4,7 +4,17 @@ const nextConfig = {
     optimizePackageImports: ['lucide-react']
   },
   images: {
-    domains: ['koqqkpitepqwlfjymcje.supabase.co']
+    domains: ['koqqkpitepqwlfjymcje.supabase.co'],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+      },
+      {
+        protocol: "https",
+        hostname: "upload.wikimedia.org",
+      },
+    ],
   }
 }
 

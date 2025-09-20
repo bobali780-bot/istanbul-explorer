@@ -83,7 +83,7 @@ export const top10Activities: Activity[] = [
     title: "Blue Mosque Visit",
     shortOverview: "Visit the stunning Sultan Ahmet Mosque, renowned for its blue tile work and majestic architecture.",
     fullDescription: "The Blue Mosque, officially known as Sultan Ahmet Mosque, represents the pinnacle of Ottoman architecture and Islamic art. Built between 1609-1616, this active mosque features six minarets, a rare architectural feature that initially caused controversy. The interior is adorned with over 20,000 handmade ceramic tiles in various shades of blue, giving the mosque its popular name. The prayer hall is crowned by a massive central dome supported by four 'elephant feet' columns. Visitors can explore the courtyard, admire the intricate tile work, and learn about Islamic culture and prayer traditions in this functioning house of worship.",
-    image: "https://images.unsplash.com/photo-1544986581-efac024faf62?auto=format&fit=crop&w=2000&q=80",
+    image: "https://images.unsplash.com/photo-1583778174183-4e4bb0b8d3cf?auto=format&fit=crop&w=2000&q=80",
     rating: 4.6,
     reviewCount: 34521,
     priceRange: "Free",
