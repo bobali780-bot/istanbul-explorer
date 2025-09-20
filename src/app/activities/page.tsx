@@ -45,7 +45,7 @@ export default function ActivitiesPage() {
             <p className="text-lg text-gray-600 mb-8">
               From ancient Byzantine churches to Ottoman palaces, bustling bazaars to serene Bosphorus cruises,
               Istanbul offers a perfect blend of cultural immersion, historical exploration, adventurous discoveries,
-              and authentic food experiences. Our carefully curated top 10 list ensures you don't miss the
+              and authentic food experiences. Our carefully curated top 10 list ensures you don&apos;t miss the
               essential experiences that define this magnificent city.
             </p>
             <div className="grid md:grid-cols-4 gap-6 text-center">

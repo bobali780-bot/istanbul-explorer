@@ -1,5 +1,3 @@
-"use client"
-
 import { notFound } from "next/navigation"
 import Image from "next/image"
 import Link from "next/link"
@@ -8,12 +6,12 @@ import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { Star, Clock, MapPin, Calendar, Users, ArrowLeft, ExternalLink, Camera, Info } from "lucide-react"
-import { getActivityBySlug, getAllActivitySlugs } from "@/data/activities"
+import { getActivityBySlug, getAllActivitySlugs, top10Activities } from "@/data/activities"
 
 interface ActivityPageProps {
-  params: {
+  params: Promise<{
     slug: string
-  }
+  }>
 }
 
 export async function generateStaticParams() {
@@ -23,12 +21,16 @@ export async function generateStaticParams() {
   }))
 }
 
-export default function ActivityPage({ params }: ActivityPageProps) {
-  const activity = getActivityBySlug(params.slug)
+export default async function ActivityPage({ params }: ActivityPageProps) {
+  const { slug } = await params
+  const activity = getActivityBySlug(slug)
 
   if (!activity) {
     notFound()
   }
+
+  const activityIndex = top10Activities.findIndex(a => a.slug === slug)
+  const ranking = activityIndex + 1
 
   return (
     <div className="min-h-screen bg-white">
@@ -53,7 +55,7 @@ export default function ActivityPage({ params }: ActivityPageProps) {
             <div className="space-y-4">
               <div className="flex flex-wrap items-center gap-4">
                 <Badge className="bg-yellow-500 text-black font-bold text-lg px-4 py-2">
-                  #{activity.ranking}
+                  #{ranking}
                 </Badge>
                 {activity.rating && (
                   <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-4 py-2">
@@ -128,19 +130,19 @@ export default function ActivityPage({ params }: ActivityPageProps) {
                 </div>
               </div>
 
-              {/* Tips */}
-              {activity.tips && activity.tips.length > 0 && (
+              {/* Practical Information */}
+              {activity.practicalInfo.included && activity.practicalInfo.included.length > 0 && (
                 <div>
                   <h3 className="text-2xl font-bold mb-6 text-gray-900 flex items-center gap-2">
                     <Camera className="w-6 h-6 text-green-600" />
-                    Insider Tips
+                    What&apos;s Included
                   </h3>
                   <div className="bg-green-50 border border-green-200 rounded-lg p-6">
                     <ul className="space-y-3">
-                      {activity.tips.map((tip, index) => (
+                      {activity.practicalInfo.included.map((item, index) => (
                         <li key={index} className="flex items-start gap-3 text-green-800">
                           <div className="w-2 h-2 bg-green-600 rounded-full mt-2 flex-shrink-0"></div>
-                          <span>{tip}</span>
+                          <span>{item}</span>
                         </li>
                       ))}
                     </ul>
@@ -214,8 +216,8 @@ export default function ActivityPage({ params }: ActivityPageProps) {
                       </div>
                       <Separator />
                       <div className="flex justify-between items-center">
-                        <span className="text-gray-600">Category</span>
-                        <span className="font-semibold">{activity.category}</span>
+                        <span className="text-gray-600">Type</span>
+                        <span className="font-semibold">Cultural Experience</span>
                       </div>
                       {activity.openingHours && (
                         <>

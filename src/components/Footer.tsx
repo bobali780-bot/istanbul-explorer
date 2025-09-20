@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useRef } from "react"
+import Link from "next/link"
 
 // Declare global adsbygoogle for TypeScript
 declare global {
@@ -73,7 +74,7 @@ export default function Footer() {
             <div>
               <h4 className="text-lg font-semibold mb-4">Explore</h4>
               <ul className="space-y-2 text-gray-300">
-                <li><a href="/activities" className="hover:text-white transition-colors">Activities</a></li>
+                <li><Link href="/activities" className="hover:text-white transition-colors">Activities</Link></li>
                 <li><a href="/food-drink" className="hover:text-white transition-colors">Food & Drink</a></li>
                 <li><a href="/hotels" className="hover:text-white transition-colors">Hotels</a></li>
                 <li><a href="/shopping" className="hover:text-white transition-colors">Shopping</a></li>
