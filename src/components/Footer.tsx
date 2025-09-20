@@ -45,7 +45,7 @@ export default function Footer() {
               className="adsbygoogle"
               style={{ display: 'block' }}
               data-ad-client="ca-pub-4768819231981592"
-              data-ad-slot="3572195600"
+              data-ad-slot="3173821922"
               data-ad-format="auto"
               data-full-width-responsive="true"
             />
