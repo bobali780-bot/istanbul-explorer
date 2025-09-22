@@ -37,25 +37,25 @@ export async function POST(request: NextRequest) {
         }
 
         // Scrape the search results page
-        const scrapeResponse = await app.scrapeUrl(searchUrl, {
+        const scrapeResponse = await app.scrape(searchUrl, {
           formats: ['html', 'markdown'],
           includeTags: ['img'],
           onlyMainContent: true
         })
 
-        if (scrapeResponse.success && scrapeResponse.data?.html) {
+        if (scrapeResponse?.html) {
           // Extract images from the HTML
           const imageRegex = /<img[^>]+src="([^"]+)"[^>]*alt="([^"]*)"[^>]*>/gi
           const images: string[] = []
           let match
 
-          while ((match = imageRegex.exec(scrapeResponse.data.html)) !== null) {
+          while ((match = imageRegex.exec(scrapeResponse.html)) !== null) {
             const imageUrl = match[1]
             const altText = match[2]
 
             // Filter for relevant images (check if alt text or URL contains activity-related keywords)
             const activityKeywords = activityName.toLowerCase().split(' ')
-            const isRelevant = activityKeywords.some(keyword =>
+            const isRelevant = activityKeywords.some((keyword: string) =>
               altText.toLowerCase().includes(keyword) ||
               imageUrl.toLowerCase().includes(keyword)
             )

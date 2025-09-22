@@ -1,11 +1,12 @@
 import { NextResponse } from 'next/server'
-import { scrapeActivityImages } from '@/lib/firecrawl'
+import FirecrawlService from '@/lib/firecrawl'
 
 export async function GET() {
   try {
     console.log('🖼️ API: Starting activity images fetch...')
 
-    const activityImages = await scrapeActivityImages()
+    const firecrawl = new FirecrawlService()
+    const activityImages = await firecrawl.searchActivity('Istanbul attractions')
 
     console.log(`✅ API: Successfully compiled ${activityImages.length} activity image collections`)
 

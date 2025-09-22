@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { scrapeAllData } from '@/lib/firecrawl'
+import FirecrawlService from '@/lib/firecrawl'
 
 export async function GET(request: NextRequest) {
   try {
     console.log('🌐 API Route: Starting data scraping...')
-    
+
     // Check if Firecrawl API key is available
     if (!process.env.FIRECRAWL_API_KEY) {
       console.error('❌ FIRECRAWL_API_KEY not found in environment variables')
@@ -15,7 +15,8 @@ export async function GET(request: NextRequest) {
     }
 
     // Scrape all data
-    const scrapedData = await scrapeAllData()
+    const firecrawl = new FirecrawlService()
+    const scrapedData = await firecrawl.searchActivity('Istanbul activities')
 
     console.log('✅ API Route: Data scraping completed successfully')
     

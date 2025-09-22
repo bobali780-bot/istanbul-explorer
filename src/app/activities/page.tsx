@@ -144,7 +144,7 @@ export default function ActivitiesPage() {
               <p className="text-gray-600">No activities found. Please add some activities to your Supabase database.</p>
             </div>
           ) : (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto place-items-center">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
               {activities.map((activity, index) => (
                 <ActivityCard
                   key={activity.slug}
