@@ -932,7 +932,7 @@ async function callGooglePlacesAPI(searchTerm: string, category: string): Promis
     const query = `${searchTerm} Istanbul Turkey`;
     const searchUrl = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURIComponent(query)}&key=${apiKey}`;
 
-    console.log(`Google Places Search URL: ${searchUrl}`);
+    console.log(`Google Places Search URL: ${searchUrl.replace(/key=[^&]+/, 'key=***REDACTED***')}`);
     const searchResponse = await fetch(searchUrl);
     const searchData = await searchResponse.json();
 
