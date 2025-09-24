@@ -3,7 +3,8 @@ import { NextResponse } from 'next/server';
 
 export const runtime = 'nodejs';
 
-const supabase = createClient(
+// Move supabase client creation into the function
+const getSupabase = () => createClient(
   process.env.SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
@@ -160,6 +161,7 @@ function normalizeTitleToAlias(title: string): string {
 
 export async function POST(request: Request) {
   try {
+    const supabase = getSupabase();
     const { id, target = 15 }: { id: number; target?: number } = await request.json();
 
     if (!id) {

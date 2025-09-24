@@ -3,13 +3,15 @@ import { NextResponse } from 'next/server';
 
 export const runtime = 'nodejs'; // ensure not edge
 
-const supabase = createClient(
+// Move supabase client creation into the function
+const getSupabase = () => createClient(
   process.env.SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
 export async function POST(request: Request) {
   try {
+    const supabase = getSupabase();
     const { action, items } = await request.json();
 
     if (!action || !items || !Array.isArray(items) || items.length === 0) {

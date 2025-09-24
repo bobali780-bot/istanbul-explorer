@@ -3,7 +3,8 @@ import { NextResponse } from 'next/server';
 
 export const runtime = 'nodejs';
 
-const supabase = createClient(
+// Move supabase client creation into the function
+const getSupabase = () => createClient(
   process.env.SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
@@ -15,6 +16,7 @@ interface ReviewAction {
 
 export async function POST(request: Request) {
   try {
+    const supabase = getSupabase();
     const { id, action }: ReviewAction = await request.json();
 
     if (!id || !action) {

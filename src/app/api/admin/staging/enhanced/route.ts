@@ -1,13 +1,15 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 
-const supabase = createClient(
+// Move supabase client creation into the function
+const getSupabase = () => createClient(
   process.env.SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 )
 
 export async function GET() {
   try {
+    const supabase = getSupabase();
     // Get successful staging items
     const { data: stagingItems, error: stagingError } = await supabase
       .from('staging_queue')
