@@ -1,13 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 
-const supabase = createClient(
+// Move supabase client creation into the function
+const getSupabase = () => createClient(
   process.env.SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 )
 
 export async function POST(request: NextRequest) {
   try {
+    const supabase = getSupabase();
     console.log('=== CLEARING ALL STAGING DATA ===')
 
     // 1. Clear staging_queue table and reset ID sequence
@@ -104,6 +106,7 @@ export async function POST(request: NextRequest) {
 // Alternative method using direct SQL if RPC doesn't work
 export async function DELETE(request: NextRequest) {
   try {
+    const supabase = getSupabase();
     console.log('=== CLEARING STAGING DATA WITH DIRECT SQL ===')
 
     // Use raw SQL to clear and reset sequences
