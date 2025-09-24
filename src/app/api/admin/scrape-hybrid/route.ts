@@ -964,13 +964,17 @@ async function callGooglePlacesAPI(searchTerm: string, category: string): Promis
 
     const result = detailsData.result;
 
-    // Process photos to get URLs
+    // Process photos to get URLs - request more and bigger images
     const photos: string[] = [];
     if (result.photos) {
-      for (const photo of result.photos.slice(0, 5)) {
-        const photoUrl = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=800&photoreference=${photo.photo_reference}&key=${apiKey}`;
+      // Increase limit from 5 to 10 when more photos are available
+      const photoLimit = Math.min(result.photos.length, 10);
+      for (const photo of result.photos.slice(0, photoLimit)) {
+        // Use larger maxwidth for better quality (Google will downscale if needed)
+        const photoUrl = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=1600&photoreference=${photo.photo_reference}&key=${apiKey}`;
         photos.push(photoUrl);
       }
+      console.log(`  📸 Google Places: Found ${result.photos.length} photos, using ${photoLimit} at 1600px width`);
     }
 
     return {
@@ -1872,7 +1876,7 @@ function buildBulletproofSearchQueries(searchTerm: string, category: string, sou
   return [...new Set(queries)].slice(0, 6);
 }
 
-// BULLETPROOF IMAGE DEDUPLICATION - Advanced URL and content-based deduplication
+// ENHANCED IMAGE DEDUPLICATION - Improved URL normalization and smarter filtering
 function bulletproofImageDeduplication(urls: string[]): string[] {
   const seen = new Set<string>();
   const filenameHashes = new Set<string>();
@@ -1883,24 +1887,54 @@ function bulletproofImageDeduplication(urls: string[]): string[] {
     if (!url || typeof url !== 'string') continue;
 
     try {
-      // Normalize URL and extract base components
-      const normalizedUrl = url.split('?')[0].toLowerCase();
       const urlObj = new URL(url);
+      const hostname = urlObj.hostname.toLowerCase();
+      
+      // Enhanced URL normalization - remove transient query params
+      const transientParams = ['ixid', 'ixlib', 'q', 'w', 'h', 'auto', 'fit', 'fm', 'crop', 'cs', 'maxwidth', 'maxheight', 'size', 'orientation'];
+      const normalizedSearchParams = new URLSearchParams();
+      
+      // Keep only non-transient parameters
+      urlObj.searchParams.forEach((value, key) => {
+        if (!transientParams.includes(key.toLowerCase())) {
+          normalizedSearchParams.set(key, value);
+        }
+      });
+      
+      const baseUrl = `${urlObj.protocol}//${hostname}${urlObj.pathname}`;
+      const normalizedUrl = normalizedSearchParams.toString() ? 
+        `${baseUrl}?${normalizedSearchParams.toString()}` : baseUrl;
+
+      // Extract filename for content-based deduplication
       const filename = urlObj.pathname.split('/').pop() || '';
+      const baseFilename = filename.split('.')[0];
+      const cleanName = baseFilename.replace(/[-_\d+]/g, '').toLowerCase();
 
       // Create content-based hash for similarity detection
-      const baseFilename = filename.split('.')[0];
-      const cleanName = baseFilename.replace(/[-_\d+]/g, '');
-      const contentHash = `${urlObj.hostname}_${cleanName}`;
+      const contentHash = `${hostname}_${cleanName}`;
 
       // Skip exact URL duplicates
       if (seen.has(normalizedUrl)) continue;
 
-      // Skip similar content (same host + similar filename)
-      if (cleanName.length > 5 && contentHashes.has(contentHash)) continue;
+      // Skip similar content (same host + similar filename) - but allow different sizes for trusted hosts
+      if (cleanName.length > 5 && contentHashes.has(contentHash)) {
+        // Special handling for Wikimedia - treat different sizes as duplicates
+        if (hostname.includes('wikimedia.org') || hostname.includes('wikipedia.org')) {
+          continue;
+        }
+        // For other hosts, allow different sizes (e.g., Unsplash 400px vs 800px)
+        // Only skip if it's the exact same size variant
+        const sizeMatch = url.match(/[wh]=(\d+)/);
+        const existingSizeMatch = Array.from(seen).find(seenUrl => seenUrl.includes(hostname) && seenUrl.includes(cleanName))?.match(/[wh]=(\d+)/);
+        if (sizeMatch && existingSizeMatch && sizeMatch[1] === existingSizeMatch[1]) {
+          continue;
+        }
+      }
 
-      // Skip filename variants (resized versions of same image)
-      if (cleanName.length > 5 && filenameHashes.has(cleanName)) continue;
+      // Skip filename variants for Wikimedia (different sizes of same image)
+      if (hostname.includes('wikimedia.org') && cleanName.length > 5 && filenameHashes.has(cleanName)) {
+        continue;
+      }
 
       // Add to tracking sets
       seen.add(normalizedUrl);
@@ -1923,8 +1957,19 @@ function bulletproofImageDeduplication(urls: string[]): string[] {
   return deduplicated;
 }
 
-// ENHANCED IMAGE VALIDATION - Strict quality rules for 15-30 image pipeline
+// ENHANCED IMAGE VALIDATION - Feature-flagged relaxed validation
 async function validateImageBatchEnhanced(urls: string[], searchTerm: string, category: string): Promise<ImageValidationResult> {
+  const { IMAGE_POLICY, isTrustedHost, isAllowedExtension } = await import('@/lib/imagePolicy');
+  
+  const rejectionReasons = {
+    invalidUrl: 0,
+    badExtension: 0,
+    headFailed: 0,
+    smallFile: 0,
+    badAspect: 0,
+    lowRelevance: 0
+  };
+
   const validationStats = {
     total: urls.length,
     urlValid: 0,
@@ -1939,55 +1984,71 @@ async function validateImageBatchEnhanced(urls: string[], searchTerm: string, ca
   const validImages: string[] = [];
   let rejectedCount = 0;
 
-  console.log(`    🔍 Enhanced validation: ${urls.length} images for "${searchTerm}"`);
+  console.log(`    🔍 ${IMAGE_POLICY.RELAXED_VALIDATION ? 'RELAXED' : 'STRICT'} validation: ${urls.length} images for "${searchTerm}"`);
 
   for (const url of urls) {
     try {
       // Stage 1: URL validation
       if (!url || typeof url !== 'string' || !url.startsWith('http')) {
+        rejectionReasons.invalidUrl++;
         rejectedCount++;
         continue;
       }
       validationStats.urlValid++;
 
-      // Stage 2: Accessibility check
-      const response = await fetch(url, { 
-        method: 'HEAD', 
-        headers: { 'User-Agent': 'Istanbul Explorer Bot 1.0' }
-      });
-      
-      if (!response.ok) {
-        rejectedCount++;
-        continue;
-      }
-      validationStats.accessible++;
-
-      // Stage 3: Content type validation
-      const contentType = response.headers.get('content-type') || '';
-      if (!contentType.startsWith('image/')) {
+      // Stage 2: File extension check (always required)
+      if (!isAllowedExtension(url)) {
+        rejectionReasons.badExtension++;
         rejectedCount++;
         continue;
       }
       validationStats.fileTypePass++;
 
-      // Stage 4: Resolution validation (must be ≥ 800px wide)
-      const contentLength = parseInt(response.headers.get('content-length') || '0');
-      if (contentLength < 50000) { // Reject tiny images (< 50KB)
-        rejectedCount++;
-        continue;
+      // Stage 3: Trusted host check - skip HEAD for trusted hosts
+      const isTrusted = isTrustedHost(url);
+      let skipHeadCheck = IMAGE_POLICY.SKIP_HEAD_FOR_TRUSTED && isTrusted;
+      
+      if (skipHeadCheck) {
+        console.log(`    🛡️ Skipping HEAD check for trusted host: ${new URL(url).hostname}`);
+        validationStats.accessible++;
+        validationStats.resolutionPass++; // Assume OK for trusted hosts
+      } else {
+        // Stage 4: Accessibility check (only for non-trusted hosts)
+        const response = await fetch(url, { 
+          method: 'HEAD', 
+          headers: { 'User-Agent': 'Istanbul Explorer Bot 1.0' }
+        });
+        
+        if (!response.ok) {
+          rejectionReasons.headFailed++;
+          rejectedCount++;
+          continue;
+        }
+        validationStats.accessible++;
+
+        // Stage 5: File size check (only for non-trusted hosts)
+        const contentLength = parseInt(response.headers.get('content-length') || '0');
+        if (contentLength < IMAGE_POLICY.MIN_FILE_KB * 1024) {
+          rejectionReasons.smallFile++;
+          rejectedCount++;
+          continue;
+        }
+        validationStats.resolutionPass++;
       }
 
-      // Stage 5: Aspect ratio validation (reject extreme panoramas)
-      const aspectRatioValid = await validateImageAspectRatio(url);
+      // Stage 6: Aspect ratio validation (relaxed rules)
+      const aspectRatioValid = await validateImageAspectRatioRelaxed(url);
       if (!aspectRatioValid) {
+        rejectionReasons.badAspect++;
         rejectedCount++;
         continue;
       }
       validationStats.aspectRatioPass++;
 
-      // Stage 6: Relevance validation
+      // Stage 7: Relevance validation (relaxed threshold)
       const relevanceCheck = validateImageRelevance(url, searchTerm, category);
-      if (relevanceCheck.confidence < 0.3) {
+      if (relevanceCheck.confidence < 0.1) { // Much more lenient threshold
+        rejectionReasons.lowRelevance++;
         rejectedCount++;
         continue;
       }
@@ -1998,6 +2059,7 @@ async function validateImageBatchEnhanced(urls: string[], searchTerm: string, ca
       validationStats.final++;
 
     } catch (error) {
+      rejectionReasons.headFailed++;
       rejectedCount++;
       console.log(`    ❌ Validation failed for ${url}: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
@@ -2005,6 +2067,7 @@ async function validateImageBatchEnhanced(urls: string[], searchTerm: string, ca
 
   console.log(`    ✅ Enhanced validation complete: ${validImages.length}/${urls.length} passed`);
   console.log(`    📊 Stats: URL=${validationStats.urlValid}, Access=${validationStats.accessible}, Type=${validationStats.fileTypePass}, Aspect=${validationStats.aspectRatioPass}, Relevant=${validationStats.relevancePass}`);
+  console.log(`    🚫 Rejections: ${JSON.stringify(rejectionReasons)}`);
 
   return {
     validImages,
@@ -2625,6 +2688,23 @@ async function validateImageUrl(url: string): Promise<{
 }
 
 // Validate image aspect ratio (reject extreme panoramas)
+// Validate image aspect ratio (relaxed version for trusted hosts)
+async function validateImageAspectRatioRelaxed(url: string): Promise<boolean> {
+  try {
+    const { IMAGE_POLICY } = await import('@/lib/imagePolicy');
+    
+    // For trusted hosts, skip aspect ratio validation
+    if (IMAGE_POLICY.SKIP_HEAD_FOR_TRUSTED && IMAGE_POLICY.TRUSTED_HOSTS.some(host => url.includes(host))) {
+      return true;
+    }
+    
+    // For non-trusted hosts, use relaxed validation
+    return await validateImageAspectRatio(url);
+  } catch {
+    return false;
+  }
+}
+
 async function validateImageAspectRatio(url: string): Promise<boolean> {
   try {
     // Create a temporary image element to check dimensions
@@ -2635,12 +2715,13 @@ async function validateImageAspectRatio(url: string): Promise<boolean> {
         resolve(false); // Timeout - assume invalid
       }, 3000);
 
-      img.onload = () => {
+      img.onload = async () => {
         clearTimeout(timeout);
         const aspectRatio = img.width / img.height;
         
-        // Reject extreme panoramas (wider than 4:1) or very tall crops (taller than 1:3)
-        const isValid = aspectRatio >= 0.33 && aspectRatio <= 4.0;
+        // Use configurable aspect ratio limits
+        const { IMAGE_POLICY } = await import('@/lib/imagePolicy');
+        const isValid = aspectRatio >= IMAGE_POLICY.MIN_AR && aspectRatio <= IMAGE_POLICY.MAX_AR;
         resolve(isValid);
       };
 
@@ -2772,14 +2853,17 @@ function validateImageRelevance(imageUrl: string, searchTerm: string, category: 
 function buildEnhancedSearchQueries(searchTerm: string, category: string): string[] {
   const categoryTerms = getCategorySpecificTerms(category);
   const istanbulKeywords = ['istanbul', 'turkish', 'turkey', 'ottoman', 'byzantine'];
-
   const queries: string[] = [];
 
-  // Primary query: specific venue + Istanbul
-  queries.push(`${searchTerm} Istanbul`);
+  // Enhanced primary queries with local name variants
+  const localVariants = generateLocalNameVariants(searchTerm);
+  for (const variant of localVariants) {
+    queries.push(`${variant} Istanbul`);
+    queries.push(`${variant} Turkey`);
+  }
 
   // Secondary queries: category-specific terms + Istanbul
-  for (const term of categoryTerms.slice(0, 3)) { // Limit to top 3 category terms
+  for (const term of categoryTerms.slice(0, 3)) {
     queries.push(`${term} Istanbul`);
   }
 
@@ -2793,7 +2877,41 @@ function buildEnhancedSearchQueries(searchTerm: string, category: string): strin
   // Final fallback: generic Istanbul + category
   queries.push(`Istanbul ${category}`);
 
-  return queries;
+  // Remove duplicates and return
+  return [...new Set(queries)];
+}
+
+// Generate local name variants for better search results
+function generateLocalNameVariants(searchTerm: string): string[] {
+  const variants: string[] = [searchTerm];
+  
+  // Common Turkish/English translations and variations
+  const translations: Record<string, string[]> = {
+    'spice bazaar': ['Egyptian Bazaar', 'Spice Market', 'Eminönü bazaar'],
+    'grand bazaar': ['Kapalıçarşı', 'Covered Bazaar'],
+    'hagia sophia': ['Ayasofya', 'Hagia Sophia Museum'],
+    'blue mosque': ['Sultan Ahmed Mosque', 'Sultanahmet Camii'],
+    'dolmabahçe palace': ['Dolmabahce Palace', 'Dolmabahçe Sarayı'],
+    'topkapi palace': ['Topkapı Palace', 'Topkapi Sarayı'],
+    'galata tower': ['Galata Kulesi', 'Galata Tower'],
+    'rumeli fortress': ['Rumeli Hisarı', 'Rumeli Hisar'],
+    'maiden\'s tower': ['Kız Kulesi', 'Maiden Tower', 'Leander\'s Tower'],
+    'basilica cistern': ['Yerebatan Sarnıcı', 'Yerebatan Cistern'],
+    'suleymaniye mosque': ['Süleymaniye Mosque', 'Suleymaniye Camii'],
+    'chora church': ['Kariye Museum', 'Chora Museum'],
+    'pera museum': ['Pera Müzesi'],
+    'istanbul modern': ['Istanbul Modern Art Museum'],
+    'miniaturk': ['Miniatürk', 'Miniaturk Park']
+  };
+
+  const lowerTerm = searchTerm.toLowerCase();
+  for (const [key, translationList] of Object.entries(translations)) {
+    if (lowerTerm.includes(key)) {
+      variants.push(...translationList);
+    }
+  }
+
+  return variants;
 }
 
 // Generate placeholder images - use local default placeholder instead of external images
