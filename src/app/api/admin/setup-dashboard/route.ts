@@ -9,6 +9,7 @@ const getSupabase = () => createClient(
 
 export async function POST() {
   try {
+    const supabase = getSupabase();
     console.log('Setting up admin dashboard schema...');
 
     const results = [];

@@ -9,6 +9,7 @@ const getSupabase = () => createClient(
 
 export async function POST() {
   try {
+    const supabase = getSupabase();
     // First clear all existing media
     await supabase.from('universal_media').delete().eq('entity_type', 'activity');
 

@@ -9,6 +9,7 @@ const getSupabase = () => createClient(
 
 export async function POST(request: Request) {
   try {
+    const supabase = getSupabase();
     console.log('Fixing database schema - adding missing columns...');
 
     // Add missing columns to staging_queue
@@ -91,6 +92,7 @@ export async function POST(request: Request) {
 
 export async function GET(request: Request) {
   try {
+    const supabase = getSupabase();
     // Check current schema
     const { data: columns, error } = await supabase
       .from('staging_queue')

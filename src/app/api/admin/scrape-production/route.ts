@@ -106,7 +106,7 @@ export async function POST(request: Request) {
         const processedItem = await processScrapedData(scrapedData, searchTerm, category, imagesPerItem);
 
         // Check for duplicates
-        const isDuplicate = await checkDuplicate(processedItem.title, category);
+        const isDuplicate = await checkDuplicate(supabase, processedItem.title, category);
         if (isDuplicate) {
           errors.push(`Duplicate found for: ${searchTerm}`);
           processedCount++;
@@ -618,7 +618,7 @@ function calculateConfidenceScore(scrapedData: any[], content: string): number {
 }
 
 // Check for duplicates
-async function checkDuplicate(title: string, category: string): Promise<boolean> {
+async function checkDuplicate(supabase: any, title: string, category: string): Promise<boolean> {
   const { data } = await supabase
     .from('staging_queue')
     .select('id')

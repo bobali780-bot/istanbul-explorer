@@ -723,7 +723,7 @@ export async function POST(request: Request) {
         console.log(`Processing: ${searchTerm} (${processedCount + 1}/${searchTerms.length})`);
 
         // Step 1: Get structured data from APIs
-        const structuredData = await getStructuredData(searchTerm, userCategory);
+        const structuredData = await getStructuredData(searchTerm, userCategory || 'auto');
 
         if (!structuredData) {
           termResult.error = {
@@ -1953,7 +1953,6 @@ async function validateImageBatchEnhanced(urls: string[], searchTerm: string, ca
       // Stage 2: Accessibility check
       const response = await fetch(url, { 
         method: 'HEAD', 
-        timeout: 5000,
         headers: { 'User-Agent': 'Istanbul Explorer Bot 1.0' }
       });
       
@@ -3098,19 +3097,7 @@ async function createStagingItem(rawContent: any, enrichedData: any, allImages: 
       console.error(`  Attempted payload:`, stagingPayload);
       return {
         success: false,
-        error: {
-          step: 'database_save',
-          message: `Database save failed: ${error.message}`,
-          details: {
-            supabase_error: {
-              code: error.code,
-              message: error.message,
-              details: error.details,
-              hint: error.hint
-            },
-            attempted_payload: stagingPayload
-          }
-        },
+        error: `Database save failed: ${error.message}`,
         usesPlaceholder
       };
     }

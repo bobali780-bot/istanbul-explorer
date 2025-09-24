@@ -25,6 +25,7 @@ interface UnsplashImage {
 
 export async function POST(request: NextRequest) {
   try {
+    const supabase = getSupabase();
     const { entityType, entityId, targetEntity } = await request.json();
 
     console.log(`Starting content generation for ${entityType}:${entityId}`);
@@ -52,19 +53,19 @@ export async function POST(request: NextRequest) {
 
     try {
       // 1. Fetch Wikipedia content for description enhancement
-      results.wikipediaContent = await fetchWikipediaContent(targetEntity) || null;
+      results.wikipediaContent = await fetchWikipediaContent(supabase, targetEntity) || null;
 
       // 2. Fetch free images from Unsplash
-      results.images = await fetchUnsplashImages(targetEntity, 5);
+      results.images = await fetchUnsplashImages(supabase, targetEntity, 5);
 
       // 3. Calculate popularity score from multiple free sources
-      results.popularityScore = await calculatePopularityScore(targetEntity);
+      results.popularityScore = await calculatePopularityScore(supabase, targetEntity);
 
       // 4. Update database with generated content
-      await updateEntityContent(entityType, entityId, results);
+      await updateEntityContent(supabase, entityType, entityId, results);
 
       // 5. Generate nearby recommendations
-      results.nearbyRecommendations = await generateNearbyRecommendations(entityType, entityId);
+      results.nearbyRecommendations = await generateNearbyRecommendations(supabase, entityType, entityId);
 
       // Update automation log
       await supabase
@@ -116,7 +117,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-async function fetchWikipediaContent(entityName: string): Promise<WikipediaResponse | null> {
+async function fetchWikipediaContent(supabase: any, entityName: string): Promise<WikipediaResponse | null> {
   try {
     // Track API usage
     await supabase
@@ -170,7 +171,7 @@ async function fetchWikipediaContent(entityName: string): Promise<WikipediaRespo
   }
 }
 
-async function fetchUnsplashImages(query: string, count: number = 5): Promise<UnsplashImage[]> {
+async function fetchUnsplashImages(supabase: any, query: string, count: number = 5): Promise<UnsplashImage[]> {
   try {
     // Track API usage
     await supabase
@@ -205,12 +206,12 @@ async function fetchUnsplashImages(query: string, count: number = 5): Promise<Un
   }
 }
 
-async function calculatePopularityScore(entityName: string): Promise<number> {
+async function calculatePopularityScore(supabase: any, entityName: string): Promise<number> {
   let score = 0;
 
   try {
     // Base score from Wikipedia pageviews (if available)
-    const wikipediaData = await fetchWikipediaContent(entityName);
+    const wikipediaData = await fetchWikipediaContent(supabase, entityName);
     if (wikipediaData?.pageviews) {
       const totalViews = Object.values(wikipediaData.pageviews).reduce((sum: number, views: any) => sum + views, 0);
       score += Math.min(totalViews / 1000, 50); // Cap at 50 points
@@ -229,7 +230,7 @@ async function calculatePopularityScore(entityName: string): Promise<number> {
   }
 }
 
-async function updateEntityContent(entityType: string, entityId: number, results: any) {
+async function updateEntityContent(supabase: any, entityType: string, entityId: number, results: any) {
   try {
     const tableName = `${entityType}s`; // activities, restaurants, hotels, shopping_venues
 
@@ -286,7 +287,7 @@ async function updateEntityContent(entityType: string, entityId: number, results
   }
 }
 
-async function generateNearbyRecommendations(entityType: string, entityId: number) {
+async function generateNearbyRecommendations(supabase: any, entityType: string, entityId: number) {
   try {
     // Get current entity details
     const { data: currentEntity } = await supabase

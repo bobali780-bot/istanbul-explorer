@@ -91,9 +91,9 @@ export async function POST(request: Request) {
       await supabase
         .from('ai_enhancement_log')
         .insert({
-          staging_item_id: item_ids[0], // For bulk actions, log against first item
+          staging_item_id: item_ids?.[0] || null, // For bulk actions, log against first item
           enhancement_type: action,
-          original_content: { action: action, item_count: item_ids.length },
+          original_content: { action: action, item_count: item_ids?.length || 0 },
           enhanced_content: { affected_items: data?.length || 0 },
           model_used: 'manual_review',
           created_at: timestamp
@@ -104,7 +104,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({
       success: true,
-      message: `Successfully ${action}ed ${item_ids.length} item(s)`,
+      message: `Successfully ${action}ed ${item_ids?.length || 0} item(s)`,
       affected_items: data?.length || 0
     });
 

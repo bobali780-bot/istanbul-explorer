@@ -9,6 +9,7 @@ const getSupabase = () => createClient(
 
 export async function GET() {
   try {
+    const supabase = getSupabase();
     // Check universal_media table
     const { data: media, error: mediaError } = await supabase
       .from('universal_media')

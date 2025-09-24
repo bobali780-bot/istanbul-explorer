@@ -16,6 +16,7 @@ interface AIEnhancementRequest {
 
 export async function POST(request: Request) {
   try {
+    const supabase = getSupabase();
     const { staging_ids, enhancement_type, target_audience = 'tourists', style = 'engaging' }: AIEnhancementRequest = await request.json();
 
     if (!staging_ids || staging_ids.length === 0) {
@@ -330,6 +331,7 @@ function generateDefaultDescription(context: any): string {
 
 export async function GET(request: Request) {
   try {
+    const supabase = getSupabase();
     const url = new URL(request.url);
     const action = url.searchParams.get('action');
 

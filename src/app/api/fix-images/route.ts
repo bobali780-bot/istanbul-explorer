@@ -9,6 +9,7 @@ const getSupabase = () => createClient(
 
 export async function POST() {
   try {
+    const supabase = getSupabase();
     // Get all activities
     const { data: activities, error: activitiesError } = await supabase
       .from('activities')

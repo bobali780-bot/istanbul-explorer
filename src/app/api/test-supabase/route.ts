@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Move supabase client creation into the function
-const getSupabase = () => createClient(supabaseUrl, supabaseKey)
+    const supabase = createClient(supabaseUrl, supabaseKey)
 
     const { data, error } = await supabase
       .from('activities')

@@ -9,6 +9,7 @@ const getSupabase = () => createClient(
 
 export async function POST() {
   try {
+    const supabase = getSupabase();
     // Try to insert a single test image
     const { data, error } = await supabase
       .from('universal_media')
