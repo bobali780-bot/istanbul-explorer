@@ -1,0 +1,2357 @@
+npm warn Unknown cli config "--port". This will stop working in the next major version of npm.
+
+> istanbul-explorer@0.1.0 dev
+> next dev
+
+   ▲ Next.js 15.5.3
+   - Local:        http://localhost:3000
+   - Network:      http://192.168.0.30:3000
+   - Environments: .env.local
+   - Experiments (use with caution):
+     · optimizePackageImports
+
+ ✓ Starting...
+ ✓ Ready in 991ms
+ ○ Compiling /admin ...
+ ✓ Compiled /admin in 919ms (677 modules)
+ GET /admin 200 in 1115ms
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: incorrect header check
+ ✓ Compiled in 105ms (274 modules)
+ ⨯ ./src/app/admin/staging/page.tsx
+Error:   [31mx[0m Unterminated regexp literal
+      ,-[[36;1;4m/Users/haidarazad/Desktop/Cursor/Istanbul/BestIstanbul/src/app/admin/staging/page.tsx[0m:1453:1]
+ [2m1450[0m |                 )}
+ [2m1451[0m |               </div>
+ [2m1452[0m |             </div>
+ [2m1453[0m |           </div>
+      : [35;1m           ^^^^^[0m
+ [2m1454[0m |         </div>
+ [2m1455[0m |       )}
+      `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./src/app/admin/staging/page.tsx
+ ⨯ ./src/app/admin/staging/page.tsx
+Error:   [31mx[0m Unterminated regexp literal
+      ,-[[36;1;4m/Users/haidarazad/Desktop/Cursor/Istanbul/BestIstanbul/src/app/admin/staging/page.tsx[0m:1453:1]
+ [2m1450[0m |                 )}
+ [2m1451[0m |               </div>
+ [2m1452[0m |             </div>
+ [2m1453[0m |           </div>
+      : [35;1m           ^^^^^[0m
+ [2m1454[0m |         </div>
+ [2m1455[0m |       )}
+      `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./src/app/admin/staging/page.tsx
+ ○ Compiling /_not-found ...
+ ⨯ ./src/app/admin/staging/page.tsx
+Error:   [31mx[0m Unterminated regexp literal
+      ,-[[36;1;4m/Users/haidarazad/Desktop/Cursor/Istanbul/BestIstanbul/src/app/admin/staging/page.tsx[0m:1453:1]
+ [2m1450[0m |                 )}
+ [2m1451[0m |               </div>
+ [2m1452[0m |             </div>
+ [2m1453[0m |           </div>
+      : [35;1m           ^^^^^[0m
+ [2m1454[0m |         </div>
+ [2m1455[0m |       )}
+      `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./src/app/admin/staging/page.tsx
+ GET /admin/staging 500 in 904ms
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: incorrect header check
+ ✓ Compiled /_error in 121ms (426 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⨯ ./src/app/admin/staging/page.tsx
+Error:   [31mx[0m Unterminated regexp literal
+      ,-[[36;1;4m/Users/haidarazad/Desktop/Cursor/Istanbul/BestIstanbul/src/app/admin/staging/page.tsx[0m:1453:1]
+ [2m1450[0m |                 )}
+ [2m1451[0m |               </div>
+ [2m1452[0m |             </div>
+ [2m1453[0m |           </div>
+      : [35;1m           ^^^^^[0m
+ [2m1454[0m |         </div>
+ [2m1455[0m |       )}
+      `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./src/app/admin/staging/page.tsx
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⨯ ./src/app/admin/staging/page.tsx
+Error:   [31mx[0m Unterminated regexp literal
+      ,-[[36;1;4m/Users/haidarazad/Desktop/Cursor/Istanbul/BestIstanbul/src/app/admin/staging/page.tsx[0m:1453:1]
+ [2m1450[0m |                 )}
+ [2m1451[0m |               </div>
+ [2m1452[0m |             </div>
+ [2m1453[0m |           </div>
+      : [35;1m           ^^^^^[0m
+ [2m1454[0m |         </div>
+ [2m1455[0m |       )}
+      `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./src/app/admin/staging/page.tsx
+ GET /admin/staging 500 in 43ms
+ ○ Compiling /_not-found ...
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ ✓ Compiled /_not-found in 152ms (984 modules)
+ GET /admin/staging 404 in 167ms
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ ✓ Compiled in 187ms (970 modules)
+ GET /admin/staging 404 in 132ms
+ ✓ Compiled in 64ms (429 modules)
+ GET /admin/staging 404 in 43ms
+ GET /admin/staging 404 in 22ms
+ ✓ Compiled in 70ms (970 modules)
+ ○ Compiling /admin/staging ...
+ ✓ Compiled /admin/staging in 679ms (1295 modules)
+ GET /admin/staging 200 in 859ms
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: incorrect header check
+ ✓ Compiled in 70ms (572 modules)
+ GET /admin/staging 200 in 14ms
+ ✓ Compiled /admin in 149ms (744 modules)
+ GET /admin 200 in 289ms
+ GET /admin/staging 200 in 39ms
+ ✓ Compiled /admin/hybrid-scraping in 243ms (1317 modules)
+ GET /admin/hybrid-scraping 200 in 288ms
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: incorrect header check
+ ✓ Compiled /api/admin/scrape-hybrid in 352ms (1396 modules)
+Starting hybrid scraping for 10 terms with category: auto-detect
+Processing: Rahmi M. Koç Museum (1/10)
+  Getting structured data for: Rahmi M. Koç Museum
+Google Places Search URL: https://maps.googleapis.com/maps/api/place/textsearch/json?query=Rahmi%20M.%20Ko%C3%A7%20Museum%20Istanbul%20Turkey&key=AIzaSyCegyoEhH9qphlL-Zbb2FgDDwFQq9HdV0w
+Google Places API Response Status: 200
+Google Places API Response: {
+  html_attributions: [],
+  results: [
+    {
+      business_status: 'OPERATIONAL',
+      formatted_address: 'Piri Paşa, Rahmi M. Koç Caddesi No: 3, 34445 Beyoğlu/İstanbul, Türkiye',
+      geometry: [Object],
+      icon: 'https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/museum-71.png',
+      icon_background_color: '#13B5C7',
+      icon_mask_base_uri: 'https://maps.gstatic.com/mapfiles/place_api/icons/v2/museum_pinlet',
+      name: 'Rahmi M. Koç Museum',
+      opening_hours: [Object],
+      photos: [Array],
+      place_id: 'ChIJwdTlr6uwyhQRXrwLsScTNkQ',
+      plus_code: [Object],
+      rating: 4.8,
+      reference: 'ChIJwdTlr6uwyhQRXrwLsScTNkQ',
+      types: [Array],
+      user_ratings_total: 25992
+    }
+  ],
+  status: 'OK'
+}
+  Detected category: activities for Rahmi M. Koç Museum
+  About to validate with data: {
+  title: 'Rahmi M. Koç Museum',
+  address: 'Piri Paşa, Rahmi M. Koç Caddesi No: 3, 34445 Beyoğlu/İstanbul, Türkiye',
+  types: [
+    'establishment',
+    'museum',
+    'point_of_interest',
+    'tourist_attraction'
+  ]
+}
+Activity validation for "Rahmi M. Koç Museum": {
+  titleMatch: true,
+  matchReason: 'Direct match',
+  isInIstanbul: true,
+  hasRequiredFields: true,
+  isNotMismatch: true
+}
+  Validation result: true
+  Enriching with Firecrawl: http://www.rmk-museum.org.tr/istanbul/
+  Skipping enrichment - domain not in allowlist: www.rmk-museum.org.tr
+  Getting images for Rahmi M. Koç Museum (activities) - target: 12, have: 5
+  Need 7 more images, fetching from Unsplash...
+  Trying 9 search queries for images
+  Query "Rahmi M. Koç Museum Istanbul" returned 30 images
+  Added 11 images from Unsplash for "Rahmi M. Koç Museum"
+  After deduplication: 12 images
+  Validating 12 images for quality and relevance...
+  Validating 12 images for Rahmi M. Koç Museum (activities)
+  Image validation complete: 0/12 valid, 12 filtered
+  Image validation complete: 0/12 valid images
+  Filtered out 12 invalid/irrelevant images
+  Still under target (0/12), using broader search...
+  Trying 9 search queries for images
+  Query "activities Istanbul Istanbul" returned 30 images
+  Validating 6 images for Rahmi M. Koç Museum (activities)
+  Image validation complete: 0/6 valid, 6 filtered
+  Broad search "activities Istanbul" added 0 valid images (total: 0)
+  Trying 9 search queries for images
+  Query "Istanbul activities Istanbul" returned 30 images
+  Validating 6 images for Rahmi M. Koç Museum (activities)
+  Image validation complete: 0/6 valid, 6 filtered
+  Broad search "Istanbul activities" added 0 valid images (total: 0)
+  Trying 9 search queries for images
+  Query "Istanbul landmark Istanbul" returned 30 images
+  Validating 6 images for Rahmi M. Koç Museum (activities)
+  Image validation complete: 0/6 valid, 6 filtered
+  Broad search "Istanbul landmark" added 0 valid images (total: 0)
+  Trying 9 search queries for images
+  Query "Turkish architecture Istanbul" returned 30 images
+  Validating 6 images for Rahmi M. Koç Museum (activities)
+  Image validation complete: 0/6 valid, 6 filtered
+  Broad search "Turkish architecture" added 0 valid images (total: 0)
+  Using high-quality Istanbul placeholders to reach minimum
+  Images: places=5, unsplash=35, pexels=0, final=8 validation=0/12 passed (deduped 8)
+  Selected thumbnail: Unsplash high-quality photo
+Error creating staging item: ReferenceError: validationStats is not defined
+    at createStagingItem (src/app/api/admin/scrape-hybrid/route.ts:2122:32)
+    at POST (src/app/api/admin/scrape-hybrid/route.ts:552:35)
+  2120 |
+  2121 |     // Prepare validation metadata for storing
+> 2122 |     const validationMetadata = validationStats.total > 0 ? {
+       |                                ^
+  2123 |       images_validated: validationStats.total,
+  2124 |       images_passed_validation: validationStats.final,
+  2125 |       images_filtered: validationStats.total - validationStats.final,
+Processing: Chora Church (2/10)
+  Getting structured data for: Chora Church
+Google Places Search URL: https://maps.googleapis.com/maps/api/place/textsearch/json?query=Chora%20Church%20Istanbul%20Turkey&key=AIzaSyCegyoEhH9qphlL-Zbb2FgDDwFQq9HdV0w
+Google Places API Response Status: 200
+Google Places API Response: {
+  html_attributions: [],
+  results: [
+    {
+      business_status: 'OPERATIONAL',
+      formatted_address: 'Derviş Ali, Kariye Cami Sk. No:18, 34087 Fatih/İstanbul, Türkiye',
+      geometry: [Object],
+      icon: 'https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/worship_islam-71.png',
+      icon_background_color: '#7B9EB0',
+      icon_mask_base_uri: 'https://maps.gstatic.com/mapfiles/place_api/icons/v2/worship_islam_pinlet',
+      name: 'Kariye Mosque',
+      photos: [Array],
+      place_id: 'ChIJ2cMuRRC6yhQRDNb0n0-3SXA',
+      plus_code: [Object],
+      rating: 4.5,
+      reference: 'ChIJ2cMuRRC6yhQRDNb0n0-3SXA',
+      types: [Array],
+      user_ratings_total: 9897
+    }
+  ],
+  status: 'OK'
+}
+  Detected category: activities for Chora Church
+  About to validate with data: {
+  title: 'Kariye Mosque',
+  address: 'Derviş Ali, Kariye Cami Sk. No:18, 34087 Fatih/İstanbul, Türkiye',
+  types: [
+    'establishment',
+    'mosque',
+    'museum',
+    'place_of_worship',
+    'point_of_interest',
+    'tourist_attraction'
+  ]
+}
+Activity validation for "Kariye Mosque": {
+  titleMatch: false,
+  matchReason: 'No match found (0% word overlap)',
+  isInIstanbul: true,
+  hasRequiredFields: true,
+  isNotMismatch: true
+}
+  Validation result: false
+Processing: Pera Museum (3/10)
+  Getting structured data for: Pera Museum
+Google Places Search URL: https://maps.googleapis.com/maps/api/place/textsearch/json?query=Pera%20Museum%20Istanbul%20Turkey&key=AIzaSyCegyoEhH9qphlL-Zbb2FgDDwFQq9HdV0w
+Google Places API Response Status: 200
+Google Places API Response: {
+  html_attributions: [],
+  results: [
+    {
+      business_status: 'OPERATIONAL',
+      formatted_address: 'Asmalı Mescit, Meşrutiyet Cd. No:65, 34430 Beyoğlu/İstanbul, Türkiye',
+      geometry: [Object],
+      icon: 'https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/museum-71.png',
+      icon_background_color: '#13B5C7',
+      icon_mask_base_uri: 'https://maps.gstatic.com/mapfiles/place_api/icons/v2/museum_pinlet',
+      name: 'Pera Museum',
+      opening_hours: [Object],
+      photos: [Array],
+      place_id: 'ChIJLTINFuC5yhQRyRbXfXliR9k',
+      plus_code: [Object],
+      rating: 4.6,
+      reference: 'ChIJLTINFuC5yhQRyRbXfXliR9k',
+      types: [Array],
+      user_ratings_total: 6718
+    }
+  ],
+  status: 'OK'
+}
+  Detected category: activities for Pera Museum
+  About to validate with data: {
+  title: 'Pera Museum',
+  address: 'Asmalı Mescit, Meşrutiyet Cd. No:65, 34430 Beyoğlu/İstanbul, Türkiye',
+  types: [
+    'establishment',
+    'museum',
+    'point_of_interest',
+    'tourist_attraction'
+  ]
+}
+Activity validation for "Pera Museum": {
+  titleMatch: true,
+  matchReason: 'Direct match',
+  isInIstanbul: true,
+  hasRequiredFields: true,
+  isNotMismatch: true
+}
+  Validation result: true
+  Enriching with Firecrawl: http://www.peramuzesi.org.tr/
+  Skipping enrichment - domain not in allowlist: www.peramuzesi.org.tr
+  Getting images for Pera Museum (activities) - target: 12, have: 5
+  Need 7 more images, fetching from Unsplash...
+  Trying 9 search queries for images
+  Query "Pera Museum Istanbul" returned 30 images
+  Added 11 images from Unsplash for "Pera Museum"
+  After deduplication: 12 images
+  Validating 12 images for quality and relevance...
+  Validating 12 images for Pera Museum (activities)
+  Image validation complete: 0/12 valid, 12 filtered
+  Image validation complete: 0/12 valid images
+  Filtered out 12 invalid/irrelevant images
+  Still under target (0/12), using broader search...
+  Trying 9 search queries for images
+  Query "activities Istanbul Istanbul" returned 30 images
+  Validating 6 images for Pera Museum (activities)
+  Image validation complete: 0/6 valid, 6 filtered
+  Broad search "activities Istanbul" added 0 valid images (total: 0)
+  Trying 9 search queries for images
+  Query "Istanbul activities Istanbul" returned 30 images
+  Validating 6 images for Pera Museum (activities)
+  Image validation complete: 0/6 valid, 6 filtered
+  Broad search "Istanbul activities" added 0 valid images (total: 0)
+  Trying 9 search queries for images
+  Query "Istanbul landmark Istanbul" returned 30 images
+  Validating 6 images for Pera Museum (activities)
+  Image validation complete: 0/6 valid, 6 filtered
+  Broad search "Istanbul landmark" added 0 valid images (total: 0)
+  Trying 9 search queries for images
+  Query "Turkish architecture Istanbul" returned 30 images
+  Validating 6 images for Pera Museum (activities)
+  Image validation complete: 0/6 valid, 6 filtered
+  Broad search "Turkish architecture" added 0 valid images (total: 0)
+  Using high-quality Istanbul placeholders to reach minimum
+  Images: places=5, unsplash=35, pexels=0, final=8 validation=0/12 passed (deduped 8)
+  Selected thumbnail: Unsplash high-quality photo
+Error creating staging item: ReferenceError: validationStats is not defined
+    at createStagingItem (src/app/api/admin/scrape-hybrid/route.ts:2122:32)
+    at POST (src/app/api/admin/scrape-hybrid/route.ts:552:35)
+  2120 |
+  2121 |     // Prepare validation metadata for storing
+> 2122 |     const validationMetadata = validationStats.total > 0 ? {
+       |                                ^
+  2123 |       images_validated: validationStats.total,
+  2124 |       images_passed_validation: validationStats.final,
+  2125 |       images_filtered: validationStats.total - validationStats.final,
+Processing: Miniatürk (4/10)
+  Getting structured data for: Miniatürk
+Google Places Search URL: https://maps.googleapis.com/maps/api/place/textsearch/json?query=Miniat%C3%BCrk%20Istanbul%20Turkey&key=AIzaSyCegyoEhH9qphlL-Zbb2FgDDwFQq9HdV0w
+Google Places API Response Status: 200
+Google Places API Response: {
+  html_attributions: [],
+  results: [
+    {
+      business_status: 'OPERATIONAL',
+      formatted_address: 'Örnektepe, İmrahor Cd. No:7, 34445 Beyoğlu/İstanbul, Türkiye',
+      geometry: [Object],
+      icon: 'https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/museum-71.png',
+      icon_background_color: '#13B5C7',
+      icon_mask_base_uri: 'https://maps.gstatic.com/mapfiles/place_api/icons/v2/museum_pinlet',
+      name: 'Miniaturk',
+      opening_hours: [Object],
+      photos: [Array],
+      place_id: 'ChIJ9WsAScqwyhQRHNfCzoxQiTE',
+      plus_code: [Object],
+      rating: 4.6,
+      reference: 'ChIJ9WsAScqwyhQRHNfCzoxQiTE',
+      types: [Array],
+      user_ratings_total: 35995
+    }
+  ],
+  status: 'OK'
+}
+  Detected category: activities for Miniatürk
+  About to validate with data: {
+  title: 'Miniaturk',
+  address: 'Örnektepe, İmrahor Cd. No:7, 34445 Beyoğlu/İstanbul, Türkiye',
+  types: [ 'establishment', 'museum', 'point_of_interest' ]
+}
+Activity validation for "Miniaturk": {
+  titleMatch: false,
+  matchReason: 'No match found (0% word overlap)',
+  isInIstanbul: true,
+  hasRequiredFields: true,
+  isNotMismatch: true
+}
+  Validation result: false
+Processing: Maiden’s Tower (5/10)
+  Getting structured data for: Maiden’s Tower
+Google Places Search URL: https://maps.googleapis.com/maps/api/place/textsearch/json?query=Maiden%E2%80%99s%20Tower%20Istanbul%20Turkey&key=AIzaSyCegyoEhH9qphlL-Zbb2FgDDwFQq9HdV0w
+Google Places API Response Status: 200
+Google Places API Response: {
+  html_attributions: [],
+  results: [
+    {
+      business_status: 'OPERATIONAL',
+      formatted_address: 'Salacak, 34668 Üsküdar/İstanbul, Türkiye',
+      geometry: [Object],
+      icon: 'https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/generic_business-71.png',
+      icon_background_color: '#13B5C7',
+      icon_mask_base_uri: 'https://maps.gstatic.com/mapfiles/place_api/icons/v2/generic_pinlet',
+      name: "Maiden's Tower",
+      opening_hours: [Object],
+      photos: [Array],
+      place_id: 'ChIJX0SZ6iu4yhQRbEe0zrr0124',
+      plus_code: [Object],
+      rating: 4.7,
+      reference: 'ChIJX0SZ6iu4yhQRbEe0zrr0124',
+      types: [Array],
+      user_ratings_total: 19835
+    },
+    {
+      business_status: 'OPERATIONAL',
+      formatted_address: 'Salacak, Salacak Mevkii, 34668 Üsküdar/İstanbul, Türkiye',
+      geometry: [Object],
+      icon: 'https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/generic_business-71.png',
+      icon_background_color: '#13B5C7',
+      icon_mask_base_uri: 'https://maps.gstatic.com/mapfiles/place_api/icons/v2/generic_pinlet',
+      name: "Maiden's Tower",
+      opening_hours: [Object],
+      photos: [Array],
+      place_id: 'ChIJVVVVVTm4yhQRLtfkio08AM0',
+      plus_code: [Object],
+      price_level: 3,
+      rating: 4.6,
+      reference: 'ChIJVVVVVTm4yhQRLtfkio08AM0',
+      types: [Array],
+      user_ratings_total: 5858
+    }
+  ],
+  status: 'OK'
+}
+  Detected category: activities for Maiden’s Tower
+  About to validate with data: {
+  title: "Maiden's Tower",
+  address: 'Salacak, 34668 Üsküdar/İstanbul, Türkiye',
+  types: [ 'establishment', 'point_of_interest', 'tourist_attraction' ]
+}
+Activity validation for "Maiden's Tower": {
+  titleMatch: true,
+  matchReason: 'Fuzzy match: 50% word overlap',
+  isInIstanbul: true,
+  hasRequiredFields: true,
+  isNotMismatch: true
+}
+  Validation result: true
+  Enriching with Firecrawl: https://kizkulesi.com/
+  Skipping enrichment - domain not in allowlist: kizkulesi.com
+  Getting images for Maiden’s Tower (activities) - target: 12, have: 5
+  Need 7 more images, fetching from Unsplash...
+  Trying 9 search queries for images
+  Query "Maiden’s Tower Istanbul" returned 30 images
+  Added 11 images from Unsplash for "Maiden’s Tower"
+  After deduplication: 12 images
+  Validating 12 images for quality and relevance...
+  Validating 12 images for Maiden’s Tower (activities)
+  Image validation complete: 0/12 valid, 12 filtered
+  Image validation complete: 0/12 valid images
+  Filtered out 12 invalid/irrelevant images
+  Still under target (0/12), using broader search...
+  Trying 9 search queries for images
+  Query "activities Istanbul Istanbul" returned 30 images
+  Validating 6 images for Maiden’s Tower (activities)
+  Image validation complete: 0/6 valid, 6 filtered
+  Broad search "activities Istanbul" added 0 valid images (total: 0)
+  Trying 9 search queries for images
+  Query "Istanbul activities Istanbul" returned 30 images
+  Validating 6 images for Maiden’s Tower (activities)
+  Image validation complete: 0/6 valid, 6 filtered
+  Broad search "Istanbul activities" added 0 valid images (total: 0)
+  Trying 9 search queries for images
+  Query "Istanbul landmark Istanbul" returned 30 images
+  Validating 6 images for Maiden’s Tower (activities)
+  Image validation complete: 0/6 valid, 6 filtered
+  Broad search "Istanbul landmark" added 0 valid images (total: 0)
+  Trying 9 search queries for images
+  Query "Turkish architecture Istanbul" returned 30 images
+  Validating 6 images for Maiden’s Tower (activities)
+  Image validation complete: 0/6 valid, 6 filtered
+  Broad search "Turkish architecture" added 0 valid images (total: 0)
+  Using high-quality Istanbul placeholders to reach minimum
+  Images: places=5, unsplash=35, pexels=0, final=8 validation=0/12 passed (deduped 8)
+  Selected thumbnail: Unsplash high-quality photo
+Error creating staging item: ReferenceError: validationStats is not defined
+    at createStagingItem (src/app/api/admin/scrape-hybrid/route.ts:2122:32)
+    at POST (src/app/api/admin/scrape-hybrid/route.ts:552:35)
+  2120 |
+  2121 |     // Prepare validation metadata for storing
+> 2122 |     const validationMetadata = validationStats.total > 0 ? {
+       |                                ^
+  2123 |       images_validated: validationStats.total,
+  2124 |       images_passed_validation: validationStats.final,
+  2125 |       images_filtered: validationStats.total - validationStats.final,
+Processing: Rumeli Fortress (6/10)
+  Getting structured data for: Rumeli Fortress
+Google Places Search URL: https://maps.googleapis.com/maps/api/place/textsearch/json?query=Rumeli%20Fortress%20Istanbul%20Turkey&key=AIzaSyCegyoEhH9qphlL-Zbb2FgDDwFQq9HdV0w
+Google Places API Response Status: 200
+Google Places API Response: {
+  html_attributions: [],
+  results: [
+    {
+      business_status: 'OPERATIONAL',
+      formatted_address: 'Rumeli Hisarı, Yahya Kemal Cd. No: 42, 34470 Sarıyer/İstanbul, Türkiye',
+      geometry: [Object],
+      icon: 'https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/generic_business-71.png',
+      icon_background_color: '#13B5C7',
+      icon_mask_base_uri: 'https://maps.gstatic.com/mapfiles/place_api/icons/v2/generic_pinlet',
+      name: 'Rumeli Fortress',
+      opening_hours: [Object],
+      photos: [Array],
+      place_id: 'ChIJ-X6_lwLKyhQR-sYaKaSqV0Y',
+      plus_code: [Object],
+      rating: 4.5,
+      reference: 'ChIJ-X6_lwLKyhQR-sYaKaSqV0Y',
+      types: [Array],
+      user_ratings_total: 13674
+    }
+  ],
+  status: 'OK'
+}
+  Detected category: activities for Rumeli Fortress
+  About to validate with data: {
+  title: 'Rumeli Fortress',
+  address: 'Rumeli Hisarı, Yahya Kemal Cd. No: 42, 34470 Sarıyer/İstanbul, Türkiye',
+  types: [ 'establishment', 'point_of_interest' ]
+}
+Activity validation for "Rumeli Fortress": {
+  titleMatch: true,
+  matchReason: 'Direct match',
+  isInIstanbul: true,
+  hasRequiredFields: true,
+  isNotMismatch: true
+}
+  Validation result: true
+  Enriching with Firecrawl: https://www.rumelihisarimuzesi.com.tr/
+  Skipping enrichment - domain not in allowlist: www.rumelihisarimuzesi.com.tr
+  Getting images for Rumeli Fortress (activities) - target: 12, have: 5
+  Need 7 more images, fetching from Unsplash...
+  Trying 9 search queries for images
+  Query "Rumeli Fortress Istanbul" returned 30 images
+  Added 11 images from Unsplash for "Rumeli Fortress"
+  After deduplication: 12 images
+  Validating 12 images for quality and relevance...
+  Validating 12 images for Rumeli Fortress (activities)
+  Image validation complete: 0/12 valid, 12 filtered
+  Image validation complete: 0/12 valid images
+  Filtered out 12 invalid/irrelevant images
+  Still under target (0/12), using broader search...
+  Trying 9 search queries for images
+  Query "activities Istanbul Istanbul" returned 30 images
+  Validating 6 images for Rumeli Fortress (activities)
+  Image validation complete: 0/6 valid, 6 filtered
+  Broad search "activities Istanbul" added 0 valid images (total: 0)
+  Trying 9 search queries for images
+  Query "Istanbul activities Istanbul" returned 30 images
+  Validating 6 images for Rumeli Fortress (activities)
+  Image validation complete: 0/6 valid, 6 filtered
+  Broad search "Istanbul activities" added 0 valid images (total: 0)
+  Trying 9 search queries for images
+  Query "Istanbul landmark Istanbul" returned 30 images
+  Validating 6 images for Rumeli Fortress (activities)
+  Image validation complete: 0/6 valid, 6 filtered
+  Broad search "Istanbul landmark" added 0 valid images (total: 0)
+  Trying 9 search queries for images
+  Query "Turkish architecture Istanbul" returned 30 images
+  Validating 6 images for Rumeli Fortress (activities)
+  Image validation complete: 0/6 valid, 6 filtered
+  Broad search "Turkish architecture" added 0 valid images (total: 0)
+  Using high-quality Istanbul placeholders to reach minimum
+  Images: places=5, unsplash=35, pexels=0, final=8 validation=0/12 passed (deduped 8)
+  Selected thumbnail: Unsplash high-quality photo
+Error creating staging item: ReferenceError: validationStats is not defined
+    at createStagingItem (src/app/api/admin/scrape-hybrid/route.ts:2122:32)
+    at POST (src/app/api/admin/scrape-hybrid/route.ts:552:35)
+  2120 |
+  2121 |     // Prepare validation metadata for storing
+> 2122 |     const validationMetadata = validationStats.total > 0 ? {
+       |                                ^
+  2123 |       images_validated: validationStats.total,
+  2124 |       images_passed_validation: validationStats.final,
+  2125 |       images_filtered: validationStats.total - validationStats.final,
+Processing: Istanbul Modern Art Museum (7/10)
+  Getting structured data for: Istanbul Modern Art Museum
+Google Places Search URL: https://maps.googleapis.com/maps/api/place/textsearch/json?query=Istanbul%20Modern%20Art%20Museum%20Istanbul%20Turkey&key=AIzaSyCegyoEhH9qphlL-Zbb2FgDDwFQq9HdV0w
+Google Places API Response Status: 200
+Google Places API Response: {
+  html_attributions: [],
+  results: [
+    {
+      business_status: 'OPERATIONAL',
+      formatted_address: 'Kılıçali Paşa, Tophane İskele Cd. No:1/1, 34433 Beyoğlu/İstanbul, Türkiye',
+      geometry: [Object],
+      icon: 'https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/museum-71.png',
+      icon_background_color: '#13B5C7',
+      icon_mask_base_uri: 'https://maps.gstatic.com/mapfiles/place_api/icons/v2/museum_pinlet',
+      name: 'Istanbul Museum of Modern Art',
+      opening_hours: [Object],
+      photos: [Array],
+      place_id: 'ChIJw8JuD9m5yhQRnegQbG9Irjs',
+      plus_code: [Object],
+      rating: 4.4,
+      reference: 'ChIJw8JuD9m5yhQRnegQbG9Irjs',
+      types: [Array],
+      user_ratings_total: 10065
+    }
+  ],
+  status: 'OK'
+}
+  Detected category: activities for Istanbul Modern Art Museum
+  About to validate with data: {
+  title: 'Istanbul Museum of Modern Art',
+  address: 'Kılıçali Paşa, Tophane İskele Cd. No:1/1, 34433 Beyoğlu/İstanbul, Türkiye',
+  types: [ 'establishment', 'museum', 'point_of_interest' ]
+}
+Activity validation for "Istanbul Museum of Modern Art": {
+  titleMatch: true,
+  matchReason: 'Alias match: istanbul modern',
+  isInIstanbul: true,
+  hasRequiredFields: true,
+  isNotMismatch: true
+}
+  Validation result: true
+  Enriching with Firecrawl: https://www.istanbulmodern.org/
+  Skipping enrichment - domain not in allowlist: www.istanbulmodern.org
+  Getting images for Istanbul Modern Art Museum (activities) - target: 12, have: 5
+  Need 7 more images, fetching from Unsplash...
+  Trying 9 search queries for images
+  Query "Istanbul Modern Art Museum Istanbul" returned 30 images
+  Added 11 images from Unsplash for "Istanbul Modern Art Museum"
+  After deduplication: 12 images
+  Validating 12 images for quality and relevance...
+  Validating 12 images for Istanbul Modern Art Museum (activities)
+  Image validation complete: 0/12 valid, 12 filtered
+  Image validation complete: 0/12 valid images
+  Filtered out 12 invalid/irrelevant images
+  Still under target (0/12), using broader search...
+  Trying 9 search queries for images
+  Query "activities Istanbul Istanbul" returned 30 images
+  Validating 6 images for Istanbul Modern Art Museum (activities)
+  Image validation complete: 0/6 valid, 6 filtered
+  Broad search "activities Istanbul" added 0 valid images (total: 0)
+  Trying 9 search queries for images
+  Query "Istanbul activities Istanbul" returned 30 images
+  Validating 6 images for Istanbul Modern Art Museum (activities)
+  Image validation complete: 0/6 valid, 6 filtered
+  Broad search "Istanbul activities" added 0 valid images (total: 0)
+  Trying 9 search queries for images
+  Query "Istanbul landmark Istanbul" returned 30 images
+  Validating 6 images for Istanbul Modern Art Museum (activities)
+  Image validation complete: 0/6 valid, 6 filtered
+  Broad search "Istanbul landmark" added 0 valid images (total: 0)
+  Trying 9 search queries for images
+  Query "Turkish architecture Istanbul" returned 30 images
+  Validating 6 images for Istanbul Modern Art Museum (activities)
+  Image validation complete: 0/6 valid, 6 filtered
+  Broad search "Turkish architecture" added 0 valid images (total: 0)
+  Using high-quality Istanbul placeholders to reach minimum
+  Images: places=5, unsplash=35, pexels=0, final=8 validation=0/12 passed (deduped 8)
+  Selected thumbnail: Unsplash high-quality photo
+Error creating staging item: ReferenceError: validationStats is not defined
+    at createStagingItem (src/app/api/admin/scrape-hybrid/route.ts:2122:32)
+    at POST (src/app/api/admin/scrape-hybrid/route.ts:552:35)
+  2120 |
+  2121 |     // Prepare validation metadata for storing
+> 2122 |     const validationMetadata = validationStats.total > 0 ? {
+       |                                ^
+  2123 |       images_validated: validationStats.total,
+  2124 |       images_passed_validation: validationStats.final,
+  2125 |       images_filtered: validationStats.total - validationStats.final,
+Processing: Eyüp Sultan Mosque (8/10)
+  Getting structured data for: Eyüp Sultan Mosque
+Google Places Search URL: https://maps.googleapis.com/maps/api/place/textsearch/json?query=Ey%C3%BCp%20Sultan%20Mosque%20Istanbul%20Turkey&key=AIzaSyCegyoEhH9qphlL-Zbb2FgDDwFQq9HdV0w
+Google Places API Response Status: 200
+Google Places API Response: {
+  html_attributions: [],
+  results: [
+    {
+      business_status: 'OPERATIONAL',
+      formatted_address: 'Merkez, Cami Kebir Sk. Eyüp Sultan Cami No:23, 34050 Eyüpsultan/İstanbul, Türkiye',
+      geometry: [Object],
+      icon: 'https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/worship_islam-71.png',
+      icon_background_color: '#7B9EB0',
+      icon_mask_base_uri: 'https://maps.gstatic.com/mapfiles/place_api/icons/v2/worship_islam_pinlet',
+      name: 'Eyüp Sultan Mosque',
+      opening_hours: [Object],
+      photos: [Array],
+      place_id: 'ChIJF_StIdCxyhQRXV-7_f2jows',
+      plus_code: [Object],
+      rating: 4.8,
+      reference: 'ChIJF_StIdCxyhQRXV-7_f2jows',
+      types: [Array],
+      user_ratings_total: 63379
+    }
+  ],
+  status: 'OK'
+}
+  Detected category: activities for Eyüp Sultan Mosque
+  About to validate with data: {
+  title: 'Eyüp Sultan Mosque',
+  address: 'Merkez, Cami Kebir Sk. Eyüp Sultan Cami No:23, 34050 Eyüpsultan/İstanbul, Türkiye',
+  types: [
+    'establishment',
+    'mosque',
+    'park',
+    'place_of_worship',
+    'point_of_interest'
+  ]
+}
+Activity validation for "Eyüp Sultan Mosque": {
+  titleMatch: true,
+  matchReason: 'Direct match',
+  isInIstanbul: true,
+  hasRequiredFields: true,
+  isNotMismatch: true
+}
+  Validation result: true
+  Enriching with Firecrawl: https://www.eyupsultan.bel.tr/tr/main/pages/eyup-sultan-camii/945
+  Skipping enrichment - domain not in allowlist: www.eyupsultan.bel.tr
+  Getting images for Eyüp Sultan Mosque (activities) - target: 12, have: 5
+  Need 7 more images, fetching from Unsplash...
+  Trying 9 search queries for images
+  Query "Eyüp Sultan Mosque Istanbul" returned 30 images
+  Added 11 images from Unsplash for "Eyüp Sultan Mosque"
+  After deduplication: 12 images
+  Validating 12 images for quality and relevance...
+  Validating 12 images for Eyüp Sultan Mosque (activities)
+  Image validation complete: 0/12 valid, 12 filtered
+  Image validation complete: 0/12 valid images
+  Filtered out 12 invalid/irrelevant images
+  Still under target (0/12), using broader search...
+  Trying 9 search queries for images
+  Query "activities Istanbul Istanbul" returned 30 images
+  Validating 6 images for Eyüp Sultan Mosque (activities)
+  Image validation complete: 0/6 valid, 6 filtered
+  Broad search "activities Istanbul" added 0 valid images (total: 0)
+  Trying 9 search queries for images
+  Query "Istanbul activities Istanbul" returned 30 images
+  Validating 6 images for Eyüp Sultan Mosque (activities)
+  Image validation complete: 0/6 valid, 6 filtered
+  Broad search "Istanbul activities" added 0 valid images (total: 0)
+  Trying 9 search queries for images
+  Query "Istanbul landmark Istanbul" returned 30 images
+  Validating 6 images for Eyüp Sultan Mosque (activities)
+  Image validation complete: 0/6 valid, 6 filtered
+  Broad search "Istanbul landmark" added 0 valid images (total: 0)
+  Trying 9 search queries for images
+  Query "Turkish architecture Istanbul" returned 30 images
+  Validating 6 images for Eyüp Sultan Mosque (activities)
+  Image validation complete: 0/6 valid, 6 filtered
+  Broad search "Turkish architecture" added 0 valid images (total: 0)
+  Using high-quality Istanbul placeholders to reach minimum
+  Images: places=5, unsplash=35, pexels=0, final=8 validation=0/12 passed (deduped 8)
+  Selected thumbnail: Unsplash high-quality photo
+Error creating staging item: ReferenceError: validationStats is not defined
+    at createStagingItem (src/app/api/admin/scrape-hybrid/route.ts:2122:32)
+    at POST (src/app/api/admin/scrape-hybrid/route.ts:552:35)
+  2120 |
+  2121 |     // Prepare validation metadata for storing
+> 2122 |     const validationMetadata = validationStats.total > 0 ? {
+       |                                ^
+  2123 |       images_validated: validationStats.total,
+  2124 |       images_passed_validation: validationStats.final,
+  2125 |       images_filtered: validationStats.total - validationStats.final,
+Processing: Camlica Mosque (9/10)
+  Getting structured data for: Camlica Mosque
+Google Places Search URL: https://maps.googleapis.com/maps/api/place/textsearch/json?query=Camlica%20Mosque%20Istanbul%20Turkey&key=AIzaSyCegyoEhH9qphlL-Zbb2FgDDwFQq9HdV0w
+Google Places API Response Status: 200
+Google Places API Response: {
+  html_attributions: [],
+  results: [
+    {
+      business_status: 'OPERATIONAL',
+      formatted_address: 'Ferah, Ferah Yolu Sk. No:6 D:3, 34692 Üsküdar/İstanbul, Türkiye',
+      geometry: [Object],
+      icon: 'https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/worship_islam-71.png',
+      icon_background_color: '#7B9EB0',
+      icon_mask_base_uri: 'https://maps.gstatic.com/mapfiles/place_api/icons/v2/worship_islam_pinlet',
+      name: 'Grand Çamlıca Mosque',
+      photos: [Array],
+      place_id: 'ChIJbY6mqC3JyhQR9gNjzJQDB8k',
+      plus_code: [Object],
+      rating: 4.9,
+      reference: 'ChIJbY6mqC3JyhQR9gNjzJQDB8k',
+      types: [Array],
+      user_ratings_total: 9523
+    }
+  ],
+  status: 'OK'
+}
+  Detected category: activities for Camlica Mosque
+  About to validate with data: {
+  title: 'Grand Çamlıca Mosque',
+  address: 'Ferah, Ferah Yolu Sk. No:6 D:3, 34692 Üsküdar/İstanbul, Türkiye',
+  types: [
+    'establishment',
+    'mosque',
+    'place_of_worship',
+    'point_of_interest'
+  ]
+}
+Activity validation for "Grand Çamlıca Mosque": {
+  titleMatch: true,
+  matchReason: 'Fuzzy match: 50% word overlap',
+  isInIstanbul: true,
+  hasRequiredFields: true,
+  isNotMismatch: true
+}
+  Validation result: true
+  Getting images for Camlica Mosque (activities) - target: 12, have: 5
+  Need 7 more images, fetching from Unsplash...
+  Trying 9 search queries for images
+  Query "Camlica Mosque Istanbul" returned 30 images
+  Added 11 images from Unsplash for "Camlica Mosque"
+  After deduplication: 12 images
+  Validating 12 images for quality and relevance...
+  Validating 12 images for Camlica Mosque (activities)
+  Image validation complete: 0/12 valid, 12 filtered
+  Image validation complete: 0/12 valid images
+  Filtered out 12 invalid/irrelevant images
+  Still under target (0/12), using broader search...
+  Trying 9 search queries for images
+  Query "activities Istanbul Istanbul" returned 30 images
+  Validating 6 images for Camlica Mosque (activities)
+  Image validation complete: 0/6 valid, 6 filtered
+  Broad search "activities Istanbul" added 0 valid images (total: 0)
+  Trying 9 search queries for images
+  Query "Istanbul activities Istanbul" returned 30 images
+  Validating 6 images for Camlica Mosque (activities)
+  Image validation complete: 0/6 valid, 6 filtered
+  Broad search "Istanbul activities" added 0 valid images (total: 0)
+  Trying 9 search queries for images
+  Query "Istanbul landmark Istanbul" returned 30 images
+  Validating 6 images for Camlica Mosque (activities)
+  Image validation complete: 0/6 valid, 6 filtered
+  Broad search "Istanbul landmark" added 0 valid images (total: 0)
+  Trying 9 search queries for images
+  Query "Turkish architecture Istanbul" returned 30 images
+  Validating 6 images for Camlica Mosque (activities)
+  Image validation complete: 0/6 valid, 6 filtered
+  Broad search "Turkish architecture" added 0 valid images (total: 0)
+  Using high-quality Istanbul placeholders to reach minimum
+  Images: places=5, unsplash=35, pexels=0, final=8 validation=0/12 passed (deduped 8)
+  Selected thumbnail: Unsplash high-quality photo
+Error creating staging item: ReferenceError: validationStats is not defined
+    at createStagingItem (src/app/api/admin/scrape-hybrid/route.ts:2122:32)
+    at POST (src/app/api/admin/scrape-hybrid/route.ts:552:35)
+  2120 |
+  2121 |     // Prepare validation metadata for storing
+> 2122 |     const validationMetadata = validationStats.total > 0 ? {
+       |                                ^
+  2123 |       images_validated: validationStats.total,
+  2124 |       images_passed_validation: validationStats.final,
+  2125 |       images_filtered: validationStats.total - validationStats.final,
+Processing: Fener & Balat District (10/10)
+  Getting structured data for: Fener & Balat District
+Google Places Search URL: https://maps.googleapis.com/maps/api/place/textsearch/json?query=Fener%20%26%20Balat%20District%20Istanbul%20Turkey&key=AIzaSyCegyoEhH9qphlL-Zbb2FgDDwFQq9HdV0w
+Google Places API Response Status: 200
+Google Places API Response: {
+  html_attributions: [],
+  results: [
+    {
+      formatted_address: 'Fener, Balat, Fatih/İstanbul, Türkiye',
+      geometry: [Object],
+      icon: 'https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/geocode-71.png',
+      icon_background_color: '#7B9EB0',
+      icon_mask_base_uri: 'https://maps.gstatic.com/mapfiles/place_api/icons/v2/generic_pinlet',
+      name: 'Fener',
+      photos: [Array],
+      place_id: 'ChIJ32Vzrh26yhQRh1yWIrkBDEI',
+      reference: 'ChIJ32Vzrh26yhQRh1yWIrkBDEI',
+      types: [Array]
+    }
+  ],
+  status: 'OK'
+}
+  Detected category: activities for Fener & Balat District
+  About to validate with data: {
+  title: 'Fener',
+  address: 'Fener, Balat, Fatih/İstanbul, Türkiye',
+  types: [ 'neighborhood', 'political' ]
+}
+Activity validation for "Fener": {
+  titleMatch: true,
+  matchReason: 'Direct match',
+  isInIstanbul: true,
+  hasRequiredFields: false,
+  isNotMismatch: true
+}
+  Validation result: false
+ POST /api/admin/scrape-hybrid 200 in 47745ms
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: incorrect header check
+ GET /admin/staging 200 in 77ms
+ GET /admin/hybrid-scraping 200 in 40ms
+Starting hybrid scraping for 10 terms with category: auto-detect
+Processing: Rahmi M. Koç Museum (1/10)
+  Getting structured data for: Rahmi M. Koç Museum
+Google Places Search URL: https://maps.googleapis.com/maps/api/place/textsearch/json?query=Rahmi%20M.%20Ko%C3%A7%20Museum%20Istanbul%20Turkey&key=AIzaSyCegyoEhH9qphlL-Zbb2FgDDwFQq9HdV0w
+Google Places API Response Status: 200
+Google Places API Response: {
+  html_attributions: [],
+  results: [
+    {
+      business_status: 'OPERATIONAL',
+      formatted_address: 'Piri Paşa, Rahmi M. Koç Caddesi No: 3, 34445 Beyoğlu/İstanbul, Türkiye',
+      geometry: [Object],
+      icon: 'https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/museum-71.png',
+      icon_background_color: '#13B5C7',
+      icon_mask_base_uri: 'https://maps.gstatic.com/mapfiles/place_api/icons/v2/museum_pinlet',
+      name: 'Rahmi M. Koç Museum',
+      opening_hours: [Object],
+      photos: [Array],
+      place_id: 'ChIJwdTlr6uwyhQRXrwLsScTNkQ',
+      plus_code: [Object],
+      rating: 4.8,
+      reference: 'ChIJwdTlr6uwyhQRXrwLsScTNkQ',
+      types: [Array],
+      user_ratings_total: 25992
+    }
+  ],
+  status: 'OK'
+}
+  Detected category: activities for Rahmi M. Koç Museum
+  About to validate with data: {
+  title: 'Rahmi M. Koç Museum',
+  address: 'Piri Paşa, Rahmi M. Koç Caddesi No: 3, 34445 Beyoğlu/İstanbul, Türkiye',
+  types: [
+    'establishment',
+    'museum',
+    'point_of_interest',
+    'tourist_attraction'
+  ]
+}
+Activity validation for "Rahmi M. Koç Museum": {
+  titleMatch: true,
+  matchReason: 'Direct match',
+  isInIstanbul: true,
+  hasRequiredFields: true,
+  isNotMismatch: true
+}
+  Validation result: true
+  Enriching with Firecrawl: http://www.rmk-museum.org.tr/istanbul/
+  Skipping enrichment - domain not in allowlist: www.rmk-museum.org.tr
+  Getting images for Rahmi M. Koç Museum (activities) - target: 12, have: 5
+  Need 7 more images, fetching from Unsplash...
+  Trying 9 search queries for images
+  Query "Rahmi M. Koç Museum Istanbul" returned 30 images
+  Added 11 images from Unsplash for "Rahmi M. Koç Museum"
+  After deduplication: 12 images
+  Validating 12 images for quality and relevance...
+  Validating 12 images for Rahmi M. Koç Museum (activities)
+  Image validation complete: 0/12 valid, 12 filtered
+  Image validation complete: 0/12 valid images
+  Filtered out 12 invalid/irrelevant images
+  Still under target (0/12), using broader search...
+  Trying 9 search queries for images
+  Query "activities Istanbul Istanbul" returned 30 images
+  Validating 6 images for Rahmi M. Koç Museum (activities)
+  Image validation complete: 0/6 valid, 6 filtered
+  Broad search "activities Istanbul" added 0 valid images (total: 0)
+  Trying 9 search queries for images
+  Query "Istanbul activities Istanbul" returned 30 images
+  Validating 6 images for Rahmi M. Koç Museum (activities)
+  Image validation complete: 0/6 valid, 6 filtered
+  Broad search "Istanbul activities" added 0 valid images (total: 0)
+  Trying 9 search queries for images
+  Query "Istanbul landmark Istanbul" returned 30 images
+  Validating 6 images for Rahmi M. Koç Museum (activities)
+  Image validation complete: 0/6 valid, 6 filtered
+  Broad search "Istanbul landmark" added 0 valid images (total: 0)
+  Trying 9 search queries for images
+  Query "Turkish architecture Istanbul" returned 30 images
+  Validating 6 images for Rahmi M. Koç Museum (activities)
+  Image validation complete: 0/6 valid, 6 filtered
+  Broad search "Turkish architecture" added 0 valid images (total: 0)
+  Using high-quality Istanbul placeholders to reach minimum
+  Images: places=5, unsplash=35, pexels=0, final=8 validation=0/12 passed (deduped 8)
+  Selected thumbnail: Unsplash high-quality photo
+Error creating staging item: ReferenceError: validationStats is not defined
+    at createStagingItem (src/app/api/admin/scrape-hybrid/route.ts:2122:32)
+    at POST (src/app/api/admin/scrape-hybrid/route.ts:552:35)
+  2120 |
+  2121 |     // Prepare validation metadata for storing
+> 2122 |     const validationMetadata = validationStats.total > 0 ? {
+       |                                ^
+  2123 |       images_validated: validationStats.total,
+  2124 |       images_passed_validation: validationStats.final,
+  2125 |       images_filtered: validationStats.total - validationStats.final,
+Processing: Chora Church (2/10)
+  Getting structured data for: Chora Church
+Google Places Search URL: https://maps.googleapis.com/maps/api/place/textsearch/json?query=Chora%20Church%20Istanbul%20Turkey&key=AIzaSyCegyoEhH9qphlL-Zbb2FgDDwFQq9HdV0w
+Google Places API Response Status: 200
+Google Places API Response: {
+  html_attributions: [],
+  results: [
+    {
+      business_status: 'OPERATIONAL',
+      formatted_address: 'Derviş Ali, Kariye Cami Sk. No:18, 34087 Fatih/İstanbul, Türkiye',
+      geometry: [Object],
+      icon: 'https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/worship_islam-71.png',
+      icon_background_color: '#7B9EB0',
+      icon_mask_base_uri: 'https://maps.gstatic.com/mapfiles/place_api/icons/v2/worship_islam_pinlet',
+      name: 'Kariye Mosque',
+      photos: [Array],
+      place_id: 'ChIJ2cMuRRC6yhQRDNb0n0-3SXA',
+      plus_code: [Object],
+      rating: 4.5,
+      reference: 'ChIJ2cMuRRC6yhQRDNb0n0-3SXA',
+      types: [Array],
+      user_ratings_total: 9897
+    }
+  ],
+  status: 'OK'
+}
+  Detected category: activities for Chora Church
+  About to validate with data: {
+  title: 'Kariye Mosque',
+  address: 'Derviş Ali, Kariye Cami Sk. No:18, 34087 Fatih/İstanbul, Türkiye',
+  types: [
+    'establishment',
+    'mosque',
+    'museum',
+    'place_of_worship',
+    'point_of_interest',
+    'tourist_attraction'
+  ]
+}
+Activity validation for "Kariye Mosque": {
+  titleMatch: false,
+  matchReason: 'No match found (0% word overlap)',
+  isInIstanbul: true,
+  hasRequiredFields: true,
+  isNotMismatch: true
+}
+  Validation result: false
+Processing: Pera Museum (3/10)
+  Getting structured data for: Pera Museum
+Google Places Search URL: https://maps.googleapis.com/maps/api/place/textsearch/json?query=Pera%20Museum%20Istanbul%20Turkey&key=AIzaSyCegyoEhH9qphlL-Zbb2FgDDwFQq9HdV0w
+Google Places API Response Status: 200
+Google Places API Response: {
+  html_attributions: [],
+  results: [
+    {
+      business_status: 'OPERATIONAL',
+      formatted_address: 'Asmalı Mescit, Meşrutiyet Cd. No:65, 34430 Beyoğlu/İstanbul, Türkiye',
+      geometry: [Object],
+      icon: 'https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/museum-71.png',
+      icon_background_color: '#13B5C7',
+      icon_mask_base_uri: 'https://maps.gstatic.com/mapfiles/place_api/icons/v2/museum_pinlet',
+      name: 'Pera Museum',
+      opening_hours: [Object],
+      photos: [Array],
+      place_id: 'ChIJLTINFuC5yhQRyRbXfXliR9k',
+      plus_code: [Object],
+      rating: 4.6,
+      reference: 'ChIJLTINFuC5yhQRyRbXfXliR9k',
+      types: [Array],
+      user_ratings_total: 6718
+    }
+  ],
+  status: 'OK'
+}
+  Detected category: activities for Pera Museum
+  About to validate with data: {
+  title: 'Pera Museum',
+  address: 'Asmalı Mescit, Meşrutiyet Cd. No:65, 34430 Beyoğlu/İstanbul, Türkiye',
+  types: [
+    'establishment',
+    'museum',
+    'point_of_interest',
+    'tourist_attraction'
+  ]
+}
+Activity validation for "Pera Museum": {
+  titleMatch: true,
+  matchReason: 'Direct match',
+  isInIstanbul: true,
+  hasRequiredFields: true,
+  isNotMismatch: true
+}
+  Validation result: true
+  Enriching with Firecrawl: http://www.peramuzesi.org.tr/
+  Skipping enrichment - domain not in allowlist: www.peramuzesi.org.tr
+  Getting images for Pera Museum (activities) - target: 12, have: 5
+  Need 7 more images, fetching from Unsplash...
+  Trying 9 search queries for images
+  Query "Pera Museum Istanbul" returned 30 images
+  Added 11 images from Unsplash for "Pera Museum"
+  After deduplication: 12 images
+  Validating 12 images for quality and relevance...
+  Validating 12 images for Pera Museum (activities)
+  Image validation complete: 0/12 valid, 12 filtered
+  Image validation complete: 0/12 valid images
+  Filtered out 12 invalid/irrelevant images
+  Still under target (0/12), using broader search...
+  Trying 9 search queries for images
+  Query "activities Istanbul Istanbul" returned 30 images
+  Validating 6 images for Pera Museum (activities)
+  Image validation complete: 0/6 valid, 6 filtered
+  Broad search "activities Istanbul" added 0 valid images (total: 0)
+  Trying 9 search queries for images
+  Query "Istanbul activities Istanbul" returned 30 images
+  Validating 6 images for Pera Museum (activities)
+  Image validation complete: 0/6 valid, 6 filtered
+  Broad search "Istanbul activities" added 0 valid images (total: 0)
+  Trying 9 search queries for images
+  Query "Istanbul landmark Istanbul" returned 30 images
+  Validating 6 images for Pera Museum (activities)
+  Image validation complete: 0/6 valid, 6 filtered
+  Broad search "Istanbul landmark" added 0 valid images (total: 0)
+  Trying 9 search queries for images
+  Query "Turkish architecture Istanbul" returned 30 images
+  Validating 6 images for Pera Museum (activities)
+  Image validation complete: 0/6 valid, 6 filtered
+  Broad search "Turkish architecture" added 0 valid images (total: 0)
+  Using high-quality Istanbul placeholders to reach minimum
+  Images: places=5, unsplash=35, pexels=0, final=8 validation=0/12 passed (deduped 8)
+  Selected thumbnail: Unsplash high-quality photo
+Error creating staging item: ReferenceError: validationStats is not defined
+    at createStagingItem (src/app/api/admin/scrape-hybrid/route.ts:2122:32)
+    at POST (src/app/api/admin/scrape-hybrid/route.ts:552:35)
+  2120 |
+  2121 |     // Prepare validation metadata for storing
+> 2122 |     const validationMetadata = validationStats.total > 0 ? {
+       |                                ^
+  2123 |       images_validated: validationStats.total,
+  2124 |       images_passed_validation: validationStats.final,
+  2125 |       images_filtered: validationStats.total - validationStats.final,
+Processing: Miniatürk (4/10)
+  Getting structured data for: Miniatürk
+Google Places Search URL: https://maps.googleapis.com/maps/api/place/textsearch/json?query=Miniat%C3%BCrk%20Istanbul%20Turkey&key=AIzaSyCegyoEhH9qphlL-Zbb2FgDDwFQq9HdV0w
+Google Places API Response Status: 200
+Google Places API Response: {
+  html_attributions: [],
+  results: [
+    {
+      business_status: 'OPERATIONAL',
+      formatted_address: 'Örnektepe, İmrahor Cd. No:7, 34445 Beyoğlu/İstanbul, Türkiye',
+      geometry: [Object],
+      icon: 'https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/museum-71.png',
+      icon_background_color: '#13B5C7',
+      icon_mask_base_uri: 'https://maps.gstatic.com/mapfiles/place_api/icons/v2/museum_pinlet',
+      name: 'Miniaturk',
+      opening_hours: [Object],
+      photos: [Array],
+      place_id: 'ChIJ9WsAScqwyhQRHNfCzoxQiTE',
+      plus_code: [Object],
+      rating: 4.6,
+      reference: 'ChIJ9WsAScqwyhQRHNfCzoxQiTE',
+      types: [Array],
+      user_ratings_total: 35995
+    }
+  ],
+  status: 'OK'
+}
+  Detected category: activities for Miniatürk
+  About to validate with data: {
+  title: 'Miniaturk',
+  address: 'Örnektepe, İmrahor Cd. No:7, 34445 Beyoğlu/İstanbul, Türkiye',
+  types: [ 'establishment', 'museum', 'point_of_interest' ]
+}
+Activity validation for "Miniaturk": {
+  titleMatch: false,
+  matchReason: 'No match found (0% word overlap)',
+  isInIstanbul: true,
+  hasRequiredFields: true,
+  isNotMismatch: true
+}
+  Validation result: false
+Processing: Maiden’s Tower (5/10)
+  Getting structured data for: Maiden’s Tower
+Google Places Search URL: https://maps.googleapis.com/maps/api/place/textsearch/json?query=Maiden%E2%80%99s%20Tower%20Istanbul%20Turkey&key=AIzaSyCegyoEhH9qphlL-Zbb2FgDDwFQq9HdV0w
+Google Places API Response Status: 200
+Google Places API Response: {
+  html_attributions: [],
+  results: [
+    {
+      business_status: 'OPERATIONAL',
+      formatted_address: 'Salacak, 34668 Üsküdar/İstanbul, Türkiye',
+      geometry: [Object],
+      icon: 'https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/generic_business-71.png',
+      icon_background_color: '#13B5C7',
+      icon_mask_base_uri: 'https://maps.gstatic.com/mapfiles/place_api/icons/v2/generic_pinlet',
+      name: "Maiden's Tower",
+      opening_hours: [Object],
+      photos: [Array],
+      place_id: 'ChIJX0SZ6iu4yhQRbEe0zrr0124',
+      plus_code: [Object],
+      rating: 4.7,
+      reference: 'ChIJX0SZ6iu4yhQRbEe0zrr0124',
+      types: [Array],
+      user_ratings_total: 19835
+    },
+    {
+      business_status: 'OPERATIONAL',
+      formatted_address: 'Salacak, Salacak Mevkii, 34668 Üsküdar/İstanbul, Türkiye',
+      geometry: [Object],
+      icon: 'https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/generic_business-71.png',
+      icon_background_color: '#13B5C7',
+      icon_mask_base_uri: 'https://maps.gstatic.com/mapfiles/place_api/icons/v2/generic_pinlet',
+      name: "Maiden's Tower",
+      opening_hours: [Object],
+      photos: [Array],
+      place_id: 'ChIJVVVVVTm4yhQRLtfkio08AM0',
+      plus_code: [Object],
+      price_level: 3,
+      rating: 4.6,
+      reference: 'ChIJVVVVVTm4yhQRLtfkio08AM0',
+      types: [Array],
+      user_ratings_total: 5858
+    }
+  ],
+  status: 'OK'
+}
+  Detected category: activities for Maiden’s Tower
+  About to validate with data: {
+  title: "Maiden's Tower",
+  address: 'Salacak, 34668 Üsküdar/İstanbul, Türkiye',
+  types: [ 'establishment', 'point_of_interest', 'tourist_attraction' ]
+}
+Activity validation for "Maiden's Tower": {
+  titleMatch: true,
+  matchReason: 'Fuzzy match: 50% word overlap',
+  isInIstanbul: true,
+  hasRequiredFields: true,
+  isNotMismatch: true
+}
+  Validation result: true
+  Enriching with Firecrawl: https://kizkulesi.com/
+  Skipping enrichment - domain not in allowlist: kizkulesi.com
+  Getting images for Maiden’s Tower (activities) - target: 12, have: 5
+  Need 7 more images, fetching from Unsplash...
+  Trying 9 search queries for images
+  Query "Maiden’s Tower Istanbul" returned 30 images
+  Added 11 images from Unsplash for "Maiden’s Tower"
+  After deduplication: 12 images
+  Validating 12 images for quality and relevance...
+  Validating 12 images for Maiden’s Tower (activities)
+  Image validation complete: 0/12 valid, 12 filtered
+  Image validation complete: 0/12 valid images
+  Filtered out 12 invalid/irrelevant images
+  Still under target (0/12), using broader search...
+  Trying 9 search queries for images
+  Query "activities Istanbul Istanbul" returned 30 images
+  Validating 6 images for Maiden’s Tower (activities)
+  Image validation complete: 0/6 valid, 6 filtered
+  Broad search "activities Istanbul" added 0 valid images (total: 0)
+  Trying 9 search queries for images
+  Query "Istanbul activities Istanbul" returned 30 images
+  Validating 6 images for Maiden’s Tower (activities)
+  Image validation complete: 0/6 valid, 6 filtered
+  Broad search "Istanbul activities" added 0 valid images (total: 0)
+  Trying 9 search queries for images
+  Query "Istanbul landmark Istanbul" returned 30 images
+  Validating 6 images for Maiden’s Tower (activities)
+  Image validation complete: 0/6 valid, 6 filtered
+  Broad search "Istanbul landmark" added 0 valid images (total: 0)
+  Trying 9 search queries for images
+  Query "Turkish architecture Istanbul" returned 30 images
+  Validating 6 images for Maiden’s Tower (activities)
+  Image validation complete: 0/6 valid, 6 filtered
+  Broad search "Turkish architecture" added 0 valid images (total: 0)
+  Using high-quality Istanbul placeholders to reach minimum
+  Images: places=5, unsplash=35, pexels=0, final=8 validation=0/12 passed (deduped 8)
+  Selected thumbnail: Unsplash high-quality photo
+Error creating staging item: ReferenceError: validationStats is not defined
+    at createStagingItem (src/app/api/admin/scrape-hybrid/route.ts:2122:32)
+    at POST (src/app/api/admin/scrape-hybrid/route.ts:552:35)
+  2120 |
+  2121 |     // Prepare validation metadata for storing
+> 2122 |     const validationMetadata = validationStats.total > 0 ? {
+       |                                ^
+  2123 |       images_validated: validationStats.total,
+  2124 |       images_passed_validation: validationStats.final,
+  2125 |       images_filtered: validationStats.total - validationStats.final,
+Processing: Rumeli Fortress (6/10)
+  Getting structured data for: Rumeli Fortress
+Google Places Search URL: https://maps.googleapis.com/maps/api/place/textsearch/json?query=Rumeli%20Fortress%20Istanbul%20Turkey&key=AIzaSyCegyoEhH9qphlL-Zbb2FgDDwFQq9HdV0w
+Google Places API Response Status: 200
+Google Places API Response: {
+  html_attributions: [],
+  results: [
+    {
+      business_status: 'OPERATIONAL',
+      formatted_address: 'Rumeli Hisarı, Yahya Kemal Cd. No: 42, 34470 Sarıyer/İstanbul, Türkiye',
+      geometry: [Object],
+      icon: 'https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/generic_business-71.png',
+      icon_background_color: '#13B5C7',
+      icon_mask_base_uri: 'https://maps.gstatic.com/mapfiles/place_api/icons/v2/generic_pinlet',
+      name: 'Rumeli Fortress',
+      opening_hours: [Object],
+      photos: [Array],
+      place_id: 'ChIJ-X6_lwLKyhQR-sYaKaSqV0Y',
+      plus_code: [Object],
+      rating: 4.5,
+      reference: 'ChIJ-X6_lwLKyhQR-sYaKaSqV0Y',
+      types: [Array],
+      user_ratings_total: 13674
+    }
+  ],
+  status: 'OK'
+}
+  Detected category: activities for Rumeli Fortress
+  About to validate with data: {
+  title: 'Rumeli Fortress',
+  address: 'Rumeli Hisarı, Yahya Kemal Cd. No: 42, 34470 Sarıyer/İstanbul, Türkiye',
+  types: [ 'establishment', 'point_of_interest' ]
+}
+Activity validation for "Rumeli Fortress": {
+  titleMatch: true,
+  matchReason: 'Direct match',
+  isInIstanbul: true,
+  hasRequiredFields: true,
+  isNotMismatch: true
+}
+  Validation result: true
+  Enriching with Firecrawl: https://www.rumelihisarimuzesi.com.tr/
+  Skipping enrichment - domain not in allowlist: www.rumelihisarimuzesi.com.tr
+  Getting images for Rumeli Fortress (activities) - target: 12, have: 5
+  Need 7 more images, fetching from Unsplash...
+  Trying 9 search queries for images
+  Query "Rumeli Fortress Istanbul" returned 30 images
+  Added 11 images from Unsplash for "Rumeli Fortress"
+  After deduplication: 12 images
+  Validating 12 images for quality and relevance...
+  Validating 12 images for Rumeli Fortress (activities)
+  Image validation complete: 0/12 valid, 12 filtered
+  Image validation complete: 0/12 valid images
+  Filtered out 12 invalid/irrelevant images
+  Still under target (0/12), using broader search...
+  Trying 9 search queries for images
+  Query "activities Istanbul Istanbul" returned 30 images
+  Validating 6 images for Rumeli Fortress (activities)
+  Image validation complete: 0/6 valid, 6 filtered
+  Broad search "activities Istanbul" added 0 valid images (total: 0)
+  Trying 9 search queries for images
+  Query "Istanbul activities Istanbul" returned 30 images
+  Validating 6 images for Rumeli Fortress (activities)
+  Image validation complete: 0/6 valid, 6 filtered
+  Broad search "Istanbul activities" added 0 valid images (total: 0)
+  Trying 9 search queries for images
+  Query "Istanbul landmark Istanbul" returned 30 images
+  Validating 6 images for Rumeli Fortress (activities)
+  Image validation complete: 0/6 valid, 6 filtered
+  Broad search "Istanbul landmark" added 0 valid images (total: 0)
+  Trying 9 search queries for images
+  Query "Turkish architecture Istanbul" returned 30 images
+  Validating 6 images for Rumeli Fortress (activities)
+  Image validation complete: 0/6 valid, 6 filtered
+  Broad search "Turkish architecture" added 0 valid images (total: 0)
+  Using high-quality Istanbul placeholders to reach minimum
+  Images: places=5, unsplash=35, pexels=0, final=8 validation=0/12 passed (deduped 8)
+  Selected thumbnail: Unsplash high-quality photo
+Error creating staging item: ReferenceError: validationStats is not defined
+    at createStagingItem (src/app/api/admin/scrape-hybrid/route.ts:2122:32)
+    at POST (src/app/api/admin/scrape-hybrid/route.ts:552:35)
+  2120 |
+  2121 |     // Prepare validation metadata for storing
+> 2122 |     const validationMetadata = validationStats.total > 0 ? {
+       |                                ^
+  2123 |       images_validated: validationStats.total,
+  2124 |       images_passed_validation: validationStats.final,
+  2125 |       images_filtered: validationStats.total - validationStats.final,
+Processing: Istanbul Modern Art Museum (7/10)
+  Getting structured data for: Istanbul Modern Art Museum
+Google Places Search URL: https://maps.googleapis.com/maps/api/place/textsearch/json?query=Istanbul%20Modern%20Art%20Museum%20Istanbul%20Turkey&key=AIzaSyCegyoEhH9qphlL-Zbb2FgDDwFQq9HdV0w
+Google Places API Response Status: 200
+Google Places API Response: {
+  html_attributions: [],
+  results: [
+    {
+      business_status: 'OPERATIONAL',
+      formatted_address: 'Kılıçali Paşa, Tophane İskele Cd. No:1/1, 34433 Beyoğlu/İstanbul, Türkiye',
+      geometry: [Object],
+      icon: 'https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/museum-71.png',
+      icon_background_color: '#13B5C7',
+      icon_mask_base_uri: 'https://maps.gstatic.com/mapfiles/place_api/icons/v2/museum_pinlet',
+      name: 'Istanbul Museum of Modern Art',
+      opening_hours: [Object],
+      photos: [Array],
+      place_id: 'ChIJw8JuD9m5yhQRnegQbG9Irjs',
+      plus_code: [Object],
+      rating: 4.4,
+      reference: 'ChIJw8JuD9m5yhQRnegQbG9Irjs',
+      types: [Array],
+      user_ratings_total: 10065
+    }
+  ],
+  status: 'OK'
+}
+  Detected category: activities for Istanbul Modern Art Museum
+  About to validate with data: {
+  title: 'Istanbul Museum of Modern Art',
+  address: 'Kılıçali Paşa, Tophane İskele Cd. No:1/1, 34433 Beyoğlu/İstanbul, Türkiye',
+  types: [ 'establishment', 'museum', 'point_of_interest' ]
+}
+Activity validation for "Istanbul Museum of Modern Art": {
+  titleMatch: true,
+  matchReason: 'Alias match: istanbul modern',
+  isInIstanbul: true,
+  hasRequiredFields: true,
+  isNotMismatch: true
+}
+  Validation result: true
+  Enriching with Firecrawl: https://www.istanbulmodern.org/
+  Skipping enrichment - domain not in allowlist: www.istanbulmodern.org
+  Getting images for Istanbul Modern Art Museum (activities) - target: 12, have: 5
+  Need 7 more images, fetching from Unsplash...
+  Trying 9 search queries for images
+  Query "Istanbul Modern Art Museum Istanbul" returned 30 images
+  Added 11 images from Unsplash for "Istanbul Modern Art Museum"
+  After deduplication: 12 images
+  Validating 12 images for quality and relevance...
+  Validating 12 images for Istanbul Modern Art Museum (activities)
+  Image validation complete: 0/12 valid, 12 filtered
+  Image validation complete: 0/12 valid images
+  Filtered out 12 invalid/irrelevant images
+  Still under target (0/12), using broader search...
+  Trying 9 search queries for images
+  Query "activities Istanbul Istanbul" returned 30 images
+  Validating 6 images for Istanbul Modern Art Museum (activities)
+  Image validation complete: 0/6 valid, 6 filtered
+  Broad search "activities Istanbul" added 0 valid images (total: 0)
+  Trying 9 search queries for images
+  Query "Istanbul activities Istanbul" returned 30 images
+  Validating 6 images for Istanbul Modern Art Museum (activities)
+  Image validation complete: 0/6 valid, 6 filtered
+  Broad search "Istanbul activities" added 0 valid images (total: 0)
+  Trying 9 search queries for images
+  Query "Istanbul landmark Istanbul" returned 30 images
+  Validating 6 images for Istanbul Modern Art Museum (activities)
+  Image validation complete: 0/6 valid, 6 filtered
+  Broad search "Istanbul landmark" added 0 valid images (total: 0)
+  Trying 9 search queries for images
+  Query "Turkish architecture Istanbul" returned 30 images
+  Validating 6 images for Istanbul Modern Art Museum (activities)
+  Image validation complete: 0/6 valid, 6 filtered
+  Broad search "Turkish architecture" added 0 valid images (total: 0)
+  Using high-quality Istanbul placeholders to reach minimum
+  Images: places=5, unsplash=35, pexels=0, final=8 validation=0/12 passed (deduped 8)
+  Selected thumbnail: Unsplash high-quality photo
+Error creating staging item: ReferenceError: validationStats is not defined
+    at createStagingItem (src/app/api/admin/scrape-hybrid/route.ts:2122:32)
+    at POST (src/app/api/admin/scrape-hybrid/route.ts:552:35)
+  2120 |
+  2121 |     // Prepare validation metadata for storing
+> 2122 |     const validationMetadata = validationStats.total > 0 ? {
+       |                                ^
+  2123 |       images_validated: validationStats.total,
+  2124 |       images_passed_validation: validationStats.final,
+  2125 |       images_filtered: validationStats.total - validationStats.final,
+Processing: Eyüp Sultan Mosque (8/10)
+  Getting structured data for: Eyüp Sultan Mosque
+Google Places Search URL: https://maps.googleapis.com/maps/api/place/textsearch/json?query=Ey%C3%BCp%20Sultan%20Mosque%20Istanbul%20Turkey&key=AIzaSyCegyoEhH9qphlL-Zbb2FgDDwFQq9HdV0w
+Google Places API Response Status: 200
+Google Places API Response: {
+  html_attributions: [],
+  results: [
+    {
+      business_status: 'OPERATIONAL',
+      formatted_address: 'Merkez, Cami Kebir Sk. Eyüp Sultan Cami No:23, 34050 Eyüpsultan/İstanbul, Türkiye',
+      geometry: [Object],
+      icon: 'https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/worship_islam-71.png',
+      icon_background_color: '#7B9EB0',
+      icon_mask_base_uri: 'https://maps.gstatic.com/mapfiles/place_api/icons/v2/worship_islam_pinlet',
+      name: 'Eyüp Sultan Mosque',
+      opening_hours: [Object],
+      photos: [Array],
+      place_id: 'ChIJF_StIdCxyhQRXV-7_f2jows',
+      plus_code: [Object],
+      rating: 4.8,
+      reference: 'ChIJF_StIdCxyhQRXV-7_f2jows',
+      types: [Array],
+      user_ratings_total: 63379
+    }
+  ],
+  status: 'OK'
+}
+  Detected category: activities for Eyüp Sultan Mosque
+  About to validate with data: {
+  title: 'Eyüp Sultan Mosque',
+  address: 'Merkez, Cami Kebir Sk. Eyüp Sultan Cami No:23, 34050 Eyüpsultan/İstanbul, Türkiye',
+  types: [
+    'establishment',
+    'mosque',
+    'park',
+    'place_of_worship',
+    'point_of_interest'
+  ]
+}
+Activity validation for "Eyüp Sultan Mosque": {
+  titleMatch: true,
+  matchReason: 'Direct match',
+  isInIstanbul: true,
+  hasRequiredFields: true,
+  isNotMismatch: true
+}
+  Validation result: true
+  Enriching with Firecrawl: https://www.eyupsultan.bel.tr/tr/main/pages/eyup-sultan-camii/945
+  Skipping enrichment - domain not in allowlist: www.eyupsultan.bel.tr
+  Getting images for Eyüp Sultan Mosque (activities) - target: 12, have: 5
+  Need 7 more images, fetching from Unsplash...
+  Trying 9 search queries for images
+  Query "Eyüp Sultan Mosque Istanbul" returned 30 images
+  Added 11 images from Unsplash for "Eyüp Sultan Mosque"
+  After deduplication: 12 images
+  Validating 12 images for quality and relevance...
+  Validating 12 images for Eyüp Sultan Mosque (activities)
+  Image validation complete: 0/12 valid, 12 filtered
+  Image validation complete: 0/12 valid images
+  Filtered out 12 invalid/irrelevant images
+  Still under target (0/12), using broader search...
+  Trying 9 search queries for images
+  Query "activities Istanbul Istanbul" returned 30 images
+  Validating 6 images for Eyüp Sultan Mosque (activities)
+  Image validation complete: 0/6 valid, 6 filtered
+  Broad search "activities Istanbul" added 0 valid images (total: 0)
+  Trying 9 search queries for images
+  Query "Istanbul activities Istanbul" returned 30 images
+  Validating 6 images for Eyüp Sultan Mosque (activities)
+  Image validation complete: 0/6 valid, 6 filtered
+  Broad search "Istanbul activities" added 0 valid images (total: 0)
+  Trying 9 search queries for images
+  Query "Istanbul landmark Istanbul" returned 30 images
+  Validating 6 images for Eyüp Sultan Mosque (activities)
+  Image validation complete: 0/6 valid, 6 filtered
+  Broad search "Istanbul landmark" added 0 valid images (total: 0)
+  Trying 9 search queries for images
+  Query "Turkish architecture Istanbul" returned 30 images
+  Validating 6 images for Eyüp Sultan Mosque (activities)
+  Image validation complete: 0/6 valid, 6 filtered
+  Broad search "Turkish architecture" added 0 valid images (total: 0)
+  Using high-quality Istanbul placeholders to reach minimum
+  Images: places=5, unsplash=35, pexels=0, final=8 validation=0/12 passed (deduped 8)
+  Selected thumbnail: Unsplash high-quality photo
+Error creating staging item: ReferenceError: validationStats is not defined
+    at createStagingItem (src/app/api/admin/scrape-hybrid/route.ts:2122:32)
+    at POST (src/app/api/admin/scrape-hybrid/route.ts:552:35)
+  2120 |
+  2121 |     // Prepare validation metadata for storing
+> 2122 |     const validationMetadata = validationStats.total > 0 ? {
+       |                                ^
+  2123 |       images_validated: validationStats.total,
+  2124 |       images_passed_validation: validationStats.final,
+  2125 |       images_filtered: validationStats.total - validationStats.final,
+Processing: Camlica Mosque (9/10)
+  Getting structured data for: Camlica Mosque
+Google Places Search URL: https://maps.googleapis.com/maps/api/place/textsearch/json?query=Camlica%20Mosque%20Istanbul%20Turkey&key=AIzaSyCegyoEhH9qphlL-Zbb2FgDDwFQq9HdV0w
+Google Places API Response Status: 200
+Google Places API Response: {
+  html_attributions: [],
+  results: [
+    {
+      business_status: 'OPERATIONAL',
+      formatted_address: 'Ferah, Ferah Yolu Sk. No:6 D:3, 34692 Üsküdar/İstanbul, Türkiye',
+      geometry: [Object],
+      icon: 'https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/worship_islam-71.png',
+      icon_background_color: '#7B9EB0',
+      icon_mask_base_uri: 'https://maps.gstatic.com/mapfiles/place_api/icons/v2/worship_islam_pinlet',
+      name: 'Grand Çamlıca Mosque',
+      photos: [Array],
+      place_id: 'ChIJbY6mqC3JyhQR9gNjzJQDB8k',
+      plus_code: [Object],
+      rating: 4.9,
+      reference: 'ChIJbY6mqC3JyhQR9gNjzJQDB8k',
+      types: [Array],
+      user_ratings_total: 9523
+    }
+  ],
+  status: 'OK'
+}
+  Detected category: activities for Camlica Mosque
+  About to validate with data: {
+  title: 'Grand Çamlıca Mosque',
+  address: 'Ferah, Ferah Yolu Sk. No:6 D:3, 34692 Üsküdar/İstanbul, Türkiye',
+  types: [
+    'establishment',
+    'mosque',
+    'place_of_worship',
+    'point_of_interest'
+  ]
+}
+Activity validation for "Grand Çamlıca Mosque": {
+  titleMatch: true,
+  matchReason: 'Fuzzy match: 50% word overlap',
+  isInIstanbul: true,
+  hasRequiredFields: true,
+  isNotMismatch: true
+}
+  Validation result: true
+  Getting images for Camlica Mosque (activities) - target: 12, have: 5
+  Need 7 more images, fetching from Unsplash...
+  Trying 9 search queries for images
+  Query "Camlica Mosque Istanbul" returned 30 images
+  Added 11 images from Unsplash for "Camlica Mosque"
+  After deduplication: 12 images
+  Validating 12 images for quality and relevance...
+  Validating 12 images for Camlica Mosque (activities)
+  Image validation complete: 0/12 valid, 12 filtered
+  Image validation complete: 0/12 valid images
+  Filtered out 12 invalid/irrelevant images
+  Still under target (0/12), using broader search...
+  Trying 9 search queries for images
+  Query "activities Istanbul Istanbul" returned 30 images
+  Validating 6 images for Camlica Mosque (activities)
+  Image validation complete: 0/6 valid, 6 filtered
+  Broad search "activities Istanbul" added 0 valid images (total: 0)
+  Trying 9 search queries for images
+  Query "Istanbul activities Istanbul" returned 30 images
+  Validating 6 images for Camlica Mosque (activities)
+  Image validation complete: 0/6 valid, 6 filtered
+  Broad search "Istanbul activities" added 0 valid images (total: 0)
+  Trying 9 search queries for images
+  Query "Istanbul landmark Istanbul" returned 30 images
+  Validating 6 images for Camlica Mosque (activities)
+  Image validation complete: 0/6 valid, 6 filtered
+  Broad search "Istanbul landmark" added 0 valid images (total: 0)
+  Trying 9 search queries for images
+  Query "Turkish architecture Istanbul" returned 30 images
+  Validating 6 images for Camlica Mosque (activities)
+  Image validation complete: 0/6 valid, 6 filtered
+  Broad search "Turkish architecture" added 0 valid images (total: 0)
+  Using high-quality Istanbul placeholders to reach minimum
+  Images: places=5, unsplash=35, pexels=0, final=8 validation=0/12 passed (deduped 8)
+  Selected thumbnail: Unsplash high-quality photo
+Error creating staging item: ReferenceError: validationStats is not defined
+    at createStagingItem (src/app/api/admin/scrape-hybrid/route.ts:2122:32)
+    at POST (src/app/api/admin/scrape-hybrid/route.ts:552:35)
+  2120 |
+  2121 |     // Prepare validation metadata for storing
+> 2122 |     const validationMetadata = validationStats.total > 0 ? {
+       |                                ^
+  2123 |       images_validated: validationStats.total,
+  2124 |       images_passed_validation: validationStats.final,
+  2125 |       images_filtered: validationStats.total - validationStats.final,
+Processing: Fener & Balat District (10/10)
+  Getting structured data for: Fener & Balat District
+Google Places Search URL: https://maps.googleapis.com/maps/api/place/textsearch/json?query=Fener%20%26%20Balat%20District%20Istanbul%20Turkey&key=AIzaSyCegyoEhH9qphlL-Zbb2FgDDwFQq9HdV0w
+Google Places API Response Status: 200
+Google Places API Response: {
+  html_attributions: [],
+  results: [
+    {
+      formatted_address: 'Fener, Balat, Fatih/İstanbul, Türkiye',
+      geometry: [Object],
+      icon: 'https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/geocode-71.png',
+      icon_background_color: '#7B9EB0',
+      icon_mask_base_uri: 'https://maps.gstatic.com/mapfiles/place_api/icons/v2/generic_pinlet',
+      name: 'Fener',
+      photos: [Array],
+      place_id: 'ChIJ32Vzrh26yhQRh1yWIrkBDEI',
+      reference: 'ChIJ32Vzrh26yhQRh1yWIrkBDEI',
+      types: [Array]
+    }
+  ],
+  status: 'OK'
+}
+  Detected category: activities for Fener & Balat District
+  About to validate with data: {
+  title: 'Fener',
+  address: 'Fener, Balat, Fatih/İstanbul, Türkiye',
+  types: [ 'neighborhood', 'political' ]
+}
+Activity validation for "Fener": {
+  titleMatch: true,
+  matchReason: 'Direct match',
+  isInIstanbul: true,
+  hasRequiredFields: false,
+  isNotMismatch: true
+}
+  Validation result: false
+ POST /api/admin/scrape-hybrid 200 in 35621ms
+ ✓ Compiled in 243ms (1327 modules)
+ GET /admin/hybrid-scraping 200 in 95ms
+ ✓ Compiled in 69ms (575 modules)
+ GET /admin/hybrid-scraping 200 in 12ms
+ ✓ Compiled in 71ms (575 modules)
+ GET /admin/hybrid-scraping 200 in 20ms
+ ✓ Compiled in 80ms (575 modules)
+ GET /admin/hybrid-scraping 200 in 13ms
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: incorrect header check
+ ✓ Compiled in 71ms (575 modules)
+ GET /admin/hybrid-scraping 200 in 14ms
+ ✓ Compiled in 66ms (575 modules)
+ GET /admin/hybrid-scraping 200 in 11ms
+ ✓ Compiled in 65ms (575 modules)
+ GET /admin/hybrid-scraping 200 in 19ms
+ ✓ Compiled in 71ms (575 modules)
+ GET /admin/hybrid-scraping 200 in 15ms
+ ✓ Compiled in 69ms (575 modules)
+ GET /admin/hybrid-scraping 200 in 11ms
+ ✓ Compiled in 342ms (1327 modules)
+ GET /admin/hybrid-scraping 200 in 62ms
+ ✓ Compiled in 66ms (575 modules)
+ GET /admin/hybrid-scraping 200 in 11ms
+ GET /admin/hybrid-scraping 200 in 47ms
+ ✓ Compiled in 176ms (1313 modules)
+ GET /admin/hybrid-scraping 200 in 38ms
+ ✓ Compiled in 184ms (1327 modules)
+ GET /admin/hybrid-scraping 200 in 63ms
+ ✓ Compiled in 191ms (1327 modules)
+ GET /admin/hybrid-scraping 200 in 44ms
+ ✓ Compiled in 156ms (1327 modules)
+ GET /admin/hybrid-scraping 200 in 37ms
+ ✓ Compiled in 196ms (1327 modules)
+ GET /admin/hybrid-scraping 200 in 40ms
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: incorrect header check
+ ✓ Compiled in 250ms (1327 modules)
+ GET /admin/hybrid-scraping 200 in 41ms
+ ⨯ ./src/app/admin/staging/page.tsx
+Error:   [31mx[0m Expected '</', got 'jsx text (
+  [31m|[0m
+  [31m|[0m                 )'
+     ,-[[36;1;4m/Users/haidarazad/Desktop/Cursor/Istanbul/BestIstanbul/src/app/admin/staging/page.tsx[0m:759:1]
+ [2m756[0m |                           </p>
+ [2m757[0m |                         )}
+ [2m758[0m |                       </div>
+ [2m759[0m | [35;1m,[0m[35;1m-[0m[35;1m>[0m                 )}</div>
+ [2m760[0m | [35;1m|[0m   
+ [2m761[0m | [35;1m`[0m[35;1m-[0m[35;1m>[0m                 <div className="flex gap-2 mt-4">
+ [2m762[0m |                       <Button
+ [2m763[0m |                         size="sm"
+ [2m764[0m |                         variant="outline"
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./src/app/admin/staging/page.tsx
+ GET /admin/hybrid-scraping 500 in 8ms
+ GET /admin/hybrid-scraping 500 in 6ms
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ GET /admin/hybrid-scraping 500 in 54ms
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ ⨯ ./src/app/admin/staging/page.tsx
+Error:   [31mx[0m Expected '</', got 'jsx text (
+  [31m|[0m
+  [31m|[0m                 )'
+     ,-[[36;1;4m/Users/haidarazad/Desktop/Cursor/Istanbul/BestIstanbul/src/app/admin/staging/page.tsx[0m:759:1]
+ [2m756[0m |                           </p>
+ [2m757[0m |                         )}
+ [2m758[0m |                       </div>
+ [2m759[0m | [35;1m,[0m[35;1m-[0m[35;1m>[0m                 )}</div>
+ [2m760[0m | [35;1m|[0m   
+ [2m761[0m | [35;1m`[0m[35;1m-[0m[35;1m>[0m                 <div className="flex gap-2 mt-4">
+ [2m762[0m |                       {item.item_type === 'success' ? (
+ [2m763[0m |                         <>
+ [2m764[0m |                           <Button
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./src/app/admin/staging/page.tsx
+ GET /admin/hybrid-scraping 200 in 60ms
+ GET /admin/hybrid-scraping 500 in 7ms
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ GET /admin/hybrid-scraping 500 in 53ms
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ ⨯ ./src/app/admin/staging/page.tsx
+Error:   [31mx[0m Expected '</', got 'jsx text (
+  [31m|[0m
+  [31m|[0m                 )'
+     ,-[[36;1;4m/Users/haidarazad/Desktop/Cursor/Istanbul/BestIstanbul/src/app/admin/staging/page.tsx[0m:759:1]
+ [2m756[0m |                           </p>
+ [2m757[0m |                         )}
+ [2m758[0m |                       </div>
+ [2m759[0m | [35;1m,[0m[35;1m-[0m[35;1m>[0m                 )}</div>
+ [2m760[0m | [35;1m|[0m   
+ [2m761[0m | [35;1m`[0m[35;1m-[0m[35;1m>[0m                 <div className="flex gap-2 mt-4">
+ [2m762[0m |                       {item.item_type === 'success' ? (
+ [2m763[0m |                         <>
+ [2m764[0m |                           <Button
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./src/app/admin/staging/page.tsx
+ GET /admin/hybrid-scraping 200 in 56ms
+ GET /admin/hybrid-scraping 500 in 4ms
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ GET /admin/hybrid-scraping 500 in 78ms
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ ⨯ ./src/app/admin/staging/page.tsx
+Error:   [31mx[0m Expected '</', got 'jsx text (
+  [31m|[0m
+  [31m|[0m                 )'
+     ,-[[36;1;4m/Users/haidarazad/Desktop/Cursor/Istanbul/BestIstanbul/src/app/admin/staging/page.tsx[0m:809:1]
+ [2m806[0m |                           </p>
+ [2m807[0m |                         )}
+ [2m808[0m |                       </div>
+ [2m809[0m | [35;1m,[0m[35;1m-[0m[35;1m>[0m                 )}</div>
+ [2m810[0m | [35;1m|[0m   
+ [2m811[0m | [35;1m`[0m[35;1m-[0m[35;1m>[0m                 <div className="flex gap-2 mt-4">
+ [2m812[0m |                       {item.item_type === 'success' ? (
+ [2m813[0m |                         <>
+ [2m814[0m |                           <Button
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./src/app/admin/staging/page.tsx
+ GET /admin/hybrid-scraping 200 in 73ms
+ GET /admin/hybrid-scraping 500 in 13ms
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ GET /admin/hybrid-scraping 500 in 62ms
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ ⨯ ./src/app/admin/staging/page.tsx
+Error:   [31mx[0m Expected '</', got 'jsx text (
+  [31m|[0m
+  [31m|[0m                 )'
+     ,-[[36;1;4m/Users/haidarazad/Desktop/Cursor/Istanbul/BestIstanbul/src/app/admin/staging/page.tsx[0m:809:1]
+ [2m806[0m |                           </p>
+ [2m807[0m |                         )}
+ [2m808[0m |                       </div>
+ [2m809[0m | [35;1m,[0m[35;1m-[0m[35;1m>[0m                 )}</div>
+ [2m810[0m | [35;1m|[0m   
+ [2m811[0m | [35;1m`[0m[35;1m-[0m[35;1m>[0m                 <div className="flex gap-2 mt-4">
+ [2m812[0m |                       {item.item_type === 'success' ? (
+ [2m813[0m |                         <>
+ [2m814[0m |                           <Button
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./src/app/admin/staging/page.tsx
+ GET /admin/hybrid-scraping 200 in 56ms
+ GET /admin/hybrid-scraping 500 in 5ms
+ ✓ Compiled in 119ms (497 modules)
+TypeError: Cannot read properties of undefined (reading '/_app')
+    at new Promise (<anonymous>)
+ ⨯ TypeError: Cannot read properties of undefined (reading '/_app')
+    at new Promise (<anonymous>)
+ ⨯ TypeError: Cannot read properties of undefined (reading '/_app')
+    at new Promise (<anonymous>)
+TypeError: Cannot read properties of undefined (reading '/_app')
+    at new Promise (<anonymous>)
+ ⨯ TypeError: Cannot read properties of undefined (reading '/_app')
+    at new Promise (<anonymous>)
+TypeError: Cannot read properties of undefined (reading '/_app')
+    at new Promise (<anonymous>)
+TypeError: Cannot read properties of undefined (reading '/_app')
+    at new Promise (<anonymous>)
+ ⨯ TypeError: Cannot read properties of undefined (reading '/_app')
+    at new Promise (<anonymous>)
+TypeError: Cannot read properties of undefined (reading '/_app')
+    at new Promise (<anonymous>)
+ GET /admin/hybrid-scraping 500 in 67ms
+ GET /admin/hybrid-scraping 500 in 15ms
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: incorrect header check
+TypeError: Cannot read properties of undefined (reading '/_app')
+    at new Promise (<anonymous>)
+ ⨯ TypeError: Cannot read properties of undefined (reading '/_app')
+    at new Promise (<anonymous>)
+ ⨯ TypeError: Cannot read properties of undefined (reading '/_app')
+    at new Promise (<anonymous>)
+TypeError: Cannot read properties of undefined (reading '/_app')
+    at new Promise (<anonymous>)
+ ⨯ TypeError: Cannot read properties of undefined (reading '/_app')
+    at new Promise (<anonymous>)
+TypeError: Cannot read properties of undefined (reading '/_app')
+    at new Promise (<anonymous>)
+TypeError: Cannot read properties of undefined (reading '/_app')
+    at new Promise (<anonymous>)
+ ⨯ TypeError: Cannot read properties of undefined (reading '/_app')
+    at new Promise (<anonymous>)
+TypeError: Cannot read properties of undefined (reading '/_app')
+    at new Promise (<anonymous>)
+ GET /admin/hybrid-scraping 500 in 100ms
+ GET /admin/hybrid-scraping 500 in 19ms
+ ✓ Compiled in 133ms (497 modules)
+ ✓ Compiled in 93ms (497 modules)
+ ✓ Compiled in 79ms (497 modules)
+ ✓ Compiled in 93ms (497 modules)
+ ✓ Compiled in 77ms (497 modules)
+ ⨯ ./src/app/admin/staging/page.tsx
+Error:   [31mx[0m Unterminated regexp literal
+     ,-[[36;1;4m/Users/haidarazad/Desktop/Cursor/Istanbul/BestIstanbul/src/app/admin/staging/page.tsx[0m:809:1]
+ [2m806[0m |                       </p>
+ [2m807[0m |                     )}
+ [2m808[0m |                   </div>
+ [2m809[0m |                 </div>
+     : [35;1m                 ^^^^^[0m
+ [2m810[0m | 
+ [2m811[0m |                 <div className="flex gap-2 mt-4">
+ [2m812[0m |                   {item.item_type === 'success' ? (
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./src/app/admin/staging/page.tsx
+ ⨯ ./src/app/admin/staging/page.tsx
+Error:   [31mx[0m Unterminated regexp literal
+     ,-[[36;1;4m/Users/haidarazad/Desktop/Cursor/Istanbul/BestIstanbul/src/app/admin/staging/page.tsx[0m:809:1]
+ [2m806[0m |                       </p>
+ [2m807[0m |                     )}
+ [2m808[0m |                   </div>
+ [2m809[0m |                 </div>
+     : [35;1m                 ^^^^^[0m
+ [2m810[0m |                 )}
+ [2m811[0m | 
+ [2m812[0m |                 <div className="flex gap-2 mt-4">
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./src/app/admin/staging/page.tsx
+[Error: ENOENT: no such file or directory, stat '/Users/haidarazad/Desktop/Cursor/Istanbul/BestIstanbul/.next/cache/webpack/server-development/2.pack.gz'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'stat',
+  path: '/Users/haidarazad/Desktop/Cursor/Istanbul/BestIstanbul/.next/cache/webpack/server-development/2.pack.gz'
+}
+ ⨯ unhandledRejection: [Error: ENOENT: no such file or directory, stat '/Users/haidarazad/Desktop/Cursor/Istanbul/BestIstanbul/.next/cache/webpack/server-development/2.pack.gz'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'stat',
+  path: '/Users/haidarazad/Desktop/Cursor/Istanbul/BestIstanbul/.next/cache/webpack/server-development/2.pack.gz'
+}
+ ⨯ unhandledRejection:  [Error: ENOENT: no such file or directory, stat '/Users/haidarazad/Desktop/Cursor/Istanbul/BestIstanbul/.next/cache/webpack/server-development/2.pack.gz'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'stat',
+  path: '/Users/haidarazad/Desktop/Cursor/Istanbul/BestIstanbul/.next/cache/webpack/server-development/2.pack.gz'
+}
+[Error: ENOENT: no such file or directory, stat '/Users/haidarazad/Desktop/Cursor/Istanbul/BestIstanbul/.next/cache/webpack/server-development/12.pack.gz'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'stat',
+  path: '/Users/haidarazad/Desktop/Cursor/Istanbul/BestIstanbul/.next/cache/webpack/server-development/12.pack.gz'
+}
+ ⨯ unhandledRejection: [Error: ENOENT: no such file or directory, stat '/Users/haidarazad/Desktop/Cursor/Istanbul/BestIstanbul/.next/cache/webpack/server-development/12.pack.gz'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'stat',
+  path: '/Users/haidarazad/Desktop/Cursor/Istanbul/BestIstanbul/.next/cache/webpack/server-development/12.pack.gz'
+}
+ ⨯ unhandledRejection:  [Error: ENOENT: no such file or directory, stat '/Users/haidarazad/Desktop/Cursor/Istanbul/BestIstanbul/.next/cache/webpack/server-development/12.pack.gz'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'stat',
+  path: '/Users/haidarazad/Desktop/Cursor/Istanbul/BestIstanbul/.next/cache/webpack/server-development/12.pack.gz'
+}
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, stat '/Users/haidarazad/Desktop/Cursor/Istanbul/BestIstanbul/.next/cache/webpack/server-development/2.pack.gz'
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename '/Users/haidarazad/Desktop/Cursor/Istanbul/BestIstanbul/.next/cache/webpack/client-development/3.pack.gz_' -> '/Users/haidarazad/Desktop/Cursor/Istanbul/BestIstanbul/.next/cache/webpack/client-development/3.pack.gz'
+ ⨯ ./src/app/admin/staging/page.tsx
+Error:   [31mx[0m Unterminated regexp literal
+     ,-[[36;1;4m/Users/haidarazad/Desktop/Cursor/Istanbul/BestIstanbul/src/app/admin/staging/page.tsx[0m:809:1]
+ [2m806[0m |                       </p>
+ [2m807[0m |                     )}
+ [2m808[0m |                   </div>
+ [2m809[0m |                 </div>
+     : [35;1m                 ^^^^^[0m
+ [2m810[0m | 
+ [2m811[0m |                 <div className="flex gap-2 mt-4">
+ [2m812[0m |                   {item.item_type === 'success' ? (
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./src/app/admin/staging/page.tsx
+ ⨯ ./src/app/admin/staging/page.tsx
+Error:   [31mx[0m Unterminated regexp literal
+     ,-[[36;1;4m/Users/haidarazad/Desktop/Cursor/Istanbul/BestIstanbul/src/app/admin/staging/page.tsx[0m:809:1]
+ [2m806[0m |                       </p>
+ [2m807[0m |                     )}
+ [2m808[0m |                   </div>
+ [2m809[0m |                 </div>
+     : [35;1m                 ^^^^^[0m
+ [2m810[0m |                 )}
+ [2m811[0m | 
+ [2m812[0m |                 <div className="flex gap-2 mt-4">
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./src/app/admin/staging/page.tsx
+ ✓ Compiled in 193ms (497 modules)
+ ⨯ ./src/app/admin/staging/page.tsx
+Error:   [31mx[0m Unterminated regexp literal
+     ,-[[36;1;4m/Users/haidarazad/Desktop/Cursor/Istanbul/BestIstanbul/src/app/admin/staging/page.tsx[0m:809:1]
+ [2m806[0m |                       </p>
+ [2m807[0m |                     )}
+ [2m808[0m |                   </div>
+ [2m809[0m |                 </div>
+     : [35;1m                 ^^^^^[0m
+ [2m810[0m |                 )}
+ [2m811[0m |               </CardContent>
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./src/app/admin/staging/page.tsx
+ ⨯ ./src/app/admin/staging/page.tsx
+Error:   [31mx[0m Unterminated regexp literal
+     ,-[[36;1;4m/Users/haidarazad/Desktop/Cursor/Istanbul/BestIstanbul/src/app/admin/staging/page.tsx[0m:809:1]
+ [2m806[0m |                       </p>
+ [2m807[0m |                     )}
+ [2m808[0m |                   </div>
+ [2m809[0m |                 </div>
+     : [35;1m                 ^^^^^[0m
+ [2m810[0m |                 )}
+ [2m811[0m | 
+ [2m812[0m |                 <div className="flex gap-2 mt-4">
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./src/app/admin/staging/page.tsx
+ ✓ Compiled in 577ms (1313 modules)
+ ✓ Compiled in 305ms (575 modules)
+ ✓ Compiled in 78ms (575 modules)
+ ✓ Compiled in 82ms (575 modules)
+ ✓ Compiled in 87ms (575 modules)
+ ✓ Compiled in 93ms (575 modules)
+ ✓ Compiled in 269ms (1327 modules)
+ ✓ Compiled in 70ms (575 modules)
+ ✓ Compiled in 164ms (1313 modules)
+ ✓ Compiled in 330ms (1327 modules)
+ ✓ Compiled in 308ms (575 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename '/Users/haidarazad/Desktop/Cursor/Istanbul/BestIstanbul/.next/cache/webpack/client-development/0.pack.gz_' -> '/Users/haidarazad/Desktop/Cursor/Istanbul/BestIstanbul/.next/cache/webpack/client-development/0.pack.gz'
+ ✓ Compiled in 355ms (575 modules)
+ ✓ Compiled in 216ms (575 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename '/Users/haidarazad/Desktop/Cursor/Istanbul/BestIstanbul/.next/cache/webpack/client-development/0.pack.gz_' -> '/Users/haidarazad/Desktop/Cursor/Istanbul/BestIstanbul/.next/cache/webpack/client-development/0.pack.gz'
+ ✓ Compiled in 372ms (575 modules)
+ ✓ Compiled in 490ms (575 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename '/Users/haidarazad/Desktop/Cursor/Istanbul/BestIstanbul/.next/cache/webpack/client-development/0.pack.gz_' -> '/Users/haidarazad/Desktop/Cursor/Istanbul/BestIstanbul/.next/cache/webpack/client-development/0.pack.gz'
+ ✓ Compiled in 421ms (575 modules)
+ ✓ Compiled in 180ms (575 modules)
+ ✓ Compiled in 783ms (1327 modules)
+ ⨯ ./src/app/admin/staging/page.tsx
+Module parse failed: Identifier 'Image' has already been declared (13:7)
+| import { CheckCircle, XCircle, Eye, Filter, RefreshCw, Star, Clock, Image, MapPin, ExternalLink, ArrowRight, Sparkles, Plus, AlertTriangle, FileText, Camera } from "__barrel_optimize__?names=AlertTriangle,ArrowRight,Camera,CheckCircle,Clock,ExternalLink,Eye,FileText,Filter,Image,MapPin,Plus,RefreshCw,Sparkles,Star,XCircle!=!lucide-react";
+| import { createClient } from '@supabase/supabase-js';
+> import Image from 'next/image';
+| const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
+| export default function StagingPage() {
+
+Import trace for requested module:
+./src/app/admin/staging/page.tsx
+ ⨯ ./src/app/admin/staging/page.tsx
+Module parse failed: Identifier 'Image' has already been declared (13:7)
+| import { CheckCircle, XCircle, Eye, Filter, RefreshCw, Star, Clock, Image, MapPin, ExternalLink, ArrowRight, Sparkles, Plus, AlertTriangle, FileText, Camera } from "__barrel_optimize__?names=AlertTriangle,ArrowRight,Camera,CheckCircle,Clock,ExternalLink,Eye,FileText,Filter,Image,MapPin,Plus,RefreshCw,Sparkles,Star,XCircle!=!lucide-react";
+| import { createClient } from '@supabase/supabase-js';
+> import Image from 'next/image';
+| const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
+| export default function StagingPage() {
+
+Import trace for requested module:
+./src/app/admin/staging/page.tsx
+ ⨯ ./src/app/admin/staging/page.tsx
+Module parse failed: Identifier 'Image' has already been declared (13:7)
+| import { CheckCircle, XCircle, Eye, Filter, RefreshCw, Star, Clock, Image, MapPin, ExternalLink, ArrowRight, Sparkles, Plus, AlertTriangle, FileText, Camera } from "__barrel_optimize__?names=AlertTriangle,ArrowRight,Camera,CheckCircle,Clock,ExternalLink,Eye,FileText,Filter,Image,MapPin,Plus,RefreshCw,Sparkles,Star,XCircle!=!lucide-react";
+| import { createClient } from '@supabase/supabase-js';
+> import Image from 'next/image';
+| const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
+| export default function StagingPage() {
+
+Import trace for requested module:
+./src/app/admin/staging/page.tsx
+ ⨯ ./src/app/admin/staging/page.tsx
+Module parse failed: Identifier 'Image' has already been declared (13:7)
+| import { CheckCircle, XCircle, Eye, Filter, RefreshCw, Star, Clock, Image, MapPin, ExternalLink, ArrowRight, Sparkles, Plus, AlertTriangle, FileText, Camera } from "__barrel_optimize__?names=AlertTriangle,ArrowRight,Camera,CheckCircle,Clock,ExternalLink,Eye,FileText,Filter,Image,MapPin,Plus,RefreshCw,Sparkles,Star,XCircle!=!lucide-react";
+| import { createClient } from '@supabase/supabase-js';
+> import Image from 'next/image';
+| const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
+| export default function StagingPage() {
+
+Import trace for requested module:
+./src/app/admin/staging/page.tsx
+ ⨯ ./src/app/admin/staging/page.tsx
+Module parse failed: Identifier 'Image' has already been declared (13:7)
+| import { CheckCircle, XCircle, Eye, Filter, RefreshCw, Star, Clock, Image, MapPin, ExternalLink, ArrowRight, Sparkles, Plus, AlertTriangle, FileText, Camera } from "__barrel_optimize__?names=AlertTriangle,ArrowRight,Camera,CheckCircle,Clock,ExternalLink,Eye,FileText,Filter,Image,MapPin,Plus,RefreshCw,Sparkles,Star,XCircle!=!lucide-react";
+| import { createClient } from '@supabase/supabase-js';
+> import Image from 'next/image';
+| const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
+| export default function StagingPage() {
+
+Import trace for requested module:
+./src/app/admin/staging/page.tsx
+ ⨯ ./src/app/admin/staging/page.tsx
+Module parse failed: Identifier 'Image' has already been declared (13:7)
+| import { CheckCircle, XCircle, Eye, Filter, RefreshCw, Star, Clock, Image, MapPin, ExternalLink, ArrowRight, Sparkles, Plus, AlertTriangle, FileText, Camera } from "__barrel_optimize__?names=AlertTriangle,ArrowRight,Camera,CheckCircle,Clock,ExternalLink,Eye,FileText,Filter,Image,MapPin,Plus,RefreshCw,Sparkles,Star,XCircle!=!lucide-react";
+| import { createClient } from '@supabase/supabase-js';
+> import Image from 'next/image';
+| const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
+| export default function StagingPage() {
+
+Import trace for requested module:
+./src/app/admin/staging/page.tsx
+ ⨯ ./src/app/admin/staging/page.tsx
+Module parse failed: Identifier 'Image' has already been declared (13:7)
+| import { CheckCircle, XCircle, Eye, Filter, RefreshCw, Star, Clock, Image, MapPin, ExternalLink, ArrowRight, Sparkles, Plus, AlertTriangle, FileText, Camera } from "__barrel_optimize__?names=AlertTriangle,ArrowRight,Camera,CheckCircle,Clock,ExternalLink,Eye,FileText,Filter,Image,MapPin,Plus,RefreshCw,Sparkles,Star,XCircle!=!lucide-react";
+| import { createClient } from '@supabase/supabase-js';
+> import Image from 'next/image';
+| const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
+| export default function StagingPage() {
+
+Import trace for requested module:
+./src/app/admin/staging/page.tsx
+ ✓ Compiled in 1051ms (1327 modules)
+ ✓ Compiled in 1396ms (1359 modules)
+ ✓ Compiled in 1070ms (1359 modules)
+ ✓ Compiled in 709ms (1359 modules)
+ ✓ Compiled in 398ms (1359 modules)
+ ✓ Compiled in 732ms (1359 modules)
+ ✓ Compiled in 675ms (1359 modules)
+ ⨯ ./src/app/admin/staging/page.tsx
+Error:   [31mx[0m Expected '</', got '}'
+      ,-[[36;1;4m/Users/haidarazad/Desktop/Cursor/Istanbul/BestIstanbul/src/app/admin/staging/page.tsx[0m:1547:1]
+ [2m1544[0m |                           </Button>
+ [2m1545[0m |                         </div>
+ [2m1546[0m |                       </div>
+ [2m1547[0m |                     )}
+      : [35;1m                     ^[0m
+ [2m1548[0m |                   </TabsContent>
+ [2m1549[0m |                 </div>
+ [2m1550[0m |               </Tabs>
+      `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./src/app/admin/staging/page.tsx
+ ⨯ ./src/app/admin/staging/page.tsx
+Error:   [31mx[0m Expected '</', got '}'
+      ,-[[36;1;4m/Users/haidarazad/Desktop/Cursor/Istanbul/BestIstanbul/src/app/admin/staging/page.tsx[0m:1547:1]
+ [2m1544[0m |                           </Button>
+ [2m1545[0m |                         </div>
+ [2m1546[0m |                       </div>
+ [2m1547[0m |                     )}
+      : [35;1m                     ^[0m
+ [2m1548[0m |                   </TabsContent>
+ [2m1549[0m |                 </div>
+ [2m1550[0m |               </Tabs>
+      `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./src/app/admin/staging/page.tsx
+ ⨯ ./src/app/admin/staging/page.tsx
+Error:   [31mx[0m Expected '</', got '}'
+      ,-[[36;1;4m/Users/haidarazad/Desktop/Cursor/Istanbul/BestIstanbul/src/app/admin/staging/page.tsx[0m:1547:1]
+ [2m1544[0m |                           </Button>
+ [2m1545[0m |                         </div>
+ [2m1546[0m |                       </div>
+ [2m1547[0m |                     )}
+      : [35;1m                     ^[0m
+ [2m1548[0m |                   </TabsContent>
+ [2m1549[0m |                 </div>
+ [2m1550[0m |               </Tabs>
+      `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./src/app/admin/staging/page.tsx
+ ⨯ ./src/app/admin/staging/page.tsx
+Error:   [31mx[0m Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+      ,-[[36;1;4m/Users/haidarazad/Desktop/Cursor/Istanbul/BestIstanbul/src/app/admin/staging/page.tsx[0m:1476:1]
+ [2m1473[0m |                           </div>
+ [2m1474[0m |                         </div>
+ [2m1475[0m |                       );
+ [2m1476[0m |                     })()}
+      : [35;1m                    ^[0m
+ [2m1477[0m | 
+ [2m1478[0m |                         {/* Raw Data and Actions */}
+ [2m1479[0m |                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      `----
+  [31mx[0m Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+      ,-[[36;1;4m/Users/haidarazad/Desktop/Cursor/Istanbul/BestIstanbul/src/app/admin/staging/page.tsx[0m:1476:1]
+ [2m1473[0m |                           </div>
+ [2m1474[0m |                         </div>
+ [2m1475[0m |                       );
+ [2m1476[0m |                     })()}
+      : [35;1m                        ^[0m
+ [2m1477[0m | 
+ [2m1478[0m |                         {/* Raw Data and Actions */}
+ [2m1479[0m |                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      `----
+  [31mx[0m Expected '</', got '}'
+      ,-[[36;1;4m/Users/haidarazad/Desktop/Cursor/Istanbul/BestIstanbul/src/app/admin/staging/page.tsx[0m:1557:1]
+ [2m1554[0m |                           </Button>
+ [2m1555[0m |                         </div>
+ [2m1556[0m |                       </div>
+ [2m1557[0m |                     )}
+      : [35;1m                     ^[0m
+ [2m1558[0m |                   </TabsContent>
+ [2m1559[0m |                 </div>
+ [2m1560[0m |               </Tabs>
+      `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./src/app/admin/staging/page.tsx
+ ⨯ ./src/app/admin/staging/page.tsx
+Error:   [31mx[0m Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+      ,-[[36;1;4m/Users/haidarazad/Desktop/Cursor/Istanbul/BestIstanbul/src/app/admin/staging/page.tsx[0m:1476:1]
+ [2m1473[0m |                           </div>
+ [2m1474[0m |                         </div>
+ [2m1475[0m |                       );
+ [2m1476[0m |                     })()}
+      : [35;1m                    ^[0m
+ [2m1477[0m | 
+ [2m1478[0m |                         {/* Raw Data and Actions */}
+ [2m1479[0m |                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      `----
+  [31mx[0m Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+      ,-[[36;1;4m/Users/haidarazad/Desktop/Cursor/Istanbul/BestIstanbul/src/app/admin/staging/page.tsx[0m:1476:1]
+ [2m1473[0m |                           </div>
+ [2m1474[0m |                         </div>
+ [2m1475[0m |                       );
+ [2m1476[0m |                     })()}
+      : [35;1m                        ^[0m
+ [2m1477[0m | 
+ [2m1478[0m |                         {/* Raw Data and Actions */}
+ [2m1479[0m |                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      `----
+  [31mx[0m Expected '</', got '}'
+      ,-[[36;1;4m/Users/haidarazad/Desktop/Cursor/Istanbul/BestIstanbul/src/app/admin/staging/page.tsx[0m:1557:1]
+ [2m1554[0m |                           </Button>
+ [2m1555[0m |                         </div>
+ [2m1556[0m |                       </div>
+ [2m1557[0m |                     )}
+      : [35;1m                     ^[0m
+ [2m1558[0m |                   </TabsContent>
+ [2m1559[0m |                 </div>
+ [2m1560[0m |               </Tabs>
+      `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./src/app/admin/staging/page.tsx
+ ⨯ ./src/app/admin/staging/page.tsx
+Error:   [31mx[0m Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+      ,-[[36;1;4m/Users/haidarazad/Desktop/Cursor/Istanbul/BestIstanbul/src/app/admin/staging/page.tsx[0m:1476:1]
+ [2m1473[0m |                           </div>
+ [2m1474[0m |                         </div>
+ [2m1475[0m |                       );
+ [2m1476[0m |                     })()}
+      : [35;1m                    ^[0m
+ [2m1477[0m | 
+ [2m1478[0m |                         {/* Raw Data and Actions */}
+ [2m1479[0m |                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      `----
+  [31mx[0m Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+      ,-[[36;1;4m/Users/haidarazad/Desktop/Cursor/Istanbul/BestIstanbul/src/app/admin/staging/page.tsx[0m:1476:1]
+ [2m1473[0m |                           </div>
+ [2m1474[0m |                         </div>
+ [2m1475[0m |                       );
+ [2m1476[0m |                     })()}
+      : [35;1m                        ^[0m
+ [2m1477[0m | 
+ [2m1478[0m |                         {/* Raw Data and Actions */}
+ [2m1479[0m |                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      `----
+  [31mx[0m Expected '</', got '}'
+      ,-[[36;1;4m/Users/haidarazad/Desktop/Cursor/Istanbul/BestIstanbul/src/app/admin/staging/page.tsx[0m:1557:1]
+ [2m1554[0m |                           </Button>
+ [2m1555[0m |                         </div>
+ [2m1556[0m |                       </div>
+ [2m1557[0m |                     )}
+      : [35;1m                     ^[0m
+ [2m1558[0m |                   </TabsContent>
+ [2m1559[0m |                 </div>
+ [2m1560[0m |               </Tabs>
+      `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./src/app/admin/staging/page.tsx
+ ⚠ Found a change in next.config.js. Restarting the server to apply the changes...
+   ▲ Next.js 15.5.3
+   - Local:        http://localhost:3000
+   - Network:      http://192.168.0.30:3000
+   - Environments: .env.local
+   - Experiments (use with caution):
+     · optimizePackageImports
+
+ ✓ Starting...
+ ✓ Ready in 2.3s
+ ⚠ Found a change in next.config.js. Restarting the server to apply the changes...
+   ▲ Next.js 15.5.3
+   - Local:        http://localhost:3000
+   - Network:      http://192.168.0.30:3000
+   - Environments: .env.local
+   - Experiments (use with caution):
+     · optimizePackageImports
+
+ ✓ Starting...
+[Error: ENOENT: no such file or directory, open '/Users/haidarazad/Desktop/Cursor/Istanbul/BestIstanbul/.next/prerender-manifest.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/haidarazad/Desktop/Cursor/Istanbul/BestIstanbul/.next/prerender-manifest.json'
+}
+[?25h

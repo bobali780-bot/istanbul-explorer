@@ -40,14 +40,15 @@ export default function ImportActivitiesPage() {
     setProgress(0)
 
     try {
-      const response = await fetch('/api/admin/scrape', {
+      const response = await fetch('/api/admin/scrape-hybrid', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          searchTerms: searchTerm.trim(),
-          jobType: 'single_search'
+          searchTerms: [searchTerm.trim()],
+          category: 'activities',
+          imagesPerItem: 12
         }),
       })
 
@@ -82,14 +83,15 @@ export default function ImportActivitiesPage() {
     setProgress(0)
 
     try {
-      const response = await fetch('/api/admin/scrape', {
+      const response = await fetch('/api/admin/scrape-hybrid', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           searchTerms: terms,
-          jobType: 'bulk_import'
+          category: 'activities',
+          imagesPerItem: 12
         }),
       })
 
@@ -132,14 +134,15 @@ export default function ImportActivitiesPage() {
     setProgress(0)
 
     try {
-      const response = await fetch('/api/admin/scrape', {
+      const response = await fetch('/api/admin/scrape-hybrid', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           searchTerms: terms,
-          jobType: 'csv_upload'
+          category: 'activities',
+          imagesPerItem: 12
         }),
       })
 

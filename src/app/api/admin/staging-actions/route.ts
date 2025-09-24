@@ -1,22 +1,32 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 
-const supabase = createClient(
+// Move supabase client creation into the function
+const getSupabase = () => createClient(
   process.env.SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
 interface StagingAction {
-  action: 'approve' | 'reject' | 'bulk_approve' | 'bulk_reject' | 'publish'
-  item_ids: string[]
+  action: 'approve' | 'reject' | 'bulk_approve' | 'bulk_reject' | 'publish' | 'override_thumbnail'
+  item_ids?: string[]
+  items?: string[]
   notes?: string
+  thumbnailData?: {
+    thumbnailUrl: string
+    thumbnailIndex: number
+    thumbnailReason: string
+  }
 }
 
 export async function POST(request: Request) {
   try {
-    const { action, item_ids, notes }: StagingAction = await request.json();
+    const { action, item_ids, items, notes, thumbnailData }: StagingAction = await request.json();
 
-    if (!item_ids || item_ids.length === 0) {
+    // Support both item_ids and items field names for compatibility
+    const itemIds = item_ids || items;
+
+    if (!itemIds || itemIds.length === 0) {
       return NextResponse.json({
         success: false,
         error: 'No items specified'
@@ -39,7 +49,23 @@ export async function POST(request: Request) {
 
       case 'publish':
         // Handle publishing approved items to main database
-        return await handlePublishToMain(item_ids);
+        return await handlePublishToMain(itemIds);
+
+      case 'override_thumbnail':
+        if (!thumbnailData) {
+          return NextResponse.json({
+            success: false,
+            error: 'Thumbnail data is required for thumbnail override'
+          }, { status: 400 });
+        }
+
+        updateData = {
+          primary_image: thumbnailData.thumbnailUrl,
+          thumbnail_index: thumbnailData.thumbnailIndex,
+          thumbnail_reason: thumbnailData.thumbnailReason,
+          updated_at: timestamp
+        };
+        break;
 
       default:
         return NextResponse.json({
@@ -49,10 +75,11 @@ export async function POST(request: Request) {
     }
 
     // Update all specified items
+    const supabase = getSupabase();
     const { data, error } = await supabase
       .from('staging_queue')
       .update(updateData)
-      .in('id', item_ids)
+      .in('id', itemIds)
       .select();
 
     if (error) {
@@ -93,6 +120,7 @@ export async function POST(request: Request) {
 // Handle publishing approved items to the main activities table
 async function handlePublishToMain(item_ids: string[]) {
   try {
+    const supabase = getSupabase();
     // Get approved staging items
     const { data: stagingItems, error: fetchError } = await supabase
       .from('staging_queue')
@@ -232,6 +260,7 @@ export async function GET(request: Request) {
 
     if (action === 'stats') {
       // Get staging statistics
+      const supabase = getSupabase();
       const { data: items, error } = await supabase
         .from('staging_queue')
         .select('status, confidence_score, category, created_at');

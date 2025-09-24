@@ -1,10 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
 
 interface ScrapingJob {
   searchTerms: string[];
@@ -15,6 +11,11 @@ interface ScrapingJob {
 
 export async function POST(request: Request) {
   try {
+    const supabase = createClient(
+      process.env.SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
+
     const { searchTerms, category = 'activities', imagesPerItem = 12, maxResults = 100 }: ScrapingJob = await request.json();
 
     if (!searchTerms || searchTerms.length === 0) {

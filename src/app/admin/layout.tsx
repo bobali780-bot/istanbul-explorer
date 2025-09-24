@@ -112,25 +112,11 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       badge: 'Phase 1'
     },
     {
-      name: 'Test Scraping',
-      href: '/admin/test-scraping',
-      icon: Search,
-      current: pathname === '/admin/test-scraping',
-      badge: 'Phase 2'
-    },
-    {
-      name: 'Production Scraping',
-      href: '/admin/production-scraping',
-      icon: MapPin,
-      current: pathname === '/admin/production-scraping',
-      badge: 'Legacy'
-    },
-    {
-      name: 'Hybrid Scraping',
+      name: 'Content Scraping',
       href: '/admin/hybrid-scraping',
       icon: Sparkles,
       current: pathname === '/admin/hybrid-scraping',
-      badge: 'New'
+      badge: 'Main'
     },
     {
       name: 'Staging Review',
