@@ -2,14 +2,13 @@ import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 
 // Move supabase client creation into the function
-const getSupabase = () => createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
 
 export async function POST() {
   try {
-    // Add Spice Bazaar activity
+    const supabase = createClient(
+      process.env.SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );    // Add Spice Bazaar activity
     const { data: activity, error: activityError } = await supabase
       .from('activities')
       .insert({

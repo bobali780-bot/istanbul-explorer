@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server';
 export async function POST() {
   try {
     // Move supabase client creation into the function
-const getSupabase = () => createClient(
+    const supabase = createClient(
       process.env.SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     );

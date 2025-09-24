@@ -1049,7 +1049,7 @@ export default function StagingPage() {
                         <div className="px-4 pb-3">
                           <div className="flex items-center justify-center text-xs text-gray-500">
                             <Camera className="h-3 w-3 mr-1" />
-                            {selectedItem.images.length} photos available
+                            {selectedItem.images?.length || 0} photos available
                           </div>
                         </div>
                       </div>
@@ -1094,7 +1094,7 @@ export default function StagingPage() {
                             <div className="absolute top-4 right-4">
                               <Badge className="bg-black bg-opacity-70 text-white text-xs">
                                 <Camera className="h-3 w-3 mr-1" />
-                                {selectedItem.images.length} photos
+                                {selectedItem.images?.length || 0} photos
                               </Badge>
                             </div>
                           </div>
@@ -1173,7 +1173,7 @@ export default function StagingPage() {
                                       What to Expect
                                     </h3>
                                     <div className="grid md:grid-cols-2 gap-6">
-                                      {selectedItem.raw_content.highlights.map((highlight, index) => (
+                                       {selectedItem.raw_content.highlights.map((highlight: string, index: number) => (
                                         <div key={index} className="flex items-start gap-3">
                                           <div className="w-2 h-2 bg-blue-600 rounded-full mt-2 flex-shrink-0"></div>
                                           <p className="text-gray-600">{highlight}</p>
@@ -1186,17 +1186,17 @@ export default function StagingPage() {
                                 {/* Photo Gallery - ENHANCED FOR VISIBILITY */}
                                 <div style={{backgroundColor: '#f0f9ff', padding: '20px', border: '2px solid #0ea5e9', borderRadius: '8px', marginTop: '40px'}}>
                                   <h3 className="text-2xl font-bold mb-6 text-blue-900">📸 Photo Gallery ({selectedItem.images?.length || 0} images)</h3>
-                                  {!selectedItem.images || selectedItem.images.length === 0 ? (
+                                  {!selectedItem.images || (selectedItem.images?.length || 0) === 0 ? (
                                     <div className="text-gray-500 text-center py-8">
                                       No images available for this item
                                     </div>
                                   ) : (
                                     <div className="text-green-600 mb-4 font-semibold">
-                                      ✅ Found {selectedItem.images.length} images - Gallery should appear below:
+                                      ✅ Found {selectedItem.images?.length || 0} images - Gallery should appear below:
                                     </div>
                                   )}
                                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                                    {selectedItem.images.map((image, index) => {
+                                    {(selectedItem.images || []).map((image, index) => {
                                       // Debug logging for gallery images
                                       console.log(`🖼️ Preview gallery image ${index + 1}:`, image, `(isPrimary: ${image === selectedItem.primary_image})`);
                                       return (
@@ -1372,11 +1372,11 @@ export default function StagingPage() {
                     {/* DEBUG: Log selectedItem data - moved to useEffect for proper React rendering */}
 
                     {/* Image Management */}
-                    {selectedItem.images && selectedItem.images.length > 0 ? (
+                    {selectedItem.images && (selectedItem.images?.length || 0) > 0 ? (
                       <div className="bg-orange-50 rounded-lg border-2 border-orange-200 p-6 mb-6">
                         <h3 className="text-lg font-semibold mb-4 flex items-center text-orange-900">
                           <Camera className="h-5 w-5 mr-2" />
-                          Image Management ({selectedItem.images.length} images)
+                          Image Management ({selectedItem.images?.length || 0} images)
                         </h3>
 
                         {/* Current Thumbnail */}
@@ -1417,7 +1417,7 @@ export default function StagingPage() {
 
                         {/* All Images Grid - Fixed with better CSS and debugging */}
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                          {selectedItem.images.map((image, index) => {
+                          {(selectedItem.images || []).map((image, index) => {
                             console.log(`🖼️ Rendering gallery image ${index + 1}:`, image);
                             console.log(`🖼️ Image URL type:`, typeof image);
                             console.log(`🖼️ Image URL length:`, image?.length);
@@ -1516,7 +1516,7 @@ export default function StagingPage() {
                             className="flex items-center gap-2"
                           >
                             <Eye className="h-4 w-4" />
-                            View All {selectedItem.images.length} Images
+                            View All {selectedItem.images?.length || 0} Images
                           </Button>
                         </div>
                       </div>
@@ -1539,7 +1539,7 @@ export default function StagingPage() {
                               <div><strong>Category:</strong> {selectedItem.category}</div>
                               <div><strong>Status:</strong> {selectedItem.status || 'pending'}</div>
                               <div><strong>Confidence:</strong> {selectedItem.confidence_score}%</div>
-                              <div><strong>Images:</strong> {selectedItem.images.length}</div>
+                              <div><strong>Images:</strong> {selectedItem.images?.length || 0}</div>
                               <div><strong>Created:</strong> {selectedItem.created_at ? new Date(selectedItem.created_at).toLocaleDateString() : 'Unknown'}</div>
                             </div>
                           </div>
@@ -1631,13 +1631,13 @@ export default function StagingPage() {
               </Button>
 
               {/* Navigation Buttons */}
-              {selectedItem.images.length > 1 && (
+              {(selectedItem.images?.length || 0) > 1 && (
                 <>
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={() => setLightboxImageIndex(prev =>
-                      prev === 0 ? selectedItem.images.length - 1 : prev - 1
+                      prev === 0 ? (selectedItem.images?.length || 1) - 1 : prev - 1
                     )}
                     className="absolute left-4 z-10 bg-black bg-opacity-50 text-white hover:bg-opacity-70"
                   >
@@ -1647,7 +1647,7 @@ export default function StagingPage() {
                     variant="ghost"
                     size="sm"
                     onClick={() => setLightboxImageIndex(prev =>
-                      prev === selectedItem.images.length - 1 ? 0 : prev + 1
+                      prev === (selectedItem.images?.length || 1) - 1 ? 0 : prev + 1
                     )}
                     className="absolute right-4 z-10 bg-black bg-opacity-50 text-white hover:bg-opacity-70"
                   >
@@ -1662,13 +1662,13 @@ export default function StagingPage() {
                 {(() => {
                   console.log('🔍 Lightbox displaying image:', {
                     index: lightboxImageIndex,
-                    url: selectedItem.images[lightboxImageIndex],
-                    totalImages: selectedItem.images.length
+                    url: selectedItem.images?.[lightboxImageIndex],
+                    totalImages: selectedItem.images?.length || 0
                   })
                   return null
                 })()}
                 <img
-                  src={selectedItem.images[lightboxImageIndex]}
+                  src={selectedItem.images?.[lightboxImageIndex] || ''}
                   alt={`${selectedItem.title} image ${lightboxImageIndex + 1}`}
                   style={{
                     maxWidth: '100%',
@@ -1679,7 +1679,7 @@ export default function StagingPage() {
                   onError={(e) => {
                     console.error('❌ Lightbox plain img failed to load:', {
                       index: lightboxImageIndex,
-                      url: selectedItem.images[lightboxImageIndex]
+                      url: selectedItem.images?.[lightboxImageIndex]
                     });
                     e.currentTarget.style.display = 'none';
                     const fallbackDiv = document.createElement('div');
@@ -1690,7 +1690,7 @@ export default function StagingPage() {
                   onLoad={() => {
                     console.log('✅ Lightbox plain img loaded successfully:', {
                       index: lightboxImageIndex,
-                      url: selectedItem.images[lightboxImageIndex]
+                      url: selectedItem.images?.[lightboxImageIndex]
                     });
                   }}
                 />
@@ -1701,17 +1701,17 @@ export default function StagingPage() {
                   <div>
                     <h4 className="font-semibold">{selectedItem.title}</h4>
                     <p className="text-sm opacity-90">
-                      Image {lightboxImageIndex + 1} of {selectedItem.images.length}
+                      Image {lightboxImageIndex + 1} of {selectedItem.images?.length || 0}
                     </p>
                   </div>
                   <div className="flex gap-2">
-                    {selectedItem.images[lightboxImageIndex] === selectedItem.primary_image ? (
+                    {selectedItem.images?.[lightboxImageIndex] === selectedItem.primary_image ? (
                       <Badge className="bg-blue-600">Current Thumbnail</Badge>
                     ) : (
                       <Button
                         size="sm"
                         onClick={() => {
-                          handleThumbnailOverride(selectedItem.id, lightboxImageIndex, selectedItem.images[lightboxImageIndex])
+                          handleThumbnailOverride(selectedItem.id, lightboxImageIndex, selectedItem.images?.[lightboxImageIndex] || '')
                           setLightboxOpen(false)
                         }}
                         className="bg-blue-600 hover:bg-blue-700 text-white"
@@ -1725,10 +1725,10 @@ export default function StagingPage() {
             </div>
 
             {/* Thumbnail Strip */}
-            {selectedItem.images.length > 1 && (
+            {(selectedItem.images?.length || 0) > 1 && (
               <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black bg-opacity-60 p-2 rounded-lg">
                 <div className="flex gap-2 max-w-md overflow-x-auto">
-                  {selectedItem.images.map((image, index) => {
+                  {(selectedItem.images || []).map((image, index) => {
                     console.log(`🖼️ Lightbox thumbnail ${index + 1}:`, image, `(isPrimary: ${image === selectedItem.primary_image})`);
                     return (
                       <img
