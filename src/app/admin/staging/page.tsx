@@ -1529,7 +1529,7 @@ export default function StagingPage() {
                                             <div className="whitespace-pre-line text-sm leading-relaxed">
                                               {formatted}
                                             </div>
-                                          );
+                                          )
                                         })()}
                                       </div>
                                     ) : selectedItem.raw_content?.enhanced_description ? (
@@ -2404,7 +2404,7 @@ export default function StagingPage() {
                           console.log(`✅ Lightbox thumbnail ${index + 1} loaded:`, image);
                         }}
                       />
-                    );
+                    )
                   })}
                 </div>
               </div>
