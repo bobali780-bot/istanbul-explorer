@@ -19,6 +19,16 @@ export async function GET() {
         key_length: process.env.PEXELS_API_KEY?.length || 0,
         key_prefix: process.env.PEXELS_API_KEY?.substring(0, 8) || 'NOT_SET'
       },
+      openai: {
+        loaded: !!process.env.OPENAI_API_KEY,
+        key_length: process.env.OPENAI_API_KEY?.length || 0,
+        key_prefix: process.env.OPENAI_API_KEY?.substring(0, 8) || 'NOT_SET'
+      },
+      claude: {
+        loaded: !!process.env.CLAUDE_API_KEY,
+        key_length: process.env.CLAUDE_API_KEY?.length || 0,
+        key_prefix: process.env.CLAUDE_API_KEY?.substring(0, 8) || 'NOT_SET'
+      },
       deployment_info: {
         environment: process.env.NODE_ENV,
         vercel_url: process.env.VERCEL_URL,
@@ -30,6 +40,8 @@ export async function GET() {
       google_places_loaded: envCheck.google_places.loaded,
       unsplash_loaded: envCheck.unsplash.loaded,
       pexels_loaded: envCheck.pexels.loaded,
+      openai_loaded: envCheck.openai.loaded,
+      claude_loaded: envCheck.claude.loaded,
       environment: envCheck.deployment_info.environment
     });
 
