@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
         // First, deduplicate against existing images
         const deduplicatedImages = additionalImages.filter(newImage => {
           const normalizedNew = normalizeImageUrl(newImage)
-          return !existingImages.some(existing => normalizeImageUrl(existing) === normalizedNew)
+          return !existingImages.some((existing: string) => normalizeImageUrl(existing) === normalizedNew)
         })
         
         // Then, deduplicate within the new images themselves
@@ -215,7 +215,7 @@ async function fetchAdditionalImages(title: string, count: number) {
           }) || []
           
           // Since we're searching for exact name, take all images (they're all relevant)
-          const bestImages = unsplashImages.map(img => img.url) // Take all images from exact search
+          const bestImages = unsplashImages.map((img: any) => img.url) // Take all images from exact search
           
           allImages.push(...bestImages)
           console.log(`✅ Got ${bestImages.length} relevant images from Unsplash for "${searchTerm}" (top ${Math.min(5, unsplashImages.length)} of ${unsplashImages.length})`)
@@ -253,7 +253,7 @@ async function fetchAdditionalImages(title: string, count: number) {
           }) || []
           
           // Since we're searching for exact name, take all images (they're all relevant)
-          const bestImages = pexelsImages.map(img => img.url) // Take all images from exact search
+          const bestImages = pexelsImages.map((img: any) => img.url) // Take all images from exact search
           
           allImages.push(...bestImages)
           console.log(`✅ Got ${bestImages.length} relevant images from Pexels for "${searchTerm}" (top ${Math.min(5, pexelsImages.length)} of ${pexelsImages.length})`)

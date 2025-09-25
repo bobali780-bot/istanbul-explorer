@@ -175,7 +175,7 @@ function parseInstructionsFallback(instructions: string, itemTitle: string) {
   
   // Parse different types of requests
   const structuredIntent = {
-    images: null,
+    images: null as number | null,
     replace_images: false,
     description_update: false,
     tags_update: false,

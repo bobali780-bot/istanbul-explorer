@@ -150,7 +150,33 @@ function mapToRawContent(structuredData: any, category: string): any {
         opening_hours: structuredData.opening_hours || [],
         best_time_to_visit: null,
         difficulty_level: null,
-        price_range: structuredData.price_range || ''
+        price_range: structuredData.price_range || '',
+        // Premium luxury travel fields
+        accessibility: {
+          wheelchair_accessible: null,
+          stroller_friendly: null,
+          kid_friendly: null,
+          senior_friendly: null,
+          accessibility_notes: null
+        },
+        facilities: {
+          toilets: null,
+          cafe_restaurant: null,
+          gift_shop: null,
+          parking: null,
+          wifi: null,
+          audio_guide: null,
+          guided_tours: null
+        },
+        practical_info: {
+          dress_code: null,
+          photography_policy: null,
+          entry_requirements: null,
+          safety_notes: null,
+          etiquette_tips: null
+        },
+        why_visit: [],
+        insider_tips: []
       };
   }
 }
@@ -1186,6 +1212,8 @@ function isAllowedDomain(url: string): boolean {
       'muze.gov.tr',
       'galatatower.com',
       'dolmabahcepalace.com',
+      'istanbulmodern.org',
+      'millisaraylar.gov.tr',
 
       // Trusted booking/review platforms (limited list, no aggregators)
       'tripadvisor.com',
@@ -2841,7 +2869,7 @@ function validateImageRelevance(imageUrl: string, searchTerm: string, category: 
   const confidence = Math.max(0, Math.min(100, relevanceScore));
   
   // Much more lenient threshold for trusted sources
-  const isRelevant = confidence >= (urlLower.includes('googleusercontent.com') || urlLower.includes('maps.gstatic.com') || urlLower.includes('maps.googleapis.com') ? 20 : 25);
+  const isRelevant = confidence >= (urlLower.includes('googleusercontent.com') || urlLower.includes('maps.gstatic.com') || urlLower.includes('maps.googleapis.com') ? 10 : 25);
 
   return {
     isRelevant,

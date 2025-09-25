@@ -106,7 +106,7 @@ export async function GET(request: NextRequest) {
         wikimediaResult = {
           asked: 5,
           got: images.length,
-          sample: images[0]?.imageinfo?.[0]?.url || ''
+          sample: (images[0] as any)?.imageinfo?.[0]?.url || ''
         };
       }
     } catch (error) {
@@ -114,7 +114,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Test the full image pipeline (without saving to DB)
-    let pipelineResult = { count: 0, sample: [], rejections: {} };
+    let pipelineResult = { count: 0, sample: [] as string[], rejections: {} as any };
     try {
       // Simple pipeline test - combine all sources
       const allImages = [...googlePhotos];

@@ -4,7 +4,8 @@ export async function GET(request: NextRequest) {
   try {
     const results = {
       timestamp: new Date().toISOString(),
-      apis: {} as any
+      apis: {} as any,
+      image_pipeline: {} as any
     }
 
     // 1. Google Places API Limits Check

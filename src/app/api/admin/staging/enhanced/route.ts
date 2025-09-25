@@ -98,14 +98,14 @@ export async function GET(request: Request) {
 
     // Calculate enhanced stats from ALL items (not filtered)
     const stats = {
-      total: (allStagingItems.length + enhancedFailedItems.length),
-      successful: allStagingItems.length,
+      total: ((allStagingItems?.length || 0) + enhancedFailedItems.length),
+      successful: allStagingItems?.length || 0,
       failed: enhancedFailedItems.length,
-      pending: allStagingItems.filter(item => (item.status || 'pending') === 'pending').length,
-      approved: allStagingItems.filter(item => item.status === 'approved').length,
-      rejected: allStagingItems.filter(item => item.status === 'rejected').length,
-      published: allStagingItems.filter(item => item.status === 'published').length,
-      using_placeholders: allStagingItems.filter(item => item.uses_placeholder).length,
+      pending: allStagingItems?.filter(item => (item.status || 'pending') === 'pending').length || 0,
+      approved: allStagingItems?.filter(item => item.status === 'approved').length || 0,
+      rejected: allStagingItems?.filter(item => item.status === 'rejected').length || 0,
+      published: allStagingItems?.filter(item => item.status === 'published').length || 0,
+      using_placeholders: allStagingItems?.filter(item => item.uses_placeholder).length || 0,
       validation_failures: enhancedFailedItems.filter(item => item.failure_type === 'Content Validation').length,
       database_failures: enhancedFailedItems.filter(item => item.failure_type === 'Database Save').length
     }

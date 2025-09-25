@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 
 interface ScrapedItem {
   name: string
@@ -247,7 +247,7 @@ export function useFeaturedItems() {
   const [error, setError] = useState<string | null>(null)
 
   // Fallback data in case API fails
-  const fallbackItems: FeaturedItems = {
+  const fallbackItems: FeaturedItems = useMemo(() => ({
     hotels: {
       name: "Four Seasons Hotel Istanbul at Sultanahmet",
       description_short: "Luxury hotel in historic Sultanahmet with stunning Hagia Sophia views",
@@ -284,7 +284,7 @@ export function useFeaturedItems() {
       rating: 4.3,
       type: "shopping"
     }
-  }
+  }), [])
 
   const getRandomItem = (array: any[]): any | null => {
     if (!array || array.length === 0) return null
@@ -292,7 +292,7 @@ export function useFeaturedItems() {
     return array[randomIndex]
   }
 
-  const fetchFeaturedItems = async () => {
+  const fetchFeaturedItems = useCallback(async () => {
     try {
       setLoading(true)
       setError(null)
@@ -378,13 +378,13 @@ export function useFeaturedItems() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [fallbackItems])
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
       fetchFeaturedItems()
     }
-  }, [])
+  }, [fetchFeaturedItems])
 
   return {
     featuredItems,

@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
         success: pipelineData.success,
         images_returned: pipelineData.item?.images?.length || 0,
         confidence_score: pipelineData.item?.confidence_score || 0,
-        sources_used: [],
+        sources_used: {} as any,
         validation_stats: {},
         issues_found: []
       },
@@ -40,7 +40,7 @@ export async function GET(request: NextRequest) {
         unsplash: 'Unknown', 
         pexels: 'Unknown'
       },
-      recommendations: []
+      recommendations: [] as string[]
     }
 
     // Extract source information from logs (this would need to be enhanced)

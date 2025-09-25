@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -34,9 +34,13 @@ import {
   Camera,
   History,
   X,
+  Users,
+  Building,
+  Info,
 } from 'lucide-react'
 import { createClient } from '@supabase/supabase-js'
 import NextImage from 'next/image'
+import { processFirecrawlContent, formatContentForPreview } from '@/lib/contentProcessor'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -126,7 +130,13 @@ export default function StagingPage() {
   const [error, setError] = useState<string | null>(null)
   const [successMessage, setSuccessMessage] = useState<string | null>(null)
   const [hoveredTile, setHoveredTile] = useState<string | null>(null)
-  const [favourites, setFavourites] = useState<Set<string>>(new Set())
+  const [favourites, setFavourites] = useState<Set<string>>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('admin-favourites')
+      return saved ? new Set(JSON.parse(saved)) : new Set()
+    }
+    return new Set()
+  })
   const [reScrapeDialogOpen, setReScrapeDialogOpen] = useState(false)
   const [reScrapeTarget, setReScrapeTarget] = useState<{ id: string; title: string } | null>(null)
   const [reScrapeInstructions, setReScrapeInstructions] = useState('')
@@ -137,7 +147,7 @@ export default function StagingPage() {
   const [versions, setVersions] = useState<{ [key: string]: any[] }>({})
   const [localVersions, setLocalVersions] = useState<{ [key: string]: any[] }>({})
 
-  const loadStagingData = async () => {
+  const loadStagingData = useCallback(async () => {
     setLoading(true)
     try {
       const url = filterStatus !== 'all' 
@@ -171,16 +181,16 @@ export default function StagingPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [filterStatus])
 
   useEffect(() => {
     loadStagingData()
-  }, [])
+  }, [loadStagingData])
 
   // Reload data when filter changes
   useEffect(() => {
     loadStagingData()
-  }, [filterStatus])
+  }, [filterStatus, loadStagingData])
 
   // Debug logging for selectedItem
   useEffect(() => {
@@ -544,6 +554,8 @@ export default function StagingPage() {
       } else {
         newFavourites.add(itemId)
       }
+      // Persist to localStorage
+      localStorage.setItem('admin-favourites', JSON.stringify(Array.from(newFavourites)))
       return newFavourites
     })
   }
@@ -559,32 +571,21 @@ export default function StagingPage() {
         className={className}
         initial={false}
         animate={{
-          scale: isFav ? [1, 1.3, 1.1] : [1, 0.7, 1],
-          rotate: isFav ? [0, -10, 10, 0] : [0, 5, -5, 0]
+          scale: isFav ? 1.1 : 1,
+          rotate: isFav ? 0 : 0
         }}
         transition={{
-          duration: 0.4,
-          ease: "easeInOut",
-          times: [0, 0.3, 0.7, 1]
+          duration: 0.2,
+          ease: "easeInOut"
         }}
-        whileHover={{ scale: 1.1 }}
+        whileHover={{ scale: 1.2 }}
         whileTap={{ scale: 0.9 }}
       >
-        <motion.div
-          animate={{
-            color: isFav ? "#ef4444" : "#9ca3af"
-          }}
-          transition={{
-            duration: 0.3,
-            ease: "easeInOut"
-          }}
-        >
-          <Heart 
-            className={`h-4 w-4 transition-all duration-300 ${
-              isFav ? 'fill-current drop-shadow-sm' : ''
-            }`} 
-          />
-        </motion.div>
+        <Heart 
+          className={`h-4 w-4 transition-colors duration-300 ${
+            isFav ? 'fill-red-500 text-red-500' : 'text-gray-400'
+          }`} 
+        />
       </motion.div>
     )
   }
@@ -1103,54 +1104,111 @@ export default function StagingPage() {
               'border-gray-200'
             }`}>
               <div 
-                className="relative h-48 overflow-hidden group"
+                className="relative h-64 overflow-hidden group cursor-pointer"
                 onMouseEnter={() => setHoveredTile(item.id)}
                 onMouseLeave={() => setHoveredTile(null)}
+                onClick={() => setSelectedItem(item)}
               >
                 {item.item_type === 'success' ? (
                   <>
-                    {/* Full Coverage Thumbnail */}
-                    <img
-                      src={item.primary_image || '/api/placeholder/400/200'}
-                      alt={item.title}
+                    {/* Full Coverage Background Image */}
+                  <img
+                      src={item.primary_image || '/api/placeholder/400/300'}
+                    alt={item.title}
                       className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-                      onError={(e) => {
-                        console.error(`❌ Card thumbnail failed to load:`, item.primary_image);
-                        e.currentTarget.style.display = 'none';
-                        const fallbackDiv = document.createElement('div');
-                        fallbackDiv.className = 'w-full h-full bg-gray-200 flex items-center justify-center text-xs text-gray-500';
-                        fallbackDiv.textContent = 'Image failed';
-                        e.currentTarget.parentNode?.appendChild(fallbackDiv);
-                      }}
-                      onLoad={() => {
-                        console.log(`✅ Card thumbnail loaded:`, item.primary_image);
+                    onError={(e) => {
+                        console.error(`❌ Card thumbnail failed to load for "${item.title}":`, item.primary_image);
+                        console.error(`❌ Available images:`, item.images);
+                      e.currentTarget.style.display = 'none';
+                      const fallbackDiv = document.createElement('div');
+                      fallbackDiv.className = 'w-full h-full bg-gray-200 flex items-center justify-center text-xs text-gray-500';
+                      fallbackDiv.textContent = 'Image failed';
+                      e.currentTarget.parentNode?.appendChild(fallbackDiv);
+                    }}
+                    onLoad={() => {
+                        console.log(`✅ Card thumbnail loaded for "${item.title}":`, item.primary_image);
                       }}
                     />
                     
+                    {/* Professional Gradient Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
+                    
+                    {/* Top Badges */}
+                    <div className="absolute top-3 left-3 flex gap-2 z-10">
+                      <Badge className="bg-white/90 text-gray-800 border-white/50">{item.category}</Badge>
+                      {/* Version indicator for rescraped items */}
+                      {(item.raw_content?.rescrape_count || 0) > 0 && (
+                        <Badge variant="secondary" className="bg-blue-500/90 text-white border-blue-400/50">
+                          V{(item.raw_content?.rescrape_count || 0) + 1}
+                  </Badge>
+                      )}
+                    </div>
+
+                    <div className="absolute top-12 right-3 flex gap-2 z-10">
+                  {/* Status Badge for successful items */}
+                  {item.item_type === 'success' && (
+                        <Badge className={
+                          item.status === 'approved' ? 'bg-green-500/90 text-white border-green-400/50' :
+                          item.status === 'rejected' ? 'bg-red-500/90 text-white border-red-400/50' :
+                          item.status === 'published' ? 'bg-blue-500/90 text-white border-blue-400/50' :
+                          'bg-gray-500/90 text-white border-gray-400/50'
+                    }>
+                      {item.status || 'pending'}
+                    </Badge>
+                  )}
+                </div>
+
+                    {/* Bottom Warning Badges */}
+                    <div className="absolute bottom-3 left-3 flex gap-2 z-10">
+                  {item.uses_placeholder && (
+                        <Badge className="bg-orange-500/90 text-white border-orange-400/50">
+                          ⚠️ Placeholder
+                    </Badge>
+                  )}
+              </div>
+
+
+                    {/* Title Overlay - Professional Text */}
+                    <div className="absolute bottom-0 left-0 right-0 p-4 z-10">
+                      <h3 className="text-white text-lg font-semibold mb-1 drop-shadow-lg">
+                        {item.title}
+                      </h3>
+                      <div className="flex items-center justify-between text-white/90 text-sm">
+                      <div className="flex items-center">
+                        <Image className="h-4 w-4 mr-1" />
+                        {item.images?.length || 0} images
+                      </div>
+                      <div className="flex items-center">
+                        <Star className="h-4 w-4 mr-1" />
+                          {item.raw_content?.rating || 'N/A'}
+                      </div>
+                    </div>
+                      </div>
+
                     {/* Hover Overlay with Actions */}
-                    <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300 flex items-center justify-center">
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-300 flex items-center justify-center">
                       <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex gap-2">
-                        <Button
-                          size="sm"
+                      <Button
+                        size="sm"
                           variant="secondary"
-                          className="bg-white/90 hover:bg-white text-gray-800"
+                          className="bg-white/95 hover:bg-white text-gray-800 shadow-lg"
                           onClick={(e) => {
                             e.stopPropagation();
                             setSelectedItem(item);
                           }}
                         >
                           <Eye className="h-4 w-4 mr-2" />
-                          Preview
-                        </Button>
+                        Preview
+                      </Button>
                         {filterStatus === 'pending' && (
-                          <Button
-                            size="sm"
-                            className="bg-green-600 hover:bg-green-700 text-white"
+                      <Button
+                        size="sm"
+                            className="bg-green-600 hover:bg-green-700 text-white shadow-lg"
                             onClick={(e) => {
                               e.stopPropagation();
                               handleDirectApprove(item.id);
-                            }}
-                            disabled={processing.has(item.id)}
+                        }}
+                        disabled={processing.has(item.id)}
                           >
                             <CheckCircle className="h-4 w-4 mr-2" />
                             Approve
@@ -1158,14 +1216,56 @@ export default function StagingPage() {
                         )}
                       </div>
                     </div>
-                    
-                    {/* Image Count Indicator */}
-                    {(item.images?.length || 0) > 1 && (
-                      <div className="absolute top-2 right-2 bg-black bg-opacity-60 text-white text-xs px-2 py-1 rounded-full">
-                        <Camera className="h-3 w-3 inline mr-1" />
-                        {item.images?.length || 0}
-                      </div>
-                    )}
+
+                    {/* Action Buttons - Always visible in top-right corner */}
+                    <div className="absolute top-3 right-3 flex gap-1 z-20">
+                      {/* Heart icon for favourites */}
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          toggleFavourite(item.id)
+                        }}
+                        className="p-1 hover:bg-red-500/20 bg-black/20 text-white hover:text-red-400"
+                      >
+                        <AnimatedHeart 
+                          isFav={isFavourite(item.id)}
+                          className="h-4 w-4"
+                        />
+                      </Button>
+
+                      {/* Re-scrape button */}
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          handleReScrape(item)
+                        }}
+                        disabled={processing.has(item.id)}
+                        className="p-1 hover:bg-blue-500/20 bg-black/20 text-white hover:text-blue-400"
+                      >
+                        {processing.has(item.id) ? (
+                          <RefreshCw className="h-4 w-4 animate-spin" />
+                        ) : (
+                          <RotateCcw className="h-4 w-4" />
+                        )}
+                      </Button>
+
+                      {/* Versions button */}
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          toggleVersions(item.id)
+                        }}
+                        className="p-1 hover:bg-purple-500/20 bg-black/20 text-white hover:text-purple-400"
+                      >
+                        <History className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </>
                 ) : (
                   <div className="w-full h-full bg-gray-100 flex items-center justify-center">
@@ -1174,198 +1274,9 @@ export default function StagingPage() {
                       <p className="text-sm text-gray-600">Failed to Process</p>
                     </div>
                   </div>
-                )}
-
-                <div className="absolute top-3 left-3 flex gap-2">
-                  <Badge>{item.category}</Badge>
-                  {/* Version indicator for rescraped items */}
-                  {(item.raw_content?.rescrape_count || 0) > 0 && (
-                    <Badge variant="secondary" className="bg-blue-100 text-blue-800 border-blue-200">
-                      V{(item.raw_content?.rescrape_count || 0) + 1}
-                    </Badge>
                   )}
                 </div>
 
-                <div className="absolute top-3 right-3 flex gap-2">
-                  {/* Item Type Badge */}
-                  <Badge variant={
-                    item.item_type === 'success' ? 'default' :
-                    'destructive'
-                  }>
-                    {item.item_type === 'success' ? '✅ Success' : '❌ Failed'}
-                  </Badge>
-
-                  {/* Status Badge for successful items */}
-                  {item.item_type === 'success' && (
-                    <Badge variant={
-                      item.status === 'approved' ? 'default' :
-                      item.status === 'rejected' ? 'destructive' :
-                      item.status === 'published' ? 'secondary' :
-                      'outline'
-                    }>
-                      {item.status || 'pending'}
-                    </Badge>
-                  )}
-
-                  {/* Failure Type Badge for failed items */}
-                  {item.item_type === 'failed' && item.failure_type && (
-                    <Badge variant="destructive">
-                      {item.failure_type}
-                    </Badge>
-                  )}
-                </div>
-
-                {/* Special Warning Badges */}
-                <div className="absolute bottom-3 left-3 flex gap-2">
-                  {item.uses_placeholder && (
-                    <Badge variant="outline" className="bg-orange-100 text-orange-800 border-orange-300">
-                      ⚠️ Using Placeholder
-                    </Badge>
-                  )}
-
-                  {item.raw_content?.validation_metadata && item.item_type === 'success' && (
-                    <Badge variant="outline" className="bg-white/90">
-                      {item.raw_content.validation_metadata.validation_rate}% validated
-                    </Badge>
-                  )}
-                </div>
-              </div>
-
-              <CardContent className="p-4">
-                <h3 className="font-semibold text-lg mb-2 line-clamp-2">{item.title}</h3>
-
-                {item.item_type === 'success' ? (
-                  <div className="space-y-2 text-sm text-gray-600">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center">
-                        <Image className="h-4 w-4 mr-1" />
-                        {item.images?.length || 0} images
-                      </div>
-                      <div className="flex items-center">
-                        <Star className="h-4 w-4 mr-1" />
-                        {item.confidence_score}%
-                      </div>
-                    </div>
-
-                    {item.raw_content?.description && (
-                      <p className="text-gray-700 line-clamp-2">
-                        {item.raw_content.description}
-                      </p>
-                    )}
-
-                    {/* Placeholder Warning */}
-                    {item.uses_placeholder && item.placeholder_info && (
-                      <div className="bg-orange-100 border border-orange-300 rounded-md p-2 mt-2">
-                        <div className="flex items-center gap-2">
-                          <AlertTriangle className="h-4 w-4 text-orange-600" />
-                          <span className="text-sm text-orange-800 font-medium">Using Placeholder Image</span>
-                        </div>
-                        <p className="text-xs text-orange-700 mt-1">{item.placeholder_info.reason}</p>
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <div className="space-y-2">
-                    {/* Error Details for Failed Items */}
-                    <div className="bg-red-100 border border-red-300 rounded-md p-3">
-                      <div className="flex items-center gap-2 mb-2">
-                        <XCircle className="h-4 w-4 text-red-600" />
-                        <span className="text-sm text-red-800 font-medium">{item.failure_type}</span>
-                      </div>
-
-                      {item.error_details && (
-                        <p className="text-xs text-red-700 mb-2">{item.error_details.message}</p>
-                      )}
-
-                      {/* Validation Details */}
-                      {item.validation_errors && (
-                        <div className="space-y-1">
-                          <p className="text-xs text-red-800 font-medium">Validation Issues:</p>
-                          {item.validation_errors.reasonsForFailure?.map((reason, idx) => (
-                            <div key={idx} className="text-xs text-red-700 flex items-center gap-1">
-                              <span className="w-1 h-1 bg-red-600 rounded-full"></span>
-                              {reason}
-                            </div>
-                          ))}
-                        </div>
-                      )}
-
-                      {/* Database Error */}
-                      {item.database_error && (
-                        <div className="mt-2">
-                          <p className="text-xs text-red-800 font-medium">Database Error:</p>
-                          <p className="text-xs text-red-700">{item.database_error}</p>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Show search term for failed items */}
-                    {item.term && (
-                      <p className="text-sm text-gray-600">
-                        <span className="font-medium">Search Term:</span> {item.term}
-                      </p>
-                    )}
-                  </div>
-                )}
-
-                {/* Action Buttons - Simplified layout */}
-                <div className="flex justify-between items-center mt-4">
-                  <div className="flex gap-1">
-                    {/* Heart icon for favourites */}
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        toggleFavourite(item.id)
-                      }}
-                      className="p-1 hover:bg-red-50"
-                    >
-                      <AnimatedHeart 
-                        isFav={isFavourite(item.id)}
-                      />
-                    </Button>
-                    
-                    {/* Re-scrape button */}
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        handleReScrape(item)
-                      }}
-                      disabled={processing.has(item.id)}
-                      className="text-blue-500 hover:text-blue-600 p-1"
-                    >
-                      {processing.has(item.id) ? (
-                        <RefreshCw className="h-4 w-4 animate-spin" />
-                      ) : (
-                        <RotateCcw className="h-4 w-4" />
-                      )}
-                    </Button>
-
-                    {/* Versions button */}
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        toggleVersions(item.id)
-                      }}
-                      className="text-purple-500 hover:text-purple-600 p-1"
-                    >
-                      <History className="h-4 w-4" />
-                    </Button>
-                  </div>
-                  
-                  {/* Quick Status Indicator */}
-                  {item.item_type === 'success' && (
-                    <div className="text-xs text-gray-500">
-                      {item.confidence_score ? `${item.confidence_score}%` : 'Ready'}
-                    </div>
-                  )}
-                </div>
-              </CardContent>
             </Card>
 
             </div>
@@ -1604,8 +1515,114 @@ export default function StagingPage() {
                                 <div>
                                   <h2 className="text-3xl font-bold mb-6 text-gray-900">About This Experience</h2>
                                   <div className="prose prose-lg max-w-none text-gray-600 space-y-4">
-                                    <p>{selectedItem.raw_content.description || `Experience the magic of ${selectedItem.title}, one of Istanbul's most captivating destinations. This remarkable ${selectedItem.category.slice(0, -1)} offers visitors an authentic glimpse into the rich history and vibrant culture that defines this incredible city.`}</p>
-                                    <p>Whether you&apos;re interested in history, architecture, or local culture, this destination provides an unforgettable experience that will leave you with lasting memories of your time in Istanbul.</p>
+                                    {selectedItem.raw_content?.firecrawl_enriched && selectedItem.raw_content?.content ? (
+                                      <div>
+                                        <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+                                          <p className="text-sm text-green-700">
+                                            ✅ <strong>Enhanced with Firecrawl:</strong> Content processed from official sources into user-friendly format.
+                                          </p>
+                                  </div>
+                                        {(() => {
+                                          const processed = processFirecrawlContent(selectedItem.raw_content.content, selectedItem.title);
+                                          const formatted = formatContentForPreview(processed, selectedItem.title);
+                                          return (
+                                            <div className="whitespace-pre-line text-sm leading-relaxed">
+                                              {formatted}
+                                            </div>
+                                          );
+                                        })()}
+                                      </div>
+                                    ) : selectedItem.raw_content?.enhanced_description ? (
+                                      <div>
+                                        <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                                          <p className="text-sm text-blue-700">
+                                            ✅ <strong>Enhanced with AI:</strong> Premium description generated by GPT-4 for luxury travel experience.
+                                          </p>
+                                        </div>
+                                        <div className="whitespace-pre-line text-sm leading-relaxed">
+                                          {selectedItem.raw_content.enhanced_description}
+                                        </div>
+                                      </div>
+                                    ) : selectedItem.raw_content?.description && selectedItem.raw_content.description !== `Experience ${selectedItem.title} in Istanbul, Turkey.` ? (
+                                      <div>
+                                        <p>{selectedItem.raw_content.description}</p>
+                                        {selectedItem.raw_content?.firecrawl_enriched && (
+                                          <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+                                            <p className="text-sm text-green-700">
+                                              ✅ <strong>Enhanced with Firecrawl:</strong> Description enriched from official sources.
+                                            </p>
+                                          </div>
+                                        )}
+                                      </div>
+                                    ) : (
+                                      <div className="space-y-4">
+                                        <div className="p-4 bg-orange-50 border border-orange-200 rounded-lg">
+                                          <p className="text-orange-800">
+                                            <strong>⚠️ No Premium Description Available</strong>
+                                          </p>
+                                          <p className="text-sm text-orange-700 mt-2">
+                                            This venue needs AI enhancement or manual description for a premium experience.
+                                          </p>
+                                          <Button 
+                                            size="sm" 
+                                            className="mt-3 bg-blue-600 hover:bg-blue-700"
+                                            onClick={async () => {
+                                              try {
+                                                const response = await fetch('/api/ai/enhance-description', {
+                                                  method: 'POST',
+                                                  headers: { 'Content-Type': 'application/json' },
+                                                  body: JSON.stringify({
+                                                    title: selectedItem.title,
+                                                    category: selectedItem.category,
+                                                    address: selectedItem.raw_content?.address,
+                                                    rating: selectedItem.raw_content?.rating,
+                                                    reviewCount: selectedItem.raw_content?.review_count,
+                                                    venueType: selectedItem.raw_content?.types?.[0]
+                                                  })
+                                                });
+                                                
+                                                const data = await response.json();
+                                                if (data.success) {
+                                                  // Update the staging item with enhanced description
+                                                  const updateResponse = await fetch('/api/admin/staging/update-field', {
+                                                    method: 'POST',
+                                                    headers: { 'Content-Type': 'application/json' },
+                                                    body: JSON.stringify({
+                                                      itemId: selectedItem.id,
+                                                      field: 'raw_content.enhanced_description',
+                                                      value: data.data.enhanced_description
+                                                    })
+                                                  });
+                                                  
+                                                  if (updateResponse.ok) {
+                                                    setSuccessMessage('✅ Premium description generated successfully!');
+                                                    setTimeout(() => setSuccessMessage(null), 3000);
+                                                    await loadStagingData();
+                                                  }
+                                                } else {
+                                                  // Handle API errors
+                                                  const errorMessage = data.code === 'MISSING_API_KEY' 
+                                                    ? 'OpenAI API key not configured. Please add OPENAI_API_KEY to your environment variables.'
+                                                    : data.error || 'Failed to generate premium description';
+                                                  setError(errorMessage);
+                                                  setTimeout(() => setError(null), 5000);
+                                                }
+                                              } catch (error) {
+                                                console.error('Error enhancing description:', error);
+                                                setError('Failed to generate premium description');
+                                                setTimeout(() => setError(null), 3000);
+                                              }
+                                            }}
+                                          >
+                                            <Wand2 className="h-4 w-4 mr-2" />
+                                            Generate Premium Description
+                                          </Button>
+                                        </div>
+                                        <p className="text-gray-500 italic">
+                                          Basic info: {selectedItem.title} is a {selectedItem.category.slice(0, -1)} located at {selectedItem.raw_content?.address || 'Istanbul, Turkey'}.
+                                        </p>
+                                      </div>
+                                    )}
                                   </div>
                                 </div>
 
@@ -1627,6 +1644,172 @@ export default function StagingPage() {
                                   </div>
                                 )}
 
+                                {/* Why Visit */}
+                                {selectedItem.raw_content.why_visit && selectedItem.raw_content.why_visit.length > 0 && (
+                                  <div>
+                                    <h3 className="text-2xl font-bold mb-6 text-gray-900 flex items-center gap-2">
+                                      <Heart className="h-6 w-6 text-red-500" />
+                                      Why Visit
+                                    </h3>
+                                    <div className="grid md:grid-cols-2 gap-6">
+                                      {selectedItem.raw_content.why_visit.map((reason: string, index: number) => (
+                                        <div key={index} className="flex items-start gap-3">
+                                          <div className="w-2 h-2 bg-red-500 rounded-full mt-2 flex-shrink-0"></div>
+                                          <p className="text-gray-600">{reason}</p>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </div>
+                                )}
+
+                                {/* Accessibility & Facilities */}
+                                <div className="grid lg:grid-cols-2 gap-8">
+                                  {/* Accessibility */}
+                                  <div>
+                                    <h3 className="text-xl font-bold mb-4 text-gray-900 flex items-center gap-2">
+                                      <Users className="h-5 w-5 text-green-600" />
+                                      Accessibility
+                                    </h3>
+                                    <div className="space-y-3">
+                                      {selectedItem.raw_content.accessibility && (
+                                        <>
+                                          {selectedItem.raw_content.accessibility.wheelchair_accessible && (
+                                            <div className="flex items-center gap-2">
+                                              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                                              <span className="text-sm text-gray-600">Wheelchair accessible</span>
+                                            </div>
+                                          )}
+                                          {selectedItem.raw_content.accessibility.stroller_friendly && (
+                                            <div className="flex items-center gap-2">
+                                              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                                              <span className="text-sm text-gray-600">Stroller friendly</span>
+                                            </div>
+                                          )}
+                                          {selectedItem.raw_content.accessibility.kid_friendly && (
+                                            <div className="flex items-center gap-2">
+                                              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                                              <span className="text-sm text-gray-600">Kid friendly</span>
+                                            </div>
+                                          )}
+                                          {selectedItem.raw_content.accessibility.senior_friendly && (
+                                            <div className="flex items-center gap-2">
+                                              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                                              <span className="text-sm text-gray-600">Senior friendly</span>
+                                            </div>
+                                          )}
+                                          {selectedItem.raw_content.accessibility.accessibility_notes && (
+                                            <p className="text-sm text-gray-600 mt-2">{selectedItem.raw_content.accessibility.accessibility_notes}</p>
+                                          )}
+                                        </>
+                                      )}
+                                      {(!selectedItem.raw_content.accessibility || Object.values(selectedItem.raw_content.accessibility).every(v => !v)) && (
+                                        <p className="text-sm text-gray-500 italic">Accessibility information not available</p>
+                                      )}
+                                    </div>
+                                  </div>
+
+                                  {/* Facilities */}
+                                  <div>
+                                    <h3 className="text-xl font-bold mb-4 text-gray-900 flex items-center gap-2">
+                                      <Building className="h-5 w-5 text-blue-600" />
+                                      Facilities
+                                    </h3>
+                                    <div className="space-y-3">
+                                      {selectedItem.raw_content.facilities && (
+                                        <>
+                                          {selectedItem.raw_content.facilities.toilets && (
+                                            <div className="flex items-center gap-2">
+                                              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                                              <span className="text-sm text-gray-600">Toilets available</span>
+                                            </div>
+                                          )}
+                                          {selectedItem.raw_content.facilities.cafe_restaurant && (
+                                            <div className="flex items-center gap-2">
+                                              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                                              <span className="text-sm text-gray-600">Café/Restaurant</span>
+                                            </div>
+                                          )}
+                                          {selectedItem.raw_content.facilities.gift_shop && (
+                                            <div className="flex items-center gap-2">
+                                              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                                              <span className="text-sm text-gray-600">Gift shop</span>
+                                            </div>
+                                          )}
+                                          {selectedItem.raw_content.facilities.parking && (
+                                            <div className="flex items-center gap-2">
+                                              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                                              <span className="text-sm text-gray-600">Parking available</span>
+                                            </div>
+                                          )}
+                                          {selectedItem.raw_content.facilities.wifi && (
+                                            <div className="flex items-center gap-2">
+                                              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                                              <span className="text-sm text-gray-600">Free WiFi</span>
+                                            </div>
+                                          )}
+                                          {selectedItem.raw_content.facilities.audio_guide && (
+                                            <div className="flex items-center gap-2">
+                                              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                                              <span className="text-sm text-gray-600">Audio guide available</span>
+                                            </div>
+                                          )}
+                                          {selectedItem.raw_content.facilities.guided_tours && (
+                                            <div className="flex items-center gap-2">
+                                              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                                              <span className="text-sm text-gray-600">Guided tours available</span>
+                                            </div>
+                                          )}
+                                        </>
+                                      )}
+                                      {(!selectedItem.raw_content.facilities || Object.values(selectedItem.raw_content.facilities).every(v => !v)) && (
+                                        <p className="text-sm text-gray-500 italic">Facility information not available</p>
+                                      )}
+                                    </div>
+                                  </div>
+                                </div>
+
+                                {/* Practical Information */}
+                                {selectedItem.raw_content.practical_info && Object.values(selectedItem.raw_content.practical_info).some(v => v) && (
+                                  <div>
+                                    <h3 className="text-xl font-bold mb-4 text-gray-900 flex items-center gap-2">
+                                      <Info className="h-5 w-5 text-purple-600" />
+                                      Practical Information
+                                    </h3>
+                                    <div className="grid md:grid-cols-2 gap-6">
+                                      {selectedItem.raw_content.practical_info.dress_code && (
+                                        <div>
+                                          <h4 className="font-semibold text-gray-800 mb-2">Dress Code</h4>
+                                          <p className="text-sm text-gray-600">{selectedItem.raw_content.practical_info.dress_code}</p>
+                                        </div>
+                                      )}
+                                      {selectedItem.raw_content.practical_info.photography_policy && (
+                                        <div>
+                                          <h4 className="font-semibold text-gray-800 mb-2">Photography Policy</h4>
+                                          <p className="text-sm text-gray-600">{selectedItem.raw_content.practical_info.photography_policy}</p>
+                                        </div>
+                                      )}
+                                      {selectedItem.raw_content.practical_info.entry_requirements && (
+                                        <div>
+                                          <h4 className="font-semibold text-gray-800 mb-2">Entry Requirements</h4>
+                                          <p className="text-sm text-gray-600">{selectedItem.raw_content.practical_info.entry_requirements}</p>
+                                        </div>
+                                      )}
+                                      {selectedItem.raw_content.practical_info.safety_notes && (
+                                        <div>
+                                          <h4 className="font-semibold text-gray-800 mb-2">Safety Notes</h4>
+                                          <p className="text-sm text-gray-600">{selectedItem.raw_content.practical_info.safety_notes}</p>
+                                        </div>
+                                      )}
+                                      {selectedItem.raw_content.practical_info.etiquette_tips && (
+                                        <div>
+                                          <h4 className="font-semibold text-gray-800 mb-2">Etiquette Tips</h4>
+                                          <p className="text-sm text-gray-600">{selectedItem.raw_content.practical_info.etiquette_tips}</p>
+                                        </div>
+                                      )}
+                                    </div>
+                                  </div>
+                                )}
+
                                 {/* Photo Gallery - ENHANCED FOR VISIBILITY */}
                                 <div style={{backgroundColor: '#f0f9ff', padding: '20px', border: '2px solid #0ea5e9', borderRadius: '8px', marginTop: '40px'}}>
                                   <h3 className="text-2xl font-bold mb-6 text-blue-900">📸 Photo Gallery ({selectedItem.images?.length || 0} images)</h3>
@@ -1644,11 +1827,11 @@ export default function StagingPage() {
                                       // Debug logging for gallery images
                                       console.log(`🖼️ Preview gallery image ${index + 1}:`, image, `(isPrimary: ${image === selectedItem.primary_image})`);
                                       return (
-                                      <div key={index} className="relative group">
+                                        <div key={index} className="relative group">
                                         <img
                                           src={image}
                                           alt={`${selectedItem.title} preview gallery ${index + 1}`}
-                                          className="w-full h-32 object-cover rounded-lg hover:opacity-80 transition-opacity cursor-pointer"
+                                            className="w-full h-32 object-cover rounded-lg hover:opacity-80 transition-opacity cursor-pointer"
                                           onError={(e) => {
                                             console.error(`❌ Preview gallery image ${index + 1} failed:`, image);
                                             e.currentTarget.style.display = 'none';
@@ -1666,14 +1849,14 @@ export default function StagingPage() {
                                             setLightboxOpen(true)
                                           }}
                                         />
-                                        {/* Primary Image Badge */}
-                                        {image === selectedItem.primary_image && (
-                                          <div className="absolute top-2 left-2 bg-blue-500 text-white text-xs px-2 py-1 rounded-full">
-                                            Primary
-                                          </div>
-                                        )}
+                                          {/* Primary Image Badge */}
+                                          {image === selectedItem.primary_image && (
+                                            <div className="absolute top-2 left-2 bg-blue-500 text-white text-xs px-2 py-1 rounded-full">
+                                              Primary
                                       </div>
-                                      );
+                                          )}
+                                        </div>
+                                      )
                                     })}
                                   </div>
                                 </div>
@@ -1828,6 +2011,22 @@ export default function StagingPage() {
                           <Camera className="h-5 w-5 mr-2" />
                           Image Management ({selectedItem.images?.length || 0} images)
                         </h3>
+                        
+                        {/* Debug: Show image URLs */}
+                        <div className="mb-4 p-3 bg-gray-100 rounded text-xs">
+                          <details>
+                            <summary className="cursor-pointer font-medium">🔍 Debug: Image URLs</summary>
+                            <div className="mt-2 space-y-1">
+                              <div><strong>Primary:</strong> {selectedItem.primary_image}</div>
+                              {selectedItem.images?.slice(0, 3).map((url, idx) => (
+                                <div key={idx}><strong>Image {idx + 1}:</strong> {url}</div>
+                              ))}
+                              {selectedItem.images?.length > 3 && (
+                                <div className="text-gray-500">... and {selectedItem.images.length - 3} more</div>
+                              )}
+                            </div>
+                          </details>
+                        </div>
 
                         {/* Current Thumbnail */}
                         <div className="mb-4 p-4 bg-blue-50 rounded-lg border-2 border-blue-200">
@@ -1883,17 +2082,23 @@ export default function StagingPage() {
                                 <img
                                   src={image}
                                   alt={`${selectedItem.title} image ${index + 1}`}
-                                  className="w-full h-full object-cover rounded"
+                                  style={{
+                                    width: '100%',
+                                    height: '100%',
+                                    objectFit: 'cover'
+                                  }}
                                   onError={(e) => {
                                     console.error(`❌ Gallery image ${index + 1} FAILED:`, image);
+                                    console.error('Error details:', e);
                                     e.currentTarget.style.display = 'none';
                                     const fallbackDiv = document.createElement('div');
-                                    fallbackDiv.className = 'w-full h-full bg-gray-200 flex items-center justify-center text-xs text-gray-500 rounded';
-                                    fallbackDiv.textContent = `Image ${index + 1} failed`;
+                                    fallbackDiv.className = 'w-full h-full bg-red-100 flex items-center justify-center text-xs text-red-600 rounded border-2 border-red-300';
+                                    fallbackDiv.textContent = `❌ Image ${index + 1} failed to load`;
                                     e.currentTarget.parentNode?.appendChild(fallbackDiv);
                                   }}
-                                  onLoad={() => {
+                                  onLoad={(e) => {
                                     console.log(`✅ Gallery image ${index + 1} LOADED:`, image);
+                                    console.log('Image element:', e.currentTarget);
                                   }}
                                 />
                                 
@@ -2005,46 +2210,46 @@ export default function StagingPage() {
 
                         {/* Action Buttons - Only show for pending items */}
                         {filterStatus === 'pending' && (
-                          <div className="flex gap-3 pt-4 border-t">
-                            <Button
-                              onClick={handleApprove}
-                              disabled={processing.has(selectedItem.id)}
-                              className="flex-1 bg-green-600 hover:bg-green-700"
-                            >
-                              {processing.has(selectedItem.id) ? (
-                                <>
-                                  <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-                                  Processing...
-                                </>
-                              ) : (
-                                <>
-                                  <CheckCircle className="h-4 w-4 mr-2" />
-                                  Approve Item
-                                </>
-                              )}
-                            </Button>
-                            <Button
-                              onClick={handleReject}
-                              disabled={processing.has(selectedItem.id)}
-                              variant="destructive"
-                              className="flex-1"
-                            >
-                              {processing.has(selectedItem.id) ? (
-                                <>
-                                  <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-                                  Processing...
-                                </>
-                              ) : (
-                                <>
-                                  <XCircle className="h-4 w-4 mr-2" />
-                                  Reject Item
-                                </>
-                              )}
-                            </Button>
-                            <Button variant="outline" onClick={() => setSelectedItem(null)}>
-                              Close Preview
-                            </Button>
-                          </div>
+                        <div className="flex gap-3 pt-4 border-t">
+                          <Button
+                            onClick={handleApprove}
+                            disabled={processing.has(selectedItem.id)}
+                            className="flex-1 bg-green-600 hover:bg-green-700"
+                          >
+                            {processing.has(selectedItem.id) ? (
+                              <>
+                                <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                                Processing...
+                              </>
+                            ) : (
+                              <>
+                                <CheckCircle className="h-4 w-4 mr-2" />
+                                Approve Item
+                              </>
+                            )}
+                          </Button>
+                          <Button
+                            onClick={handleReject}
+                            disabled={processing.has(selectedItem.id)}
+                            variant="destructive"
+                            className="flex-1"
+                          >
+                            {processing.has(selectedItem.id) ? (
+                              <>
+                                <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                                Processing...
+                              </>
+                            ) : (
+                              <>
+                                <XCircle className="h-4 w-4 mr-2" />
+                                Reject Item
+                              </>
+                            )}
+                          </Button>
+                          <Button variant="outline" onClick={() => setSelectedItem(null)}>
+                            Close Preview
+                          </Button>
+                        </div>
                         )}
                         
                         {/* Close button for non-pending items */}
@@ -2214,7 +2419,7 @@ export default function StagingPage() {
           <DialogHeader>
             <DialogTitle>Re-scrape Item</DialogTitle>
             <DialogDescription>
-              Provide instructions for re-scraping "{reScrapeTarget?.title}"
+              Provide instructions for re-scraping &quot;{reScrapeTarget?.title}&quot;
             </DialogDescription>
           </DialogHeader>
           
@@ -2283,7 +2488,7 @@ export default function StagingPage() {
                   </Button>
                   <Button
                     onClick={executeReScrape}
-                    disabled={reScrapeTarget && processing.has(reScrapeTarget.id)}
+                    disabled={reScrapeTarget ? processing.has(reScrapeTarget.id) : false}
                     className="bg-green-600 hover:bg-green-700"
                   >
                     {reScrapeTarget && processing.has(reScrapeTarget.id) ? (
