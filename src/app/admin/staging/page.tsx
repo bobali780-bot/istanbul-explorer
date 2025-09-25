@@ -2085,8 +2085,10 @@ export default function StagingPage() {
                                   style={{
                                     width: '100%',
                                     height: '100%',
-                                    objectFit: 'cover'
+                                    objectFit: 'cover',
+                                    backgroundColor: 'transparent'
                                   }}
+                                  className="rounded"
                                   onError={(e) => {
                                     console.error(`❌ Gallery image ${index + 1} FAILED:`, image);
                                     console.error('Error details:', e);
@@ -2099,6 +2101,9 @@ export default function StagingPage() {
                                   onLoad={(e) => {
                                     console.log(`✅ Gallery image ${index + 1} LOADED:`, image);
                                     console.log('Image element:', e.currentTarget);
+                                    console.log('Image dimensions:', e.currentTarget.naturalWidth, 'x', e.currentTarget.naturalHeight);
+                                    console.log('Image display style:', e.currentTarget.style.display);
+                                    console.log('Image visibility:', e.currentTarget.style.visibility);
                                   }}
                                 />
                                 
