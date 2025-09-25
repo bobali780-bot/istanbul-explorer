@@ -2068,8 +2068,10 @@ export default function StagingPage() {
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                           {(selectedItem.images || []).map((image, index) => (
                             <div key={index} className="relative group">
-                              <div
-                                className={`relative w-full h-32 rounded transition-all cursor-pointer border-2 ${
+                              <img
+                                src={image}
+                                alt={`${selectedItem.title} image ${index + 1}`}
+                                className={`w-full h-32 object-cover rounded transition-all cursor-pointer border-2 ${
                                   image === selectedItem.primary_image
                                     ? 'ring-2 ring-blue-500 ring-offset-2 border-blue-300'
                                     : 'border-gray-200 hover:ring-2 hover:ring-gray-300'
@@ -2078,34 +2080,23 @@ export default function StagingPage() {
                                   setLightboxImageIndex(index)
                                   setLightboxOpen(true)
                                 }}
-                              >
-                                <img
-                                  src={image}
-                                  alt={`${selectedItem.title} image ${index + 1}`}
-                                  style={{
-                                    width: '100%',
-                                    height: '100%',
-                                    objectFit: 'cover',
-                                    backgroundColor: 'transparent'
-                                  }}
-                                  className="rounded"
-                                  onError={(e) => {
-                                    console.error(`❌ Gallery image ${index + 1} FAILED:`, image);
-                                    console.error('Error details:', e);
-                                    e.currentTarget.style.display = 'none';
-                                    const fallbackDiv = document.createElement('div');
-                                    fallbackDiv.className = 'w-full h-full bg-red-100 flex items-center justify-center text-xs text-red-600 rounded border-2 border-red-300';
-                                    fallbackDiv.textContent = `❌ Image ${index + 1} failed to load`;
-                                    e.currentTarget.parentNode?.appendChild(fallbackDiv);
-                                  }}
-                                  onLoad={(e) => {
-                                    console.log(`✅ Gallery image ${index + 1} LOADED:`, image);
-                                    console.log('Image element:', e.currentTarget);
-                                    console.log('Image dimensions:', e.currentTarget.naturalWidth, 'x', e.currentTarget.naturalHeight);
-                                    console.log('Image display style:', e.currentTarget.style.display);
-                                    console.log('Image visibility:', e.currentTarget.style.visibility);
-                                  }}
-                                />
+                                onError={(e) => {
+                                  console.error(`❌ Gallery image ${index + 1} FAILED:`, image);
+                                  console.error('Error details:', e);
+                                  e.currentTarget.style.display = 'none';
+                                  const fallbackDiv = document.createElement('div');
+                                  fallbackDiv.className = 'w-full h-32 bg-red-100 flex items-center justify-center text-xs text-red-600 rounded border-2 border-red-300';
+                                  fallbackDiv.textContent = `❌ Image ${index + 1} failed to load`;
+                                  e.currentTarget.parentNode?.appendChild(fallbackDiv);
+                                }}
+                                onLoad={(e) => {
+                                  console.log(`✅ Gallery image ${index + 1} LOADED:`, image);
+                                  console.log('Image element:', e.currentTarget);
+                                  console.log('Image dimensions:', e.currentTarget.naturalWidth, 'x', e.currentTarget.naturalHeight);
+                                  console.log('Image display style:', e.currentTarget.style.display);
+                                  console.log('Image visibility:', e.currentTarget.style.visibility);
+                                }}
+                              />
                                 
                                 {/* Remove Image Button */}
                                 <button
@@ -2125,9 +2116,6 @@ export default function StagingPage() {
                                     Primary
                                   </div>
                                 )}
-                              </div>
-                              <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all rounded flex items-center justify-center">
-                                <Eye className="h-5 w-5 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
                               </div>
                               {image !== selectedItem.primary_image && (
                                 <Button
