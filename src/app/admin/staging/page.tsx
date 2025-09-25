@@ -2098,25 +2098,26 @@ export default function StagingPage() {
                                 }}
                               />
                                 
-                                {/* Remove Image Button */}
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation()
-                                    handleRemoveImage(selectedItem.id, image)
-                                  }}
-                                  className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
-                                  title="Remove this image"
-                                >
-                                  <X className="h-3 w-3" />
-                                </button>
-                                
-                                {/* Primary Image Badge */}
-                                {image === selectedItem.primary_image && (
-                                  <div className="absolute top-2 left-2 bg-blue-500 text-white text-xs px-2 py-1 rounded-full">
-                                    Primary
-                                  </div>
-                                )}
-                              </div>
+                              {/* Remove Image Button */}
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  handleRemoveImage(selectedItem.id, image)
+                                }}
+                                className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                                title="Remove this image"
+                              >
+                                <X className="h-3 w-3" />
+                              </button>
+                              
+                              {/* Primary Image Badge */}
+                              {image === selectedItem.primary_image && (
+                                <div className="absolute top-2 left-2 bg-blue-500 text-white text-xs px-2 py-1 rounded-full">
+                                  Primary
+                                </div>
+                              )}
+
+                              {/* Set as Primary Button */}
                               {image !== selectedItem.primary_image && (
                                 <Button
                                   size="sm"
@@ -2130,6 +2131,8 @@ export default function StagingPage() {
                                   {processing.has(selectedItem.id) ? 'Updating...' : 'Set as Thumbnail'}
                                 </Button>
                               )}
+                              
+                              {/* Current Thumbnail Label */}
                               {image === selectedItem.primary_image && (
                                 <div className="absolute inset-x-1 bottom-1 bg-blue-600 text-white text-xs py-1 px-2 rounded text-center">
                                   Current Thumbnail
