@@ -10,6 +10,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { motion } from "framer-motion"
 import {
   CheckCircle,
   XCircle,
@@ -17,6 +18,8 @@ import {
   Trash2,
   Filter,
   RefreshCw,
+  Heart,
+  RotateCcw,
   Star,
   Clock,
   Image,
@@ -29,6 +32,8 @@ import {
   AlertTriangle,
   FileText,
   Camera,
+  History,
+  X,
 } from 'lucide-react'
 import { createClient } from '@supabase/supabase-js'
 import NextImage from 'next/image'
@@ -109,7 +114,7 @@ export default function StagingPage() {
     database_failures: 0
   })
   const [filterCategory, setFilterCategory] = useState<string>('all')
-  const [filterStatus, setFilterStatus] = useState<string>('all')
+  const [filterStatus, setFilterStatus] = useState<string>('pending')
   const [searchTerm, setSearchTerm] = useState('')
   const [refillDialogOpen, setRefillDialogOpen] = useState(false)
   const [refillTarget, setRefillTarget] = useState<{ id: string; title: string; currentCount: number } | null>(null)
@@ -120,11 +125,25 @@ export default function StagingPage() {
   const [lightboxImageIndex, setLightboxImageIndex] = useState(0)
   const [error, setError] = useState<string | null>(null)
   const [successMessage, setSuccessMessage] = useState<string | null>(null)
+  const [hoveredTile, setHoveredTile] = useState<string | null>(null)
+  const [favourites, setFavourites] = useState<Set<string>>(new Set())
+  const [reScrapeDialogOpen, setReScrapeDialogOpen] = useState(false)
+  const [reScrapeTarget, setReScrapeTarget] = useState<{ id: string; title: string } | null>(null)
+  const [reScrapeInstructions, setReScrapeInstructions] = useState('')
+  const [aiUnderstanding, setAiUnderstanding] = useState<string>('')
+  const [structuredIntent, setStructuredIntent] = useState<any>(null)
+  const [showAiConfirmation, setShowAiConfirmation] = useState(false)
+  const [showVersions, setShowVersions] = useState<{ [key: string]: boolean }>({})
+  const [versions, setVersions] = useState<{ [key: string]: any[] }>({})
+  const [localVersions, setLocalVersions] = useState<{ [key: string]: any[] }>({})
 
   const loadStagingData = async () => {
     setLoading(true)
     try {
-      const response = await fetch('/api/admin/staging/enhanced')
+      const url = filterStatus !== 'all' 
+        ? `/api/admin/staging/enhanced?status=${filterStatus}`
+        : '/api/admin/staging/enhanced'
+      const response = await fetch(url)
       const result = await response.json()
 
       if (!result.success) {
@@ -157,6 +176,11 @@ export default function StagingPage() {
   useEffect(() => {
     loadStagingData()
   }, [])
+
+  // Reload data when filter changes
+  useEffect(() => {
+    loadStagingData()
+  }, [filterStatus])
 
   // Debug logging for selectedItem
   useEffect(() => {
@@ -384,15 +408,343 @@ export default function StagingPage() {
     }
   }
 
-  // Filter staging data
+  // Direct approve/reject functions for tile buttons
+  const handleDirectApprove = async (itemId: string) => {
+    try {
+      setProcessing(prev => new Set(prev).add(itemId))
+
+      const response = await fetch('/api/admin/staging-actions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          action: 'approve',
+          items: [itemId]
+        }),
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        setSuccessMessage('Item approved successfully!')
+        setError(null)
+        setTimeout(() => setSuccessMessage(null), 3000)
+        await loadStagingData()
+      } else {
+        throw new Error(data.message || 'Failed to approve item')
+      }
+    } catch (error) {
+      console.error('Error approving item:', error)
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+      setError(`Error approving item: ${errorMessage}`)
+      setSuccessMessage(null)
+      setTimeout(() => setError(null), 5000)
+    } finally {
+      setProcessing(prev => {
+        const newSet = new Set(prev)
+        newSet.delete(itemId)
+        return newSet
+      })
+    }
+  }
+
+  const handleDirectReject = async (itemId: string) => {
+    try {
+      setProcessing(prev => new Set(prev).add(itemId))
+
+      const response = await fetch('/api/admin/staging-actions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          action: 'reject',
+          items: [itemId]
+        }),
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        setSuccessMessage('Item rejected successfully!')
+        setError(null)
+        setTimeout(() => setSuccessMessage(null), 3000)
+        await loadStagingData()
+      } else {
+        throw new Error(data.message || 'Failed to reject item')
+      }
+    } catch (error) {
+      console.error('Error rejecting item:', error)
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+      setError(`Error rejecting item: ${errorMessage}`)
+      setSuccessMessage(null)
+      setTimeout(() => setError(null), 5000)
+    } finally {
+      setProcessing(prev => {
+        const newSet = new Set(prev)
+        newSet.delete(itemId)
+        return newSet
+      })
+    }
+  }
+
+  const handleRemoveImage = async (itemId: string, imageUrl: string) => {
+    try {
+      setProcessing(prev => new Set(prev).add(itemId))
+
+      const response = await fetch('/api/admin/staging/remove-image', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          tileId: itemId,
+          imageUrl: imageUrl
+        }),
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        setSuccessMessage(`Image removed successfully. ${data.data.imagesRemaining} images remaining.`)
+        setTimeout(() => setSuccessMessage(null), 3000)
+        await loadStagingData()
+        
+        // If this was the selected item, update it
+        if (selectedItem && selectedItem.id === itemId) {
+          const updatedItem = stagingData.find(item => item.id === itemId)
+          if (updatedItem) {
+            setSelectedItem(updatedItem)
+          }
+        }
+      } else {
+        throw new Error(data.error || 'Failed to remove image')
+      }
+    } catch (error) {
+      console.error('Error removing image:', error)
+      setError(`Failed to remove image: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      setTimeout(() => setError(null), 5000)
+    } finally {
+      setProcessing(prev => {
+        const newSet = new Set(prev)
+        newSet.delete(itemId)
+        return newSet
+      })
+    }
+  }
+
+
+  // Favourites functions
+  const toggleFavourite = (itemId: string) => {
+    setFavourites(prev => {
+      const newFavourites = new Set(prev)
+      if (newFavourites.has(itemId)) {
+        newFavourites.delete(itemId)
+      } else {
+        newFavourites.add(itemId)
+      }
+      return newFavourites
+    })
+  }
+
+  const isFavourite = (itemId: string) => {
+    return favourites.has(itemId)
+  }
+
+  // Animated Heart Component
+  const AnimatedHeart = ({ isFav, className = "" }: { isFav: boolean; className?: string }) => {
+    return (
+      <motion.div
+        className={className}
+        initial={false}
+        animate={{
+          scale: isFav ? [1, 1.3, 1.1] : [1, 0.7, 1],
+          rotate: isFav ? [0, -10, 10, 0] : [0, 5, -5, 0]
+        }}
+        transition={{
+          duration: 0.4,
+          ease: "easeInOut",
+          times: [0, 0.3, 0.7, 1]
+        }}
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
+      >
+        <motion.div
+          animate={{
+            color: isFav ? "#ef4444" : "#9ca3af"
+          }}
+          transition={{
+            duration: 0.3,
+            ease: "easeInOut"
+          }}
+        >
+          <Heart 
+            className={`h-4 w-4 transition-all duration-300 ${
+              isFav ? 'fill-current drop-shadow-sm' : ''
+            }`} 
+          />
+        </motion.div>
+      </motion.div>
+    )
+  }
+
+  // Re-scrape functions
+  const handleReScrape = (item: any) => {
+    setReScrapeTarget({ id: item.id, title: item.title })
+    setReScrapeInstructions('')
+    setAiUnderstanding('')
+    setShowAiConfirmation(false)
+    setReScrapeDialogOpen(true)
+  }
+
+  const getAiUnderstanding = async () => {
+    if (!reScrapeInstructions.trim()) return
+
+    try {
+      // Call AI API to parse the user's instructions
+      const response = await fetch('/api/ai/parse-instructions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          instructions: reScrapeInstructions.trim(),
+          itemTitle: reScrapeTarget?.title || 'this item'
+        }),
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        setAiUnderstanding(data.understanding)
+        setStructuredIntent(data.structuredIntent)
+        setShowAiConfirmation(true)
+      } else {
+        throw new Error(data.message || 'Failed to get AI understanding')
+      }
+    } catch (error) {
+      console.error('Error getting AI understanding:', error)
+      setError('Failed to get AI understanding. Please try again.')
+      setTimeout(() => setError(null), 5000)
+    }
+  }
+
+  const executeReScrape = async () => {
+    if (!reScrapeTarget || !reScrapeInstructions.trim() || !structuredIntent) return
+
+    try {
+      setProcessing(prev => new Set(prev).add(reScrapeTarget.id))
+
+      const response = await fetch('/api/admin/rescrape', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          tileId: reScrapeTarget.id,
+          structuredIntent: structuredIntent,
+          instructions: reScrapeInstructions.trim()
+        }),
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        // Create a local version record
+        const newVersion = {
+          id: `local-${Date.now()}`,
+          version_number: (localVersions[reScrapeTarget.id]?.length || 0) + 1,
+          changes_summary: data.changesSummary,
+          status: 'approved',
+          created_at: new Date().toISOString()
+        }
+        
+        setLocalVersions(prev => ({
+          ...prev,
+          [reScrapeTarget.id]: [...(prev[reScrapeTarget.id] || []), newVersion]
+        }))
+
+        setSuccessMessage(`✅ Re-scraped "${reScrapeTarget.title}" successfully! ${data.changesSummary}`)
+        setError(null)
+        setTimeout(() => setSuccessMessage(null), 3000)
+        await loadStagingData()
+        setReScrapeDialogOpen(false)
+        setReScrapeTarget(null)
+        setReScrapeInstructions('')
+        setAiUnderstanding('')
+        setStructuredIntent(null)
+        setShowAiConfirmation(false)
+      } else {
+        throw new Error(data.message || 'Failed to re-scrape item')
+      }
+    } catch (error) {
+      console.error('Error re-scraping item:', error)
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+      setError(`Error re-scraping item: ${errorMessage}`)
+      setSuccessMessage(null)
+      setTimeout(() => setError(null), 5000)
+    } finally {
+      setProcessing(prev => {
+        const newSet = new Set(prev)
+        if (reScrapeTarget) {
+          newSet.delete(reScrapeTarget.id)
+        }
+        return newSet
+      })
+    }
+  }
+
+  // Version management functions
+  const loadVersions = async (tileId: string) => {
+    // Use local versions instead of database
+    setVersions(prev => ({
+      ...prev,
+      [tileId]: localVersions[tileId] || []
+    }))
+  }
+
+  const toggleVersions = (tileId: string) => {
+    setShowVersions(prev => ({
+      ...prev,
+      [tileId]: !prev[tileId]
+    }))
+    
+    if (!versions[tileId]) {
+      loadVersions(tileId)
+    }
+  }
+
+  const approveVersion = async (versionId: string) => {
+    try {
+      const response = await fetch('/api/admin/versions', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ versionId, status: 'approved' })
+      })
+      
+      const data = await response.json()
+      if (data.success) {
+        setSuccessMessage('Version approved successfully!')
+        setTimeout(() => setSuccessMessage(null), 3000)
+        await loadStagingData()
+      }
+    } catch (error) {
+      console.error('Error approving version:', error)
+      setError('Failed to approve version')
+      setTimeout(() => setError(null), 5000)
+    }
+  }
+
+  // Filter staging data (client-side filtering for category and search only)
   const filteredData = stagingData.filter(item => {
     const matchesCategory = filterCategory === 'all' || item.category === filterCategory
-    const matchesStatus = filterStatus === 'all' || (item.status || 'pending') === filterStatus
     const matchesSearch = !searchTerm ||
       item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       item.category.toLowerCase().includes(searchTerm.toLowerCase())
+    const matchesFavourites = filterStatus !== 'favourites' || isFavourite(item.id)
 
-    return matchesCategory && matchesStatus && matchesSearch
+    return matchesCategory && matchesSearch && matchesFavourites
   })
 
   if (loading) {
@@ -409,8 +761,69 @@ export default function StagingPage() {
       {/* Header */}
       <div className="flex justify-between items-start">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Staging Review</h1>
-          <p className="mt-2 text-gray-600">Review and approve scraped content before publishing</p>
+          <h1 className="text-3xl font-bold text-gray-900">
+            {filterStatus === 'pending' && 'Staging Review'}
+            {filterStatus === 'approved' && 'Approved Items'}
+            {filterStatus === 'rejected' && 'Rejected Items'}
+            {filterStatus === 'all' && 'All Items'}
+            {filterStatus === 'favourites' && 'Favourite Items'}
+          </h1>
+          <p className="mt-2 text-gray-600">
+            {filterStatus === 'pending' && 'Review and approve scraped content before publishing'}
+            {filterStatus === 'approved' && 'Items that have been approved and are ready for publishing'}
+            {filterStatus === 'rejected' && 'Items that have been rejected and need revision'}
+            {filterStatus === 'all' && 'View all items across all statuses'}
+            {filterStatus === 'favourites' && 'Your favourite items for testing and reference'}
+          </p>
+          
+          {/* Folder Navigation */}
+          <div className="mt-4 flex gap-2">
+            <Button
+              variant={filterStatus === 'pending' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setFilterStatus('pending')}
+              className="flex items-center gap-2"
+            >
+              <RefreshCw className="h-4 w-4" />
+              Pending Review ({stats.pending})
+            </Button>
+            <Button
+              variant={filterStatus === 'approved' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setFilterStatus('approved')}
+              className="flex items-center gap-2"
+            >
+              <CheckCircle className="h-4 w-4" />
+              Approved ({stats.approved})
+            </Button>
+            <Button
+              variant={filterStatus === 'rejected' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setFilterStatus('rejected')}
+              className="flex items-center gap-2"
+            >
+              <XCircle className="h-4 w-4" />
+              Rejected ({stats.rejected})
+            </Button>
+            <Button
+              variant={filterStatus === 'all' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setFilterStatus('all')}
+              className="flex items-center gap-2"
+            >
+              <Eye className="h-4 w-4" />
+              View All
+            </Button>
+            <Button
+              variant={filterStatus === 'favourites' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setFilterStatus('favourites')}
+              className="flex items-center gap-2"
+            >
+              <Heart className="h-4 w-4" />
+              Favourites ({favourites.size})
+            </Button>
+          </div>
 
           {/* Error and Success Messages */}
           {error && (
@@ -683,33 +1096,77 @@ export default function StagingPage() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredData.map((item) => (
-            <Card key={item.id} className={`overflow-hidden hover:shadow-lg transition-shadow ${
+            <div key={item.id} className="space-y-0">
+            <Card className={`overflow-hidden hover:shadow-xl transition-all duration-300 hover:scale-105 ${
               item.item_type === 'failed' ? 'border-red-200 bg-red-50' :
               item.uses_placeholder ? 'border-orange-200 bg-orange-50' :
               'border-gray-200'
             }`}>
-              <div className="relative h-48 overflow-hidden">
+              <div 
+                className="relative h-48 overflow-hidden group"
+                onMouseEnter={() => setHoveredTile(item.id)}
+                onMouseLeave={() => setHoveredTile(null)}
+              >
                 {item.item_type === 'success' ? (
-                  <img
-                    src={item.primary_image || '/api/placeholder/400/200'}
-                    alt={item.title}
-                    style={{
-                      width: '100%',
-                      height: '100%',
-                      objectFit: 'cover'
-                    }}
-                    onError={(e) => {
-                      console.error(`❌ Card thumbnail failed to load:`, item.primary_image);
-                      e.currentTarget.style.display = 'none';
-                      const fallbackDiv = document.createElement('div');
-                      fallbackDiv.className = 'w-full h-full bg-gray-200 flex items-center justify-center text-xs text-gray-500';
-                      fallbackDiv.textContent = 'Image failed';
-                      e.currentTarget.parentNode?.appendChild(fallbackDiv);
-                    }}
-                    onLoad={() => {
-                      console.log(`✅ Card thumbnail loaded:`, item.primary_image);
-                    }}
-                  />
+                  <>
+                    {/* Full Coverage Thumbnail */}
+                    <img
+                      src={item.primary_image || '/api/placeholder/400/200'}
+                      alt={item.title}
+                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                      onError={(e) => {
+                        console.error(`❌ Card thumbnail failed to load:`, item.primary_image);
+                        e.currentTarget.style.display = 'none';
+                        const fallbackDiv = document.createElement('div');
+                        fallbackDiv.className = 'w-full h-full bg-gray-200 flex items-center justify-center text-xs text-gray-500';
+                        fallbackDiv.textContent = 'Image failed';
+                        e.currentTarget.parentNode?.appendChild(fallbackDiv);
+                      }}
+                      onLoad={() => {
+                        console.log(`✅ Card thumbnail loaded:`, item.primary_image);
+                      }}
+                    />
+                    
+                    {/* Hover Overlay with Actions */}
+                    <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300 flex items-center justify-center">
+                      <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex gap-2">
+                        <Button
+                          size="sm"
+                          variant="secondary"
+                          className="bg-white/90 hover:bg-white text-gray-800"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedItem(item);
+                          }}
+                        >
+                          <Eye className="h-4 w-4 mr-2" />
+                          Preview
+                        </Button>
+                        {filterStatus === 'pending' && (
+                          <Button
+                            size="sm"
+                            className="bg-green-600 hover:bg-green-700 text-white"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDirectApprove(item.id);
+                            }}
+                            disabled={processing.has(item.id)}
+                          >
+                            <CheckCircle className="h-4 w-4 mr-2" />
+                            Approve
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                    
+                    {/* Image Count Indicator */}
+                    {(item.images?.length || 0) > 1 && (
+                      <div className="absolute top-2 right-2 bg-black bg-opacity-60 text-white text-xs px-2 py-1 rounded-full">
+                        <Camera className="h-3 w-3 inline mr-1" />
+                        {item.images?.length || 0}
+                      </div>
+                    )}
+                  </>
                 ) : (
                   <div className="w-full h-full bg-gray-100 flex items-center justify-center">
                     <div className="text-center">
@@ -719,8 +1176,14 @@ export default function StagingPage() {
                   </div>
                 )}
 
-                <div className="absolute top-3 left-3">
+                <div className="absolute top-3 left-3 flex gap-2">
                   <Badge>{item.category}</Badge>
+                  {/* Version indicator for rescraped items */}
+                  {(item.raw_content?.rescrape_count || 0) > 0 && (
+                    <Badge variant="secondary" className="bg-blue-100 text-blue-800 border-blue-200">
+                      V{(item.raw_content?.rescrape_count || 0) + 1}
+                    </Badge>
+                  )}
                 </div>
 
                 <div className="absolute top-3 right-3 flex gap-2">
@@ -845,85 +1308,67 @@ export default function StagingPage() {
                   </div>
                 )}
 
-                <div className="flex gap-2 mt-4">
-                  {item.item_type === 'success' ? (
-                    <>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => setSelectedItem(item)}
-                        className="flex-1"
-                      >
-                        <Eye className="h-4 w-4 mr-1" />
-                        Preview
-                      </Button>
+                {/* Action Buttons - Simplified layout */}
+                <div className="flex justify-between items-center mt-4">
+                  <div className="flex gap-1">
+                    {/* Heart icon for favourites */}
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        toggleFavourite(item.id)
+                      }}
+                      className="p-1 hover:bg-red-50"
+                    >
+                      <AnimatedHeart 
+                        isFav={isFavourite(item.id)}
+                      />
+                    </Button>
+                    
+                    {/* Re-scrape button */}
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        handleReScrape(item)
+                      }}
+                      disabled={processing.has(item.id)}
+                      className="text-blue-500 hover:text-blue-600 p-1"
+                    >
+                      {processing.has(item.id) ? (
+                        <RefreshCw className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <RotateCcw className="h-4 w-4" />
+                      )}
+                    </Button>
 
-                      <Button
-                        size="sm"
-                        onClick={() => {
-                          setSelectedItem(item)
-                          setTimeout(() => handleApprove(), 100)
-                        }}
-                        disabled={processing.has(item.id)}
-                        className="bg-green-600 hover:bg-green-700"
-                      >
-                        {processing.has(item.id) ? (
-                          <RefreshCw className="h-4 w-4 animate-spin" />
-                        ) : (
-                          <CheckCircle className="h-4 w-4" />
-                        )}
-                      </Button>
-
-                      <Button
-                        size="sm"
-                        variant="destructive"
-                        onClick={() => {
-                          setSelectedItem(item)
-                          setTimeout(() => handleReject(), 100)
-                        }}
-                        disabled={processing.has(item.id)}
-                      >
-                        {processing.has(item.id) ? (
-                          <RefreshCw className="h-4 w-4 animate-spin" />
-                        ) : (
-                          <XCircle className="h-4 w-4" />
-                        )}
-                      </Button>
-                    </>
-                  ) : (
-                    <>
-                      {/* Failed Item Buttons */}
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => setSelectedItem(item)}
-                        className="flex-1"
-                      >
-                        <FileText className="h-4 w-4 mr-1" />
-                        View Error Details
-                      </Button>
-
-                      <Button
-                        size="sm"
-                        variant="secondary"
-                        onClick={() => handleRetryValidation(item)}
-                        disabled={processing.has(item.id)}
-                        className="bg-blue-600 hover:bg-blue-700 text-white"
-                      >
-                        {processing.has(item.id) ? (
-                          <RefreshCw className="h-4 w-4 animate-spin" />
-                        ) : (
-                          <>
-                            <RefreshCw className="h-4 w-4 mr-1" />
-                            Retry
-                          </>
-                        )}
-                      </Button>
-                    </>
+                    {/* Versions button */}
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        toggleVersions(item.id)
+                      }}
+                      className="text-purple-500 hover:text-purple-600 p-1"
+                    >
+                      <History className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  
+                  {/* Quick Status Indicator */}
+                  {item.item_type === 'success' && (
+                    <div className="text-xs text-gray-500">
+                      {item.confidence_score ? `${item.confidence_score}%` : 'Ready'}
+                    </div>
                   )}
                 </div>
               </CardContent>
             </Card>
+
+            </div>
           ))}
         </div>
       )}
@@ -931,12 +1376,11 @@ export default function StagingPage() {
       {/* Enhanced Preview Modal with Tabs */}
       {selectedItem && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-6xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+          <div className="bg-white rounded-lg max-w-6xl w-full h-[90vh] overflow-hidden flex flex-col">
             {/* Header */}
             <div className="p-6 border-b border-gray-200 flex-shrink-0">
               <div className="flex justify-between items-start mb-4">
-                <div>
-                  <h2 className="text-2xl font-bold">{selectedItem.title}</h2>
+                <div>                  <h2 className="text-2xl font-bold">{selectedItem.title}</h2>
                   <div className="flex items-center gap-2 mt-1">
                     <Badge variant="outline">{selectedItem.category}</Badge>
                     <Badge variant="outline">ID: {selectedItem.id}</Badge>
@@ -972,7 +1416,7 @@ export default function StagingPage() {
                 </TabsList>
 
                 {/* Tab Contents */}
-                <div className="flex-1 overflow-y-auto p-6">
+                <div className="flex-1 overflow-y-auto p-6 min-h-0">
                   {/* Tile Preview Tab */}
                   <TabsContent value="tile-preview" className="space-y-6">
                     <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border-2 border-blue-200 p-6">
@@ -1200,11 +1644,11 @@ export default function StagingPage() {
                                       // Debug logging for gallery images
                                       console.log(`🖼️ Preview gallery image ${index + 1}:`, image, `(isPrimary: ${image === selectedItem.primary_image})`);
                                       return (
-                                      <div key={index} className="relative group cursor-pointer">
+                                      <div key={index} className="relative group">
                                         <img
                                           src={image}
                                           alt={`${selectedItem.title} preview gallery ${index + 1}`}
-                                          className="w-full h-32 object-cover rounded-lg hover:opacity-80 transition-opacity"
+                                          className="w-full h-32 object-cover rounded-lg hover:opacity-80 transition-opacity cursor-pointer"
                                           onError={(e) => {
                                             console.error(`❌ Preview gallery image ${index + 1} failed:`, image);
                                             e.currentTarget.style.display = 'none';
@@ -1222,6 +1666,12 @@ export default function StagingPage() {
                                             setLightboxOpen(true)
                                           }}
                                         />
+                                        {/* Primary Image Badge */}
+                                        {image === selectedItem.primary_image && (
+                                          <div className="absolute top-2 left-2 bg-blue-500 text-white text-xs px-2 py-1 rounded-full">
+                                            Primary
+                                          </div>
+                                        )}
                                       </div>
                                       );
                                     })}
@@ -1415,17 +1865,12 @@ export default function StagingPage() {
                           </div>
                         </div>
 
-                        {/* All Images Grid - Fixed with better CSS and debugging */}
+                        {/* All Images Grid */}
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                          {(selectedItem.images || []).map((image, index) => {
-                            console.log(`🖼️ Rendering gallery image ${index + 1}:`, image);
-                            console.log(`🖼️ Image URL type:`, typeof image);
-                            console.log(`🖼️ Image URL length:`, image?.length);
-                            console.log(`🔍 TESTING: Plain img tag for image:`, image);
-                            return (
+                          {(selectedItem.images || []).map((image, index) => (
                             <div key={index} className="relative group">
                               <div
-                                className={`relative w-full h-32 rounded transition-all cursor-pointer border-2 bg-red-100 ${
+                                className={`relative w-full h-32 rounded transition-all cursor-pointer border-2 ${
                                   image === selectedItem.primary_image
                                     ? 'ring-2 ring-blue-500 ring-offset-2 border-blue-300'
                                     : 'border-gray-200 hover:ring-2 hover:ring-gray-300'
@@ -1435,49 +1880,41 @@ export default function StagingPage() {
                                   setLightboxOpen(true)
                                 }}
                               >
-                                {/* DEBUG: Visual debugging with background color */}
-                                <div className="w-full h-full bg-yellow-200 flex items-center justify-center text-xs">
-                                  <div className="text-center">
-                                    <div className="text-red-600 font-bold">IMG {index + 1}</div>
-                                    <div className="text-xs text-gray-600 truncate max-w-[120px]">
-                                      {image.split('/').pop()}
-                                    </div>
-                                  </div>
-                                </div>
-                                
-                                {/* Hidden image for testing */}
                                 <img
                                   src={image}
                                   alt={`${selectedItem.title} image ${index + 1}`}
-                                  style={{
-                                    position: 'absolute',
-                                    top: 0,
-                                    left: 0,
-                                    width: '100%',
-                                    height: '100%',
-                                    objectFit: 'cover',
-                                    zIndex: 1,
-                                    opacity: 0.8
-                                  }}
+                                  className="w-full h-full object-cover rounded"
                                   onError={(e) => {
                                     console.error(`❌ Gallery image ${index + 1} FAILED:`, image);
                                     e.currentTarget.style.display = 'none';
+                                    const fallbackDiv = document.createElement('div');
+                                    fallbackDiv.className = 'w-full h-full bg-gray-200 flex items-center justify-center text-xs text-gray-500 rounded';
+                                    fallbackDiv.textContent = `Image ${index + 1} failed`;
+                                    e.currentTarget.parentNode?.appendChild(fallbackDiv);
                                   }}
-                                  onLoad={(e) => {
-                                    console.log(`✅ Gallery image ${index + 1} LOADED:`, {
-                                      url: image,
-                                      width: e.currentTarget.naturalWidth,
-                                      height: e.currentTarget.naturalHeight,
-                                      elementVisible: e.currentTarget.offsetWidth > 0
-                                    });
-                                    // Show the image by hiding the debug overlay
-                                    const parent = e.currentTarget.parentElement;
-                                    if (parent) {
-                                      const debugDiv = parent.querySelector('div');
-                                      if (debugDiv) debugDiv.style.display = 'none';
-                                    }
+                                  onLoad={() => {
+                                    console.log(`✅ Gallery image ${index + 1} LOADED:`, image);
                                   }}
                                 />
+                                
+                                {/* Remove Image Button */}
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    handleRemoveImage(selectedItem.id, image)
+                                  }}
+                                  className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                                  title="Remove this image"
+                                >
+                                  <X className="h-3 w-3" />
+                                </button>
+                                
+                                {/* Primary Image Badge */}
+                                {image === selectedItem.primary_image && (
+                                  <div className="absolute top-2 left-2 bg-blue-500 text-white text-xs px-2 py-1 rounded-full">
+                                    Primary
+                                  </div>
+                                )}
                               </div>
                               <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all rounded flex items-center justify-center">
                                 <Eye className="h-5 w-5 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -1501,8 +1938,7 @@ export default function StagingPage() {
                                 </div>
                               )}
                             </div>
-                            );
-                          })}
+                          ))}
                         </div>
 
                         {/* View All Images Button */}
@@ -1567,47 +2003,58 @@ export default function StagingPage() {
                           </div>
                         </div>
 
-                        {/* Action Buttons */}
-                        <div className="flex gap-3 pt-4 border-t">
-                          <Button
-                            onClick={handleApprove}
-                            disabled={processing.has(selectedItem.id)}
-                            className="flex-1 bg-green-600 hover:bg-green-700"
-                          >
-                            {processing.has(selectedItem.id) ? (
-                              <>
-                                <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-                                Processing...
-                              </>
-                            ) : (
-                              <>
-                                <CheckCircle className="h-4 w-4 mr-2" />
-                                Approve Item
-                              </>
-                            )}
-                          </Button>
-                          <Button
-                            onClick={handleReject}
-                            disabled={processing.has(selectedItem.id)}
-                            variant="destructive"
-                            className="flex-1"
-                          >
-                            {processing.has(selectedItem.id) ? (
-                              <>
-                                <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-                                Processing...
-                              </>
-                            ) : (
-                              <>
-                                <XCircle className="h-4 w-4 mr-2" />
-                                Reject Item
-                              </>
-                            )}
-                          </Button>
-                          <Button variant="outline" onClick={() => setSelectedItem(null)}>
-                            Close Preview
-                          </Button>
-                        </div>
+                        {/* Action Buttons - Only show for pending items */}
+                        {filterStatus === 'pending' && (
+                          <div className="flex gap-3 pt-4 border-t">
+                            <Button
+                              onClick={handleApprove}
+                              disabled={processing.has(selectedItem.id)}
+                              className="flex-1 bg-green-600 hover:bg-green-700"
+                            >
+                              {processing.has(selectedItem.id) ? (
+                                <>
+                                  <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                                  Processing...
+                                </>
+                              ) : (
+                                <>
+                                  <CheckCircle className="h-4 w-4 mr-2" />
+                                  Approve Item
+                                </>
+                              )}
+                            </Button>
+                            <Button
+                              onClick={handleReject}
+                              disabled={processing.has(selectedItem.id)}
+                              variant="destructive"
+                              className="flex-1"
+                            >
+                              {processing.has(selectedItem.id) ? (
+                                <>
+                                  <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                                  Processing...
+                                </>
+                              ) : (
+                                <>
+                                  <XCircle className="h-4 w-4 mr-2" />
+                                  Reject Item
+                                </>
+                              )}
+                            </Button>
+                            <Button variant="outline" onClick={() => setSelectedItem(null)}>
+                              Close Preview
+                            </Button>
+                          </div>
+                        )}
+                        
+                        {/* Close button for non-pending items */}
+                        {filterStatus !== 'pending' && (
+                          <div className="flex justify-end pt-4 border-t">
+                            <Button variant="outline" onClick={() => setSelectedItem(null)}>
+                              Close Preview
+                            </Button>
+                          </div>
+                        )}
                   </TabsContent>
                 </div>
               </Tabs>
@@ -1760,6 +2207,103 @@ export default function StagingPage() {
           </div>
         </div>
       )}
+
+      {/* Re-scrape Dialog */}
+      <Dialog open={reScrapeDialogOpen} onOpenChange={setReScrapeDialogOpen}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Re-scrape Item</DialogTitle>
+            <DialogDescription>
+              Provide instructions for re-scraping "{reScrapeTarget?.title}"
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4">
+            {!showAiConfirmation ? (
+              <>
+                <div>
+                  <label htmlFor="reScrapeInstructions" className="block text-sm font-medium text-gray-700 mb-2">
+                    Instructions for AI
+                  </label>
+                  <textarea
+                    id="reScrapeInstructions"
+                    value={reScrapeInstructions}
+                    onChange={(e) => setReScrapeInstructions(e.target.value)}
+                    placeholder="Describe what to rescrape (e.g. Add 15 more images, update description, improve tags, full rescrape)"
+                    className="w-full px-6 py-4 border-2 border-gray-400 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-500 focus:border-blue-500 resize-none text-base leading-relaxed bg-white shadow-sm hover:shadow-md transition-shadow duration-200"
+                    rows={8}
+                  />
+                </div>
+                
+                <div className="flex justify-end gap-2">
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setReScrapeDialogOpen(false)
+                      setReScrapeTarget(null)
+                      setReScrapeInstructions('')
+                      setAiUnderstanding('')
+                      setShowAiConfirmation(false)
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={getAiUnderstanding}
+                    disabled={!reScrapeInstructions.trim()}
+                    className="bg-blue-600 hover:bg-blue-700"
+                  >
+                    Get AI Understanding
+                  </Button>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                  <div className="flex items-start gap-3">
+                    <div className="bg-blue-100 rounded-full p-2">
+                      <Sparkles className="h-5 w-5 text-blue-600" />
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="font-medium text-blue-900 mb-2">AI Understanding</h4>
+                      <p className="text-blue-800 whitespace-pre-line text-sm">{aiUnderstanding}</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="flex justify-end gap-2">
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setShowAiConfirmation(false)
+                      setAiUnderstanding('')
+                    }}
+                  >
+                    Let me clarify
+                  </Button>
+                  <Button
+                    onClick={executeReScrape}
+                    disabled={reScrapeTarget && processing.has(reScrapeTarget.id)}
+                    className="bg-green-600 hover:bg-green-700"
+                  >
+                    {reScrapeTarget && processing.has(reScrapeTarget.id) ? (
+                      <>
+                        <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                        Re-scraping...
+                      </>
+                    ) : (
+                      <>
+                        <CheckCircle className="h-4 w-4 mr-2" />
+                        Confirm & Re-scrape
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

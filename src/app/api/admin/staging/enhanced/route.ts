@@ -7,21 +7,22 @@ const getSupabase = () => createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 )
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
     const supabase = getSupabase();
-    // Get successful staging items
-    const { data: stagingItems, error: stagingError } = await supabase
+    const { searchParams } = new URL(request.url);
+    const statusFilter = searchParams.get('status');
+    
+    // Always get ALL staging items first for stats calculation
+    const { data: allStagingItems, error: stagingError } = await supabase
       .from('staging_queue')
       .select('*')
-      .order('created_at', { ascending: false })
-
-    if (stagingError) {
-      console.error('Error fetching staging items:', stagingError)
-      return NextResponse.json({
-        success: false,
-        error: `Database error: ${stagingError.message}`
-      }, { status: 500 })
+      .order('created_at', { ascending: false });
+    
+    // Apply status filter to staging items AFTER getting all items
+    let stagingItems = allStagingItems;
+    if (statusFilter && statusFilter !== 'all') {
+      stagingItems = allStagingItems?.filter(item => (item.status || 'pending') === statusFilter) || [];
     }
 
     // Get recent scraping jobs to find failed items
@@ -95,23 +96,31 @@ export async function GET() {
       placeholder_info: null
     }))
 
-    // Combine and sort all items
-    const allItems = [...enhancedStagingItems, ...enhancedFailedItems]
-      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-
-    // Calculate enhanced stats
+    // Calculate enhanced stats from ALL items (not filtered)
     const stats = {
-      total: allItems.length,
-      successful: enhancedStagingItems.length,
+      total: (allStagingItems.length + enhancedFailedItems.length),
+      successful: allStagingItems.length,
       failed: enhancedFailedItems.length,
-      pending: enhancedStagingItems.filter(item => item.status === 'pending').length,
-      approved: enhancedStagingItems.filter(item => item.status === 'approved').length,
-      rejected: enhancedStagingItems.filter(item => item.status === 'rejected').length,
-      published: enhancedStagingItems.filter(item => item.status === 'published').length,
-      using_placeholders: enhancedStagingItems.filter(item => item.uses_placeholder).length,
+      pending: allStagingItems.filter(item => (item.status || 'pending') === 'pending').length,
+      approved: allStagingItems.filter(item => item.status === 'approved').length,
+      rejected: allStagingItems.filter(item => item.status === 'rejected').length,
+      published: allStagingItems.filter(item => item.status === 'published').length,
+      using_placeholders: allStagingItems.filter(item => item.uses_placeholder).length,
       validation_failures: enhancedFailedItems.filter(item => item.failure_type === 'Content Validation').length,
       database_failures: enhancedFailedItems.filter(item => item.failure_type === 'Database Save').length
     }
+
+    // Apply status filter to items AFTER calculating stats
+    let filteredItems = [...enhancedStagingItems, ...enhancedFailedItems]
+    
+    if (statusFilter && statusFilter !== 'all') {
+      filteredItems = filteredItems.filter(item => 
+        item.item_type === 'success' ? (item.status || 'pending') === statusFilter : false
+      )
+    }
+    
+    // Sort filtered items
+    const allItems = filteredItems.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
 
     return NextResponse.json({
       success: true,

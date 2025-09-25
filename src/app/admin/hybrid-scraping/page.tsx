@@ -290,15 +290,18 @@ export default function HybridScrapingPage() {
 
             <div>
               <label className="block text-sm font-medium mb-2">Images Per Item</label>
-              <select
+              <Input
+                type="number"
                 value={imagesPerItem}
-                onChange={(e) => setImagesPerItem(parseInt(e.target.value))}
-                className="w-full p-2 border rounded-md"
-              >
-                <option value={8}>8 images</option>
-                <option value={12}>12 images (recommended)</option>
-                <option value={15}>15 images (maximum)</option>
-              </select>
+                onChange={(e) => setImagesPerItem(Math.max(1, Math.min(30, parseInt(e.target.value) || 15)))}
+                min={1}
+                max={30}
+                className="w-full"
+                placeholder="15"
+              />
+              <p className="text-xs text-gray-500 mt-1">
+                Minimum: 1, Maximum: 30, Recommended: 15
+              </p>
             </div>
 
             <div className="flex items-end">

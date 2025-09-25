@@ -50,6 +50,18 @@ export function isTrustedHost(url: string): boolean {
  */
 export function isAllowedExtension(url: string): boolean {
   try {
+    // For URLs without extensions (like Google Places, Unsplash), check if they're from trusted hosts
+    const hostname = new URL(url).hostname.toLowerCase();
+    const isTrustedHost = IMAGE_POLICY.TRUSTED_HOSTS.some(trusted => 
+      hostname.includes(trusted.toLowerCase())
+    );
+    
+    // If it's a trusted host, assume it's valid (they serve images)
+    if (isTrustedHost) {
+      return true;
+    }
+    
+    // For other URLs, check file extension
     const ext = url.split('.').pop()?.toLowerCase();
     return ext ? IMAGE_POLICY.ALLOW_EXTS.includes(ext) : false;
   } catch {

@@ -103,40 +103,49 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// Alternative method using direct SQL if RPC doesn't work
+// Alternative method using simple delete
 export async function DELETE(request: NextRequest) {
   try {
     const supabase = getSupabase();
-    console.log('=== CLEARING STAGING DATA WITH DIRECT SQL ===')
+    console.log('=== CLEARING ALL STAGING DATA ===')
 
-    // Use raw SQL to clear and reset sequences
-    const queries = [
-      'TRUNCATE TABLE staging_queue RESTART IDENTITY CASCADE;',
-      'TRUNCATE TABLE scraping_jobs RESTART IDENTITY CASCADE;'
-    ]
+    // Clear staging_queue table
+    console.log('Clearing staging_queue table...')
+    const { error: clearStagingError } = await supabase
+      .from('staging_queue')
+      .delete()
+      .gte('id', 1) // Delete all records with id >= 1
 
-    for (const query of queries) {
-      console.log(`Executing: ${query}`)
-      const { error } = await supabase.rpc('execute_sql', { query })
-      if (error) {
-        console.error(`Error executing ${query}:`, error)
-        throw error
-      }
+    if (clearStagingError) {
+      console.error('Error clearing staging_queue:', clearStagingError)
+      throw clearStagingError
     }
 
-    console.log('=== STAGING DATA CLEARED WITH SQL ===')
+    // Clear scraping_jobs table
+    console.log('Clearing scraping_jobs table...')
+    const { error: clearJobsError } = await supabase
+      .from('scraping_jobs')
+      .delete()
+      .gte('id', 1) // Delete all records with id >= 1
+
+    if (clearJobsError) {
+      console.error('Error clearing scraping_jobs:', clearJobsError)
+      throw clearJobsError
+    }
+
+    console.log('=== STAGING DATA CLEARED SUCCESSFULLY ===')
 
     return NextResponse.json({
       success: true,
-      message: 'All staging data cleared with SQL TRUNCATE',
-      method: 'direct_sql'
+      message: 'All staging data cleared successfully',
+      method: 'simple_delete'
     })
 
   } catch (error) {
-    console.error('Error with SQL clearing:', error)
+    console.error('Error clearing staging data:', error)
     return NextResponse.json({
       success: false,
-      error: 'Failed to clear staging data with SQL',
+      error: 'Failed to clear staging data',
       details: error instanceof Error ? error.message : 'Unknown error'
     }, { status: 500 })
   }

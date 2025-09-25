@@ -797,7 +797,7 @@ export async function POST(request: Request) {
           termResult.status = 'success';
           termResult.id = stagingResult.item.id;
           termResult.title = stagingResult.item.title;
-          termResult.imagesCount = stagingResult.item.image_count;
+          termResult.imagesCount = allImages.length;
           termResult.confidence = stagingResult.item.confidence_score;
           successCount++;
         } else {
@@ -2047,7 +2047,7 @@ async function validateImageBatchEnhanced(urls: string[], searchTerm: string, ca
 
       // Stage 7: Relevance validation (relaxed threshold)
       const relevanceCheck = validateImageRelevance(url, searchTerm, category);
-      if (relevanceCheck.confidence < 0.1) { // Much more lenient threshold
+      if (!relevanceCheck.isRelevant) { // Use the isRelevant boolean instead of confidence threshold
         rejectionReasons.lowRelevance++;
         rejectedCount++;
         continue;
@@ -2804,7 +2804,7 @@ function validateImageRelevance(imageUrl: string, searchTerm: string, category: 
   }
 
   // Source reputation (higher quality sources get bonus)
-  if (urlLower.includes('googleusercontent.com') || urlLower.includes('maps.gstatic.com')) {
+  if (urlLower.includes('googleusercontent.com') || urlLower.includes('maps.gstatic.com') || urlLower.includes('maps.googleapis.com')) {
     relevanceScore += 40;
     reasons.push('Google Places official photo');
   } else if (urlLower.includes('wikimedia.org') || urlLower.includes('wikipedia.org')) {
@@ -2839,7 +2839,9 @@ function validateImageRelevance(imageUrl: string, searchTerm: string, category: 
 
   // Calculate confidence and determine relevance
   const confidence = Math.max(0, Math.min(100, relevanceScore));
-  const isRelevant = confidence >= 40; // Threshold for relevance
+  
+  // Much more lenient threshold for trusted sources
+  const isRelevant = confidence >= (urlLower.includes('googleusercontent.com') || urlLower.includes('maps.gstatic.com') || urlLower.includes('maps.googleapis.com') ? 20 : 25);
 
   return {
     isRelevant,
