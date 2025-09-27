@@ -1,6 +1,48 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 
+// Enhanced structured schema interface for enrichment pipeline
+interface StructuredSchema {
+  about?: string;
+  what_to_expect?: string[];
+  why_visit?: string[];
+  accessibility?: {
+    wheelchair?: boolean;
+    stroller?: boolean;
+    kid_friendly?: boolean;
+    senior_friendly?: boolean;
+    notes?: string;
+  };
+  facilities?: {
+    toilets?: boolean;
+    cafe?: boolean;
+    gift_shop?: boolean;
+    parking?: boolean;
+    wifi?: boolean;
+    tours?: boolean;
+    audio_guides?: boolean;
+  };
+  practical_info?: {
+    dress_code?: string;
+    photography?: string;
+    entry_requirements?: string;
+    safety?: string;
+    etiquette?: string;
+  };
+  insider_tips?: string[];
+  experience_details?: {
+    duration?: string;
+    hours?: string;
+    type?: string;
+    location?: string;
+  };
+  reviews?: {
+    rating?: number;
+    review_count?: number;
+  };
+  images?: string[];
+}
+
 // Category detection helper
 function detectCategory(types: string[], userCategory?: string): string {
   // If user explicitly specified a category, use it
@@ -736,9 +778,13 @@ export async function POST(request: Request) {
     let processedCount = 0;
     let successCount = 0;
     let creditsUsed = 0;
-
+    
     // Process each search term using hybrid approach
     for (const searchTerm of searchTerms) {
+      // Variables for automatic enrichment pipeline (declared at loop level for scope)
+      let structuredSchema: StructuredSchema = {};
+      let gptEnhancement: any = { success: false, enhanced_fields: [], reason: 'Not attempted', enhanced_content: {} };
+      
       const termResult: TermResult = {
         term: searchTerm,
         detectedCategory: 'activities', // Default, will be updated
@@ -800,9 +846,34 @@ export async function POST(request: Request) {
           continue;
         }
 
-        // Step 5: Enrich with Firecrawl on official pages
+        // Step 5: Enhanced automatic enrichment pipeline
+        console.log(`  Starting automatic enrichment pipeline for ${structuredData.title}...`);
+        
+        // 5a. Firecrawl enrichment (existing)
         const enrichedData = await enrichWithFirecrawl(structuredData);
         creditsUsed += enrichedData.creditsUsed || 0;
+
+        // 5b. Parse Firecrawl content into structured schema
+        if (enrichedData.success && enrichedData.enriched_content) {
+          console.log(`  Parsing Firecrawl content into schema for ${structuredData.title}...`);
+          structuredSchema = parseFirecrawlContentToSchema(
+            enrichedData.enriched_content, 
+            structuredData.title, 
+            detectedCategory
+          );
+          console.log(`  Schema parsing complete - extracted ${Object.keys(structuredSchema).length} fields`);
+        }
+
+        // 5c. GPT fallback enhancement for missing fields
+        gptEnhancement = await enhanceWithGPT(structuredData, structuredSchema);
+        if (gptEnhancement.success && gptEnhancement.enhanced_fields.length > 0) {
+          console.log(`  GPT enhancement complete - enhanced: ${gptEnhancement.enhanced_fields.join(', ')}`);
+          structuredSchema = gptEnhancement.enhanced_content;
+        } else if (gptEnhancement.success) {
+          console.log(`  GPT enhancement skipped - all fields already populated`);
+        } else {
+          console.log(`  GPT enhancement failed: ${gptEnhancement.reason}`);
+        }
 
         // Step 6: Get comprehensive images with category-specific terms
         const allImages = await getImagesForCategory(searchTerm, detectedCategory, structuredData.photos, imagesPerItem);
@@ -817,7 +888,7 @@ export async function POST(request: Request) {
 
         // Step 7: Map content for category and insert into staging
         const rawContent = mapToRawContent(structuredData, detectedCategory);
-        const stagingResult = await createStagingItem(rawContent, enrichedData, allImages, detectedCategory, job.id);
+        const stagingResult = await createStagingItem(rawContent, enrichedData, allImages, detectedCategory, job.id, structuredSchema, gptEnhancement);
 
         if (stagingResult.success) {
           termResult.status = 'success';
@@ -3042,6 +3113,549 @@ function extractAdditionalInfo(markdown: string): any {
   };
 }
 
+// Generate unique SEO hook for each venue
+function generateUniqueSeoHook(title: string, content: string): string {
+  const titleLower = title.toLowerCase();
+  
+  // Venue-specific SEO hooks
+  if (titleLower.includes('blue mosque') || titleLower.includes('sultan ahmed')) {
+    return "Witness the breathtaking blue Iznik tiles of Istanbul's imperial mosque";
+  }
+  if (titleLower.includes('hagia sophia') || titleLower.includes('ayasofya')) {
+    return "Explore the architectural marvel that defined Byzantine and Ottoman empires";
+  }
+  if (titleLower.includes('galata tower')) {
+    return "Ascend for panoramic views of Istanbul's historic skyline";
+  }
+  if (titleLower.includes('topkapi') || titleLower.includes('topkapı')) {
+    return "Step into the opulent world of Ottoman sultans and their treasures";
+  }
+  if (titleLower.includes('grand bazaar') || titleLower.includes('kapalı çarşı')) {
+    return "Immerse yourself in the world's oldest covered market";
+  }
+  if (titleLower.includes('basilica cistern')) {
+    return "Descend into Istanbul's mysterious underground water palace";
+  }
+  if (titleLower.includes('spice bazaar')) {
+    return "Awaken your senses in Istanbul's aromatic spice market";
+  }
+  if (titleLower.includes('dolmabahçe') || titleLower.includes('dolmabahce')) {
+    return "Experience the grandeur of the last Ottoman palace";
+  }
+  
+  // Generic fallback based on content analysis
+  if (content.includes('mosque') || content.includes('camii')) {
+    return "Discover one of Istanbul's most significant Islamic landmarks";
+  }
+  if (content.includes('palace') || content.includes('saray')) {
+    return "Explore the royal heritage of Istanbul's imperial past";
+  }
+  if (content.includes('tower') || content.includes('kule')) {
+    return "Ascend to one of Istanbul's most iconic viewpoints";
+  }
+  if (content.includes('bazaar') || content.includes('çarşı')) {
+    return "Experience the vibrant energy of Istanbul's historic markets";
+  }
+  
+  // Final fallback
+  return "Discover one of Istanbul's most captivating destinations";
+}
+
+// Enhanced Firecrawl content parser that extracts structured schema fields
+function parseFirecrawlContentToSchema(markdown: string, title: string, category: string): any {
+  const content = markdown.toLowerCase();
+  const schema = {
+    description: '',
+    seo_hook: '',
+    why_visit: [] as string[],
+    facilities: {
+      wifi: null as string | null,
+      parking: null as string | null,
+      toilets: null as string | null,
+      gift_shop: null as string | null,
+      audio_guide: null as string | null,
+      guided_tours: null as string | null,
+      cafe_restaurant: null as string | null
+    },
+    accessibility: {
+      wheelchair_accessible: null as string | null,
+      stroller_friendly: null as string | null,
+      kid_friendly: null as string | null,
+      senior_friendly: null as string | null,
+      accessibility_notes: null as string | null
+    },
+    practical_info: {
+      dress_code: null as string | null,
+      photography_policy: null as string | null,
+      entry_requirements: null as string | null,
+      safety_notes: null as string | null,
+      etiquette_tips: null as string | null
+    },
+    insider_tips: [] as string[],
+    highlights: [] as string[],
+    opening_hours: [] as string[],
+    duration: null as string | null,
+    difficulty_level: null as string | null,
+    best_time_to_visit: null as string | null,
+    price_range: null as string | null
+  };
+
+  // Extract description (first substantial paragraph) - clean it first
+  const paragraphs = markdown.split('\n').filter(p => p.trim().length > 50);
+  if (paragraphs.length > 0) {
+    let cleanDescription = paragraphs[0].trim();
+    
+    // Clean up the description by removing markdown images and navigation elements
+    cleanDescription = cleanDescription
+      .replace(/!\[.*?\]\([^)]+\)/g, '') // Remove markdown images
+      .replace(/!\[\]\([^)]+\)/g, '') // Remove standalone image links
+      .replace(/\[Cart\]|\[English\]|\[Türkçe\]|\[Müze Kart\]|\[Voice Of Museum\]|\[Home Turkey\]|\[Kültür Bakanlığı\]|\[DÖSİMM\]/g, '') // Remove navigation elements
+      .replace(/\s+/g, ' ') // Remove excessive whitespace
+      .trim();
+    
+    schema.description = cleanDescription;
+  }
+
+  // Generate unique SEO hook for this specific venue
+  schema.seo_hook = generateUniqueSeoHook(title, content);
+
+  // Extract why visit reasons
+  schema.why_visit = extractWhyVisitReasons(content, title);
+
+  // Extract facilities
+  schema.facilities = extractFacilities(content);
+
+  // Extract accessibility info
+  schema.accessibility = extractAccessibilityInfo(content);
+
+  // Extract practical information
+  schema.practical_info = extractPracticalInfo(content, category);
+
+  // Extract insider tips
+  schema.insider_tips = extractInsiderTips(content);
+
+  // Extract highlights (existing function)
+  schema.highlights = extractHighlightsFromFirecrawl(markdown);
+
+  // Extract opening hours
+  schema.opening_hours = extractOpeningHours(content);
+
+  // Extract duration, difficulty, best time
+  const duration = extractDuration(content);
+  const difficulty = extractDifficultyLevel(content);
+  const bestTime = extractBestTime(markdown);
+  const priceRange = extractPriceRange(content);
+  
+  schema.duration = duration || null;
+  schema.difficulty_level = difficulty || null;
+  schema.best_time_to_visit = bestTime || null;
+  schema.price_range = priceRange || null;
+
+  return schema;
+}
+
+// Extract why visit reasons from content
+function extractWhyVisitReasons(content: string, title: string): string[] {
+  const reasons: string[] = [];
+  
+  // Look for common patterns that indicate reasons to visit
+  const reasonPatterns = [
+    /(?:why visit|must see|attraction|famous for|known for|renowned for|notable for)\s*[:\-]?\s*([^.\n]{20,100})/gi,
+    /(?:visit for|see for|experience for)\s*([^.\n]{20,100})/gi,
+    /(?:highlight|feature|special|unique)\s*[:\-]?\s*([^.\n]{20,100})/gi,
+    /(?:significance|importance|history|heritage|culture)\s*[:\-]?\s*([^.\n]{20,100})/gi
+  ];
+
+  reasonPatterns.forEach(pattern => {
+    let match;
+    while ((match = pattern.exec(content)) !== null) {
+      const reason = match[1].trim();
+      if (reason.length > 20 && reason.length < 100 && !reasons.includes(reason)) {
+        reasons.push(reason);
+      }
+    }
+  });
+
+  // Add venue-specific reasons based on title
+  const titleLower = title.toLowerCase();
+  if (titleLower.includes('mosque')) {
+    reasons.push('Architectural masterpiece of Islamic design');
+    reasons.push('Active place of worship with spiritual significance');
+  } else if (titleLower.includes('palace')) {
+    reasons.push('Historic royal residence with opulent interiors');
+    reasons.push('UNESCO World Heritage site');
+  } else if (titleLower.includes('tower')) {
+    reasons.push('Panoramic city views from historic landmark');
+    reasons.push('Iconic Istanbul skyline viewpoint');
+  }
+
+  return reasons.slice(0, 5);
+}
+
+// Extract facilities information
+function extractFacilities(content: string): any {
+  const facilities: any = {
+    wifi: null,
+    parking: null,
+    toilets: null,
+    gift_shop: null,
+    audio_guide: null,
+    guided_tours: null,
+    cafe_restaurant: null
+  };
+
+  // Check for wifi
+  if (content.includes('wifi') || content.includes('wireless internet') || content.includes('internet access')) {
+    facilities.wifi = 'Available for visitors';
+  }
+
+  // Check for parking
+  if (content.includes('parking') || content.includes('car park')) {
+    facilities.parking = 'Parking available nearby';
+  }
+
+  // Check for toilets/restrooms
+  if (content.includes('toilet') || content.includes('restroom') || content.includes('bathroom')) {
+    facilities.toilets = 'Public restrooms available';
+  }
+
+  // Check for gift shop
+  if (content.includes('gift shop') || content.includes('souvenir') || content.includes('shop')) {
+    facilities.gift_shop = 'Gift shop with souvenirs';
+  }
+
+  // Check for audio guide
+  if (content.includes('audio guide') || content.includes('audio tour') || content.includes('guided audio')) {
+    facilities.audio_guide = 'Audio guide available';
+  }
+
+  // Check for guided tours
+  if (content.includes('guided tour') || content.includes('tour guide') || content.includes('group tour')) {
+    facilities.guided_tours = 'Guided tours available';
+  }
+
+  // Check for cafe/restaurant
+  if (content.includes('cafe') || content.includes('restaurant') || content.includes('dining')) {
+    facilities.cafe_restaurant = 'Cafe and dining options available';
+  }
+
+  return facilities;
+}
+
+// Extract accessibility information
+function extractAccessibilityInfo(content: string): any {
+  const accessibility: any = {
+    wheelchair_accessible: null,
+    stroller_friendly: null,
+    kid_friendly: null,
+    senior_friendly: null,
+    accessibility_notes: null
+  };
+
+  // Check for wheelchair accessibility
+  if (content.includes('wheelchair') || content.includes('accessible') || content.includes('disability')) {
+    accessibility.wheelchair_accessible = 'Wheelchair accessible areas available';
+  }
+
+  // Check for family/kid friendly
+  if (content.includes('family') || content.includes('children') || content.includes('kid')) {
+    accessibility.kid_friendly = 'Family and children friendly';
+  }
+
+  // Check for senior friendly
+  if (content.includes('senior') || content.includes('elderly') || content.includes('older')) {
+    accessibility.senior_friendly = 'Senior citizen friendly';
+  }
+
+  // Check for stroller access
+  if (content.includes('stroller') || content.includes('pram') || content.includes('baby carriage')) {
+    accessibility.stroller_friendly = 'Stroller accessible';
+  }
+
+  return accessibility;
+}
+
+// Extract practical information
+function extractPracticalInfo(content: string, category: string): any {
+  const practical: any = {
+    dress_code: null,
+    photography_policy: null,
+    entry_requirements: null,
+    safety_notes: null,
+    etiquette_tips: null
+  };
+
+  // Extract dress code
+  if (content.includes('dress code') || content.includes('appropriate dress') || content.includes('modest dress')) {
+    practical.dress_code = 'Modest dress required';
+  } else if (category === 'activities' && (content.includes('mosque') || content.includes('religious'))) {
+    practical.dress_code = 'Modest dress required for religious sites';
+  }
+
+  // Extract photography policy
+  if (content.includes('photography') || content.includes('photos') || content.includes('camera')) {
+    practical.photography_policy = 'Photography allowed';
+  }
+
+  // Extract entry requirements
+  if (content.includes('ticket') || content.includes('admission') || content.includes('entry')) {
+    practical.entry_requirements = 'Entry requirements may apply';
+  }
+
+  // Extract safety notes
+  if (content.includes('safety') || content.includes('security') || content.includes('caution')) {
+    practical.safety_notes = 'Follow safety guidelines';
+  }
+
+  // Extract etiquette tips
+  if (content.includes('etiquette') || content.includes('respect') || content.includes('behavior')) {
+    practical.etiquette_tips = 'Respectful behavior expected';
+  }
+
+  return practical;
+}
+
+// Extract insider tips
+function extractInsiderTips(content: string): string[] {
+  const tips: string[] = [];
+  
+  const tipPatterns = [
+    /(?:tip|hint|advice|recommendation|suggestion)[:\-]?\s*([^.\n]{20,100})/gi,
+    /(?:best time|ideal time|perfect time)\s*[:\-]?\s*([^.\n]{20,100})/gi,
+    /(?:avoid|skip|don't miss|must do)\s*([^.\n]{20,100})/gi,
+    /(?:insider|local|secret|hidden)\s*([^.\n]{20,100})/gi
+  ];
+
+  tipPatterns.forEach(pattern => {
+    let match;
+    while ((match = pattern.exec(content)) !== null) {
+      const tip = match[1].trim();
+      if (tip.length > 20 && tip.length < 100 && !tips.includes(tip)) {
+        tips.push(tip);
+      }
+    }
+  });
+
+  return tips.slice(0, 3);
+}
+
+// Extract opening hours
+function extractOpeningHours(content: string): string[] {
+  const hours: string[] = [];
+  
+  const hourPatterns = [
+    /(?:open|hours|time)[:\-]?\s*([^.\n]{10,50})/gi,
+    /(?:monday|tuesday|wednesday|thursday|friday|saturday|sunday)[:\-]?\s*([^.\n]{10,50})/gi,
+    /(\d{1,2}:\d{2}\s*(?:am|pm)?\s*[-–]\s*\d{1,2}:\d{2}\s*(?:am|pm)?)/gi
+  ];
+
+  hourPatterns.forEach(pattern => {
+    let match;
+    while ((match = pattern.exec(content)) !== null) {
+      const hour = match[1].trim();
+      if (hour.length > 5 && hour.length < 50 && !hours.includes(hour)) {
+        hours.push(hour);
+      }
+    }
+  });
+
+  return hours.slice(0, 5);
+}
+
+// Extract duration
+function extractDuration(content: string): string | null {
+  const durationPatterns = [
+    /(?:visit|tour|stay|explore)\s*(?:for\s*)?(\d+\s*(?:hour|minute|day))/gi,
+    /(?:duration|time|length)\s*[:\-]?\s*(\d+\s*(?:hour|minute|day))/gi,
+    /(\d+\s*(?:hour|minute|day)s?\s*(?:visit|tour|stay))/gi
+  ];
+
+  for (const pattern of durationPatterns) {
+    const match = pattern.exec(content);
+    if (match) {
+      return match[1].trim();
+    }
+  }
+
+  return null;
+}
+
+// Extract difficulty level
+function extractDifficultyLevel(content: string): string | null {
+  if (content.includes('easy') || content.includes('accessible') || content.includes('simple')) {
+    return 'Easy';
+  } else if (content.includes('moderate') || content.includes('medium') || content.includes('intermediate')) {
+    return 'Moderate';
+  } else if (content.includes('difficult') || content.includes('challenging') || content.includes('hard')) {
+    return 'Difficult';
+  }
+
+  return 'Easy'; // Default
+}
+
+// Extract price range
+function extractPriceRange(content: string): string | null {
+  if (content.includes('free') || content.includes('no charge') || content.includes('no cost')) {
+    return 'Free entry';
+  } else if (content.includes('€') || content.includes('$') || content.includes('₺')) {
+    const priceMatch = content.match(/(?:€|$|₺)\s*\d+/);
+    if (priceMatch) {
+      return `From ${priceMatch[0]}`;
+    }
+  }
+
+  return null;
+}
+
+// GPT fallback enhancement for missing schema fields
+async function enhanceWithGPT(structuredData: StructuredActivityData, existingSchema: any): Promise<any> {
+  if (!process.env.OPENAI_API_KEY) {
+    console.log('  Skipping GPT enhancement - no API key');
+    return { success: false, reason: 'No OpenAI API key' };
+  }
+
+  try {
+    const title = structuredData.title;
+    const category = 'activities'; // Default category for activities
+    const address = structuredData.address || 'Istanbul, Turkey';
+    const rating = structuredData.rating || 4.0;
+    const reviewCount = structuredData.review_count || 0;
+
+    // Check which fields need enhancement
+    const needsEnhancement = {
+      description: !existingSchema.description || existingSchema.description.length < 100,
+      why_visit: !existingSchema.why_visit || existingSchema.why_visit.length === 0,
+      facilities: !existingSchema.facilities || Object.values(existingSchema.facilities).every(v => v === null),
+      accessibility: !existingSchema.accessibility || Object.values(existingSchema.accessibility).every(v => v === null),
+      practical_info: !existingSchema.practical_info || Object.values(existingSchema.practical_info).every(v => v === null),
+      insider_tips: !existingSchema.insider_tips || existingSchema.insider_tips.length === 0
+    };
+
+    // If no fields need enhancement, skip GPT
+    if (!Object.values(needsEnhancement).some(needs => needs)) {
+      console.log('  Skipping GPT enhancement - all fields populated');
+      return { success: true, enhanced_fields: [] };
+    }
+
+    console.log(`  Enhancing with GPT for ${title}...`);
+
+    const openai = new (await import('openai')).default({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
+
+    const prompt = `You are a luxury travel content expert creating premium content for Istanbul Explorer. 
+
+VENUE DETAILS:
+- Name: ${title}
+- Category: ${category}
+- Address: ${address}
+- Rating: ${rating}/5 (${reviewCount} reviews)
+
+EXISTING CONTENT:
+${JSON.stringify(existingSchema, null, 2)}
+
+ENHANCEMENT NEEDED:
+${JSON.stringify(needsEnhancement, null, 2)}
+
+INSTRUCTIONS:
+1. Fill ONLY the missing/empty fields identified in "ENHANCEMENT NEEDED"
+2. Do NOT overwrite existing good content
+3. Generate realistic, venue-specific content
+4. Use luxury travel magazine style
+5. Be specific about Istanbul context
+6. Keep responses concise but informative
+
+RETURN JSON ONLY with this exact structure:
+{
+  "description": "Enhanced description if needed",
+  "why_visit": ["reason1", "reason2", "reason3"],
+  "facilities": {
+    "wifi": "specific info or null",
+    "parking": "specific info or null", 
+    "toilets": "specific info or null",
+    "gift_shop": "specific info or null",
+    "audio_guide": "specific info or null",
+    "guided_tours": "specific info or null",
+    "cafe_restaurant": "specific info or null"
+  },
+  "accessibility": {
+    "wheelchair_accessible": "specific info or null",
+    "stroller_friendly": "specific info or null", 
+    "kid_friendly": "specific info or null",
+    "senior_friendly": "specific info or null",
+    "accessibility_notes": "specific info or null"
+  },
+  "practical_info": {
+    "dress_code": "specific info or null",
+    "photography_policy": "specific info or null",
+    "entry_requirements": "specific info or null", 
+    "safety_notes": "specific info or null",
+    "etiquette_tips": "specific info or null"
+  },
+  "insider_tips": ["tip1", "tip2", "tip3"]
+}
+
+Only include fields that need enhancement. Use null for fields that don't need changes.`;
+
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [
+        { role: "system", content: "You are an expert luxury travel writer specializing in Istanbul and Turkish culture." },
+        { role: "user", content: prompt }
+      ],
+      temperature: 0.7,
+      max_tokens: 1500,
+    });
+
+    const responseText = completion.choices[0]?.message?.content;
+    if (!responseText) {
+      throw new Error('No response from GPT');
+    }
+
+    // Parse the JSON response
+    const enhancedFields = JSON.parse(responseText);
+    
+    // Merge with existing schema (only update fields that were enhanced)
+    const mergedSchema = { ...existingSchema };
+    
+    Object.keys(enhancedFields).forEach(key => {
+      if ((needsEnhancement as any)[key] && enhancedFields[key]) {
+        if (typeof enhancedFields[key] === 'object' && enhancedFields[key] !== null) {
+          // For nested objects like facilities, merge only non-null values
+          mergedSchema[key] = { ...mergedSchema[key] };
+          Object.keys(enhancedFields[key]).forEach(subKey => {
+            if (enhancedFields[key][subKey] !== null) {
+              mergedSchema[key][subKey] = enhancedFields[key][subKey];
+            }
+          });
+        } else {
+          // For arrays and strings
+          mergedSchema[key] = enhancedFields[key];
+        }
+      }
+    });
+
+    const enhancedFieldNames = Object.keys(enhancedFields).filter(key => 
+      (needsEnhancement as any)[key] && enhancedFields[key] !== null
+    );
+
+    console.log(`  GPT enhancement successful - enhanced: ${enhancedFieldNames.join(', ')}`);
+
+    return {
+      success: true,
+      enhanced_fields: enhancedFieldNames,
+      enhanced_content: mergedSchema
+    };
+
+  } catch (error) {
+    console.error('GPT enhancement error:', error);
+    return { 
+      success: false, 
+      reason: error instanceof Error ? error.message : 'Unknown error' 
+    };
+  }
+}
+
 function extractTips(content: string): string[] {
   const tipPatterns = [
     /tip[s]?[:\s]+([^.\n]{20,100})/gi,
@@ -3103,7 +3717,7 @@ function isValidImageUrl(url: string): boolean {
   }
 }
 
-async function createStagingItem(rawContent: any, enrichedData: any, allImages: string[], category: string, jobId: string): Promise<{
+async function createStagingItem(rawContent: any, enrichedData: any, allImages: string[], category: string, jobId: string, structuredSchema: StructuredSchema, gptEnhancement: any): Promise<{
   success: boolean;
   item?: any;
   error?: string;
@@ -3165,6 +3779,21 @@ async function createStagingItem(rawContent: any, enrichedData: any, allImages: 
       highlights: enrichedData.highlights || [],
       additional_info: enrichedData.additional_info || {},
       firecrawl_enriched: enrichedData.success,
+      // Enhanced structured schema fields
+      ...(structuredSchema || {}),
+      // Enrichment metadata
+      enrichment_metadata: {
+        firecrawl_success: enrichedData.success,
+        gpt_enhanced: (gptEnhancement as any)?.success || false,
+        gpt_enhanced_fields: (gptEnhancement as any)?.enhanced_fields || [],
+        schema_fields_populated: Object.keys(structuredSchema || {}).filter(key => {
+          const value = (structuredSchema as any)?.[key];
+          return value !== null && 
+                 value !== undefined && 
+                 !(Array.isArray(value) && value.length === 0) &&
+                 !(typeof value === 'object' && Object.values(value).every(v => v === null));
+        })
+      },
       placeholder_info: usesPlaceholder ? {
         reason: placeholderReason,
         original_image_count: allImages.length,

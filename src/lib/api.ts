@@ -109,7 +109,9 @@ export async function getActivityBySlug(slug: string): Promise<Activity | null> 
     if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
       return null
     }
-    const { data, error } = await supabase
+
+    // First get the activity
+    const { data: activity, error: activityError } = await supabase
       .from('activities')
       .select(`
         id,
@@ -127,43 +129,67 @@ export async function getActivityBySlug(slug: string): Promise<Activity | null> 
         location,
         highlights,
         trip_advisor_url,
+        address,
+        district,
+        meta_title,
+        meta_description,
+        is_featured,
+        popularity_score,
         created_at,
-        updated_at,
-        activity_images (
-          id,
-          image_url,
-          alt_text,
-          is_primary,
-          sort_order
-        ),
-        activity_reviews (
-          id,
-          author,
-          rating,
-          comment,
-          review_date
-        )
+        updated_at
       `)
       .eq('slug', slug)
+      .eq('is_active', true)
       .single()
 
-    if (error || !data) {
-      console.error('Supabase fetch error:', error)
+    if (activityError || !activity) {
+      console.error('Supabase activity fetch error:', activityError)
       return null
     }
 
-    // Sort images by sort_order and ensure primary image is first
-    const activityWithSortedImages = {
-      ...data,
-      activity_images: data.activity_images
-        .sort((a, b) => {
-          if (a.is_primary && !b.is_primary) return -1
-          if (!a.is_primary && b.is_primary) return 1
-          return a.sort_order - b.sort_order
-        })
+    // Get media for this activity
+    const { data: media } = await supabase
+      .from('universal_media')
+      .select('*')
+      .eq('entity_type', 'activity')
+      .eq('entity_id', activity.id)
+      .order('sort_order', { ascending: true })
+
+    // Get reviews for this activity
+    const { data: reviews } = await supabase
+      .from('universal_reviews')
+      .select('*')
+      .eq('entity_type', 'activity')
+      .eq('entity_id', activity.id)
+      .order('review_date', { ascending: false })
+
+    // Sort media by primary first, then sort_order
+    const sortedMedia = (media || []).sort((a, b) => {
+      if (a.is_primary && !b.is_primary) return -1
+      if (!a.is_primary && b.is_primary) return 1
+      return a.sort_order - b.sort_order
+    })
+
+    // Combine data
+    const activityWithMedia = {
+      ...activity,
+      activity_images: sortedMedia.map(m => ({
+        id: m.id,
+        image_url: m.media_url,
+        alt_text: m.alt_text,
+        is_primary: m.is_primary,
+        sort_order: m.sort_order
+      })),
+      activity_reviews: (reviews || []).map(r => ({
+        id: r.id,
+        author: r.reviewer_name,
+        rating: r.rating,
+        comment: r.content,
+        review_date: r.review_date
+      }))
     }
 
-    return activityWithSortedImages as Activity
+    return activityWithMedia as Activity
   } catch (error) {
     console.error('Error fetching activity:', error)
     return null

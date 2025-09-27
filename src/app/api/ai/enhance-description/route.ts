@@ -56,7 +56,7 @@ Create an engaging, informative description for this ${category} in Istanbul:
 **Format:** Return only the description text, no additional formatting or quotes.`;
 
     const completion = await openai.chat.completions.create({
-      model: "gpt-4",
+      model: "gpt-4o-mini",
       messages: [
         {
           role: "system",

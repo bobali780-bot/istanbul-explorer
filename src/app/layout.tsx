@@ -1,35 +1,18 @@
-import type { Metadata } from "next"
-import { Inter } from "next/font/google"
-import Script from "next/script"
-import Footer from "@/components/Footer"
-import "./globals.css"
-
-const inter = Inter({ subsets: ["latin"] })
+import './globals.css'
+import type { Metadata } from 'next'
+import { Header } from '@/components/Header'
 
 export const metadata: Metadata = {
-  title: "Istanbul Explorer - Your Travel Guide",
-  description: "Discover the best places to visit in Istanbul with our curated travel guide platform",
+  title: 'Istanbul City Guide | Best Things To Do, Eat, Shop & Stay',
+  description: 'Plan your perfect Istanbul trip with handpicked activities, hotels, food & drink, and shopping—everything in one place.',
 }
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <head>
-        {/* Google AdSense */}
-        <Script
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4768819231981592"
-          crossOrigin="anonymous"
-          strategy="afterInteractive"
-        />
-      </head>
-      <body className={inter.className}>
+      <body className="text-slate-900 antialiased">
+        <Header />
         {children}
-        <Footer />
       </body>
     </html>
   )

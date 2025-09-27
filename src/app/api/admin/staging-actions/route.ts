@@ -40,6 +40,13 @@ export async function POST(request: Request) {
       case 'approve':
       case 'bulk_approve':
         updateData.status = 'approved';
+        // Automatically publish approved items to main activities table
+        try {
+          await handlePublishToMain(itemIds);
+        } catch (publishError) {
+          console.error('Auto-publish failed:', publishError);
+          // Continue with approval even if publish fails
+        }
         break;
 
       case 'reject':
@@ -144,32 +151,27 @@ async function handlePublishToMain(item_ids: string[]) {
       try {
         // Transform staging item to activities format
         const activityData = {
-          title: item.title,
+          name: item.title, // Map title to name field
           slug: generateSlug(item.title),
           description: item.raw_content.description || '',
-          category: item.category,
-          subcategory: extractSubcategory(item.raw_content.content),
-          primary_image: item.primary_image,
-          images: item.images,
-          image_count: item.image_count,
-          price_range: item.raw_content.price_range || '',
-          duration: item.raw_content.duration || '',
+          short_overview: item.raw_content.description || '', // Use description as overview
+          full_description: item.raw_content.description || '',
+          booking_url: '', // Can be enhanced later
           rating: item.raw_content.rating || 0,
           review_count: item.raw_content.review_count || 0,
-          highlights: item.raw_content.highlights || [],
+          price_range: item.raw_content.price_range || '',
+          duration: item.raw_content.duration || '',
+          opening_hours: Array.isArray(item.raw_content.opening_hours) 
+            ? item.raw_content.opening_hours.join(', ') 
+            : item.raw_content.opening_hours || '',
           location: 'Istanbul, Turkey', // Default for Istanbul Explorer
-          website_url: item.source_urls[0] || '',
-          booking_url: '', // Can be enhanced later
-          metadata: {
-            confidence_score: item.confidence_score,
-            original_staging_id: item.id,
-            scraping_job_id: item.scraping_job_id,
-            source_urls: item.source_urls,
-            published_at: new Date().toISOString(),
-            raw_content: item.raw_content
-          },
-          status: 'published',
-          featured: item.confidence_score >= 85, // High confidence items are featured
+          highlights: item.raw_content.highlights || [],
+          trip_advisor_url: item.source_urls?.[0] || '',
+          address: item.raw_content.address || 'Istanbul, Turkey',
+          district: extractDistrict(item.raw_content.address),
+          is_featured: item.confidence_score >= 85, // High confidence items are featured
+          is_active: true, // Make it visible on the site
+          popularity_score: Math.floor(item.confidence_score || 50), // Use confidence as popularity
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString()
         };
@@ -184,6 +186,28 @@ async function handlePublishToMain(item_ids: string[]) {
         if (publishError) {
           errors.push(`Failed to publish "${item.title}": ${publishError.message}`);
           continue;
+        }
+
+        // Add images to universal_media table
+        if (item.images && item.images.length > 0) {
+          const mediaRecords = item.images.map((imageUrl: string, index: number) => ({
+            entity_type: 'activity',
+            entity_id: publishedActivity.id,
+            media_url: imageUrl,
+            media_type: 'image',
+            alt_text: `${item.title} image ${index + 1}`,
+            is_primary: index === 0, // First image is primary
+            sort_order: index + 1
+          }));
+
+          const { error: mediaError } = await supabase
+            .from('universal_media')
+            .insert(mediaRecords);
+
+          if (mediaError) {
+            console.error(`Failed to insert media for "${item.title}":`, mediaError);
+            // Don't fail the whole operation for media errors
+          }
         }
 
         // Update staging item status
@@ -251,6 +275,26 @@ function extractSubcategory(content: string): string {
   }
 
   return 'general';
+}
+
+// Helper function to extract district from address
+function extractDistrict(address: string): string {
+  if (!address) return 'Istanbul';
+  
+  const districts = [
+    'Sultanahmet', 'Beyoğlu', 'Kadıköy', 'Beşiktaş', 'Şişli', 'Fatih', 
+    'Üsküdar', 'Bakırköy', 'Maltepe', 'Pendik', 'Tuzla', 'Sarıyer'
+  ];
+
+  const addressLower = address.toLowerCase();
+  
+  for (const district of districts) {
+    if (addressLower.includes(district.toLowerCase())) {
+      return district;
+    }
+  }
+
+  return 'Istanbul';
 }
 
 export async function GET(request: Request) {

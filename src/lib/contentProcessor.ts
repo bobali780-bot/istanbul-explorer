@@ -25,8 +25,12 @@ export function processFirecrawlContent(rawContent: string, venueTitle: string):
 
   // Clean up the raw content
   let cleanContent = rawContent
-    // Remove markdown image syntax
+    // Remove markdown image syntax (including images with empty alt text)
     .replace(/!\[.*?\]\([^)]+\)/g, '')
+    // Remove standalone image links
+    .replace(/!\[\]\([^)]+\)/g, '')
+    // Remove navigation elements and logos
+    .replace(/\[Cart\]|\[English\]|\[Türkçe\]|\[Müze Kart\]|\[Voice Of Museum\]|\[Home Turkey\]|\[Kültür Bakanlığı\]|\[DÖSİMM\]/g, '')
     // Remove reCAPTCHA text
     .replace(/reCAPTCHA/g, '')
     // Remove excessive whitespace
@@ -73,7 +77,7 @@ function extractHighlights(content: string, venueTitle: string): string[] {
     /(UNESCO|World Heritage)/gi,
     /(free|gratis)/gi,
     /(panoramic|360-degree|views?)/gi,
-    /(historic|ancient|medieval)/gi,
+    /(ancient|medieval|century)/gi,
     /(active|working|operational)/gi
   ];
 
@@ -88,15 +92,23 @@ function extractHighlights(content: string, venueTitle: string): string[] {
     }
   });
 
-  // Remove duplicates and limit to 6 highlights
-  const uniqueHighlights = [...new Set(highlights)].slice(0, 6);
+  // Remove duplicates and similar highlights, limit to 6
+  const uniqueHighlights = [...new Set(highlights)]
+    .filter((highlight, index, arr) => {
+      // Remove very similar highlights (case-insensitive)
+      return !arr.slice(0, index).some(other => 
+        other.toLowerCase().includes(highlight.toLowerCase()) || 
+        highlight.toLowerCase().includes(other.toLowerCase())
+      );
+    })
+    .slice(0, 6);
   
   // Add venue-specific highlights if we don't have enough
   if (uniqueHighlights.length < 3) {
     const defaultHighlights = [
-      'Historic landmark',
       'Cultural significance',
-      'Visitor attraction'
+      'Visitor attraction',
+      'Must-see destination'
     ];
     
     defaultHighlights.forEach(highlight => {
@@ -143,12 +155,12 @@ function extractKeyInfo(content: string): ProcessedContent['keyInfo'] {
  * Format content for display in staging preview
  */
 export function formatContentForPreview(processed: ProcessedContent, venueTitle: string): string {
-  let formatted = `**${venueTitle}**\n\n`;
+  let formatted = `${venueTitle}\n\n`;
   
   formatted += processed.cleanDescription + '\n\n';
   
   if (processed.highlights.length > 0) {
-    formatted += '**Key Highlights:**\n';
+    formatted += 'Key Highlights:\n';
     processed.highlights.forEach(highlight => {
       formatted += `• ${highlight}\n`;
     });
@@ -156,11 +168,23 @@ export function formatContentForPreview(processed: ProcessedContent, venueTitle:
   }
   
   if (processed.keyInfo.duration || processed.keyInfo.bestTime || processed.keyInfo.entryRequirements) {
-    formatted += '**Visitor Information:**\n';
+    formatted += 'Visitor Information:\n';
     if (processed.keyInfo.duration) formatted += `• Duration: ${processed.keyInfo.duration}\n`;
     if (processed.keyInfo.bestTime) formatted += `• Best time: ${processed.keyInfo.bestTime}\n`;
     if (processed.keyInfo.entryRequirements) formatted += `• Entry: ${processed.keyInfo.entryRequirements}\n`;
   }
   
   return formatted;
+}
+
+/**
+ * Clean markdown formatting for display
+ */
+export function cleanMarkdownForDisplay(content: string): string {
+  return content
+    .replace(/\*\*(.*?)\*\*/g, '$1') // Remove bold formatting
+    .replace(/\*(.*?)\*/g, '$1') // Remove italic formatting
+    .replace(/• /g, '• ') // Keep bullet points but clean them
+    .replace(/\n{3,}/g, '\n\n') // Remove excessive line breaks
+    .trim();
 }

@@ -1,0 +1,112 @@
+/* Love Istanbul - Luxury Travel Magazine Theme */
+@theme {
+  /* Color Palette */
+  --color-ink: #0E1A2B;           /* Bosphorus Navy - headings, primary text */
+  --color-accent: #C8A96A;         /* Antique Gold - hairline dividers, icons, focus */
+  --color-turq: #1C7C7D;          /* Iznik Turquoise - subtle accents */
+  --color-paper: #F4F1EB;          /* Parchment - page background */
+  --color-sand: #E9E3D7;           /* Sand - cards, alt surfaces */
+  --color-muted: #5F6B7A;          /* Muted - secondary text */
+  
+  /* Typography */
+  --font-family-serif: 'Source Serif 4', 'Times New Roman', serif;
+  --font-family-sans: 'Inter', 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+  
+  /* Spacing */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-2xl: 3rem;
+  --spacing-3xl: 4rem;
+  
+  /* Border Radius */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  
+  /* Transitions */
+  --transition-fast: 150ms ease-in-out;
+  --transition-normal: 250ms ease-in-out;
+  --transition-slow: 350ms ease-in-out;
+}
+
+/* Base Styles */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--paper);
+  color: var(--ink);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Typography */
+.font-serif {
+  font-family: var(--font-serif);
+}
+
+.font-sans {
+  font-family: var(--font-sans);
+}
+
+/* Focus Styles */
+.focus-ring {
+  @apply focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2;
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Utility Classes */
+.text-ink { color: var(--color-ink); }
+.text-accent { color: var(--color-accent); }
+.text-turq { color: var(--color-turq); }
+.text-muted { color: var(--color-muted); }
+
+.bg-paper { background-color: var(--color-paper); }
+.bg-sand { background-color: var(--color-sand); }
+.bg-ink { background-color: var(--color-ink); }
+.bg-accent { background-color: var(--color-accent); }
+
+.border-accent { border-color: var(--color-accent); }
+.border-ink { border-color: var(--color-ink); }
+
+/* Iznik Tessellation Pattern (subtle overlay) */
+.iznik-pattern {
+  background-image: 
+    radial-gradient(circle at 25% 25%, var(--color-accent) 2px, transparent 2px),
+    radial-gradient(circle at 75% 75%, var(--color-accent) 2px, transparent 2px);
+  background-size: 20px 20px;
+  background-position: 0 0, 10px 10px;
+  opacity: 0.05;
+}
+
+/* Arch-shaped image masks */
+.arch-mask {
+  clip-path: polygon(0 0, 100% 0, 100% 85%, 50% 100%, 0 85%);
+}
+
+/* Gold hairline rules */
+.hairline {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--color-accent), transparent);
+}

@@ -40,7 +40,11 @@ import {
 } from 'lucide-react'
 import { createClient } from '@supabase/supabase-js'
 import NextImage from 'next/image'
-import { processFirecrawlContent, formatContentForPreview } from '@/lib/contentProcessor'
+import { processFirecrawlContent, formatContentForPreview, cleanMarkdownForDisplay } from '@/lib/contentProcessor'
+import TwoColumnCards from '@/components/TwoColumnCards'
+import RelatedContentRows from '@/components/RelatedContentRows'
+import ReviewsSection from '@/components/ReviewsSection'
+import InsiderTipsSection from '@/components/InsiderTipsSection'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -1424,33 +1428,95 @@ export default function StagingPage() {
                       <div className="bg-white rounded-lg shadow-lg overflow-hidden max-w-5xl mx-auto">
                         {/* Hero Section - Matches Live Template */}
                         <section className="relative">
-                          {/* Image Gallery Simulation */}
-                          <div className="relative h-96 mb-8 overflow-hidden rounded-lg">
-                            <img
-                              src={selectedItem.primary_image}
-                              alt={selectedItem.title}
-                              style={{
-                                width: '100%',
-                                height: '100%',
-                                objectFit: 'cover'
-                              }}
-                              onError={(e) => {
-                                console.error(`❌ Hero image failed to load:`, selectedItem.primary_image);
-                                e.currentTarget.style.display = 'none';
-                                const fallbackDiv = document.createElement('div');
-                                fallbackDiv.className = 'w-full h-full bg-gray-200 flex items-center justify-center text-gray-500';
-                                fallbackDiv.textContent = 'Hero image failed';
-                                e.currentTarget.parentNode?.appendChild(fallbackDiv);
-                              }}
-                              onLoad={() => {
-                                console.log(`✅ Hero image loaded:`, selectedItem.primary_image);
-                              }}
-                            />
-                            <div className="absolute top-4 right-4">
-                              <Badge className="bg-black bg-opacity-70 text-white text-xs">
-                                <Camera className="h-3 w-3 mr-1" />
-                                {selectedItem.images?.length || 0} photos
-                              </Badge>
+                          {/* Expedia-Style Image Gallery */}
+                          <div className="mb-8">
+                            {/* Main Image */}
+                            <div className="relative h-96 mb-4 overflow-hidden rounded-lg">
+                              <img
+                                src={selectedItem.primary_image}
+                                alt={selectedItem.title}
+                                className="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform duration-300"
+                                onClick={() => {
+                                  setLightboxImageIndex(0);
+                                  setLightboxOpen(true);
+                                }}
+                                onError={(e) => {
+                                  console.error(`❌ Hero image failed to load:`, selectedItem.primary_image);
+                                  e.currentTarget.style.display = 'none';
+                                  const fallbackDiv = document.createElement('div');
+                                  fallbackDiv.className = 'w-full h-full bg-gray-200 flex items-center justify-center text-gray-500';
+                                  fallbackDiv.textContent = 'Hero image failed';
+                                  e.currentTarget.parentNode?.appendChild(fallbackDiv);
+                                }}
+                                onLoad={() => {
+                                  console.log(`✅ Hero image loaded:`, selectedItem.primary_image);
+                                }}
+                              />
+                              <div className="absolute top-4 right-4">
+                                <Badge className="bg-black bg-opacity-70 text-white text-xs">
+                                  <Camera className="h-3 w-3 mr-1" />
+                                  {selectedItem.images?.length || 0} photos
+                                </Badge>
+                              </div>
+                              <div className="absolute top-4 left-4">
+                                <button
+                                  onClick={() => {
+                                    const itemId = selectedItem.id.toString();
+                                    const currentFavorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+                                    const isFavorited = currentFavorites.includes(itemId);
+                                    
+                                    if (isFavorited) {
+                                      const updatedFavorites = currentFavorites.filter((id: string) => id !== itemId);
+                                      localStorage.setItem('favorites', JSON.stringify(updatedFavorites));
+                                    } else {
+                                      const updatedFavorites = [...currentFavorites, itemId];
+                                      localStorage.setItem('favorites', JSON.stringify(updatedFavorites));
+                                    }
+                                    
+                                    // Trigger re-render by updating state
+                                    setFavourites(new Set(JSON.parse(localStorage.getItem('favorites') || '[]')));
+                                  }}
+                                  className="p-2 bg-white/80 rounded-full hover:bg-white transition-colors"
+                                >
+                                  <Heart 
+                                    className={`w-5 h-5 transition-colors ${
+                                      favourites.has(selectedItem.id.toString()) 
+                                        ? 'text-red-500 fill-current' 
+                                        : 'text-gray-600 hover:text-red-500'
+                                    }`}
+                                  />
+                                </button>
+                              </div>
+                            </div>
+
+                            {/* Thumbnail Grid */}
+                            <div className="grid grid-cols-4 gap-2">
+                              {(selectedItem.images || []).slice(0, 4).map((image, index) => (
+                                <div key={index} className="relative group">
+                                  <img
+                                    src={image}
+                                    alt={`${selectedItem.title} ${index + 1}`}
+                                    className="w-full h-20 object-cover rounded-lg cursor-pointer hover:scale-105 transition-transform duration-300"
+                                    onClick={() => {
+                                      setLightboxImageIndex(index);
+                                      setLightboxOpen(true);
+                                    }}
+                                    onError={(e) => {
+                                      console.error(`❌ Thumbnail ${index + 1} failed:`, image);
+                                      e.currentTarget.style.display = 'none';
+                                      const fallbackDiv = document.createElement('div');
+                                      fallbackDiv.className = 'w-full h-20 bg-gray-200 flex items-center justify-center text-xs text-gray-500 rounded-lg';
+                                      fallbackDiv.textContent = `Image ${index + 1}`;
+                                      e.currentTarget.parentNode?.appendChild(fallbackDiv);
+                                    }}
+                                  />
+                                  {index === 0 && (
+                                    <div className="absolute top-1 left-1 bg-blue-500 text-white text-xs px-1 py-0.5 rounded">
+                                      Primary
+                                    </div>
+                                  )}
+                                </div>
+                              ))}
                             </div>
                           </div>
 
@@ -1478,8 +1544,8 @@ export default function StagingPage() {
                                 {selectedItem.title}
                               </h1>
 
-                              <p className="text-xl md:text-2xl text-gray-600 max-w-4xl">
-                                {selectedItem.raw_content.description || `Discover this amazing ${selectedItem.category.slice(0, -1)} in Istanbul, offering unique experiences and unforgettable memories for travelers from around the world.`}
+                              <p className="text-lg text-gray-600 max-w-4xl italic">
+                                {selectedItem.raw_content?.seo_hook || "Discover one of Istanbul's most captivating destinations"}
                               </p>
 
                               <div className="flex flex-wrap items-center gap-6 text-lg">
@@ -1511,6 +1577,7 @@ export default function StagingPage() {
                             <div className="grid lg:grid-cols-3 gap-12">
                               {/* Main Content */}
                               <div className="lg:col-span-2 space-y-12">
+
                                 {/* Description */}
                                 <div>
                                   <h2 className="text-3xl font-bold mb-6 text-gray-900">About This Experience</h2>
@@ -1527,7 +1594,7 @@ export default function StagingPage() {
                                           const formatted = formatContentForPreview(processed, selectedItem.title);
                                           return (
                                             <div className="whitespace-pre-line text-sm leading-relaxed">
-                                              {formatted}
+                                              {cleanMarkdownForDisplay(formatted)}
                                             </div>
                                           )
                                         })()}
@@ -1540,7 +1607,7 @@ export default function StagingPage() {
                                           </p>
                                         </div>
                                         <div className="whitespace-pre-line text-sm leading-relaxed">
-                                          {selectedItem.raw_content.enhanced_description}
+                                          {cleanMarkdownForDisplay(selectedItem.raw_content.enhanced_description)}
                                         </div>
                                       </div>
                                     ) : selectedItem.raw_content?.description && selectedItem.raw_content.description !== `Experience ${selectedItem.title} in Istanbul, Turkey.` ? (
@@ -1626,240 +1693,24 @@ export default function StagingPage() {
                                   </div>
                                 </div>
 
-                                {/* What to Expect */}
-                                {selectedItem.raw_content.highlights && selectedItem.raw_content.highlights.length > 0 && (
-                                  <div>
-                                    <h3 className="text-2xl font-bold mb-6 text-gray-900 flex items-center gap-2">
-                                      <div className="w-6 h-6 text-blue-600">ℹ️</div>
-                                      What to Expect
-                                    </h3>
-                                    <div className="grid md:grid-cols-2 gap-6">
-                                       {selectedItem.raw_content.highlights.map((highlight: string, index: number) => (
-                                        <div key={index} className="flex items-start gap-3">
-                                          <div className="w-2 h-2 bg-blue-600 rounded-full mt-2 flex-shrink-0"></div>
-                                          <p className="text-gray-600">{highlight}</p>
-                                        </div>
-                                      ))}
-                                    </div>
-                                  </div>
-                                )}
+                                {/* Two Column Cards */}
+                                <TwoColumnCards 
+                                  whyVisit={selectedItem.raw_content?.why_visit || []}
+                                  accessibility={selectedItem.raw_content?.accessibility || {}}
+                                  facilities={selectedItem.raw_content?.facilities || {}}
+                                  practicalInfo={selectedItem.raw_content?.practical_info || {}}
+                                />
 
-                                {/* Why Visit */}
-                                {selectedItem.raw_content.why_visit && selectedItem.raw_content.why_visit.length > 0 && (
-                                  <div>
-                                    <h3 className="text-2xl font-bold mb-6 text-gray-900 flex items-center gap-2">
-                                      <Heart className="h-6 w-6 text-red-500" />
-                                      Why Visit
-                                    </h3>
-                                    <div className="grid md:grid-cols-2 gap-6">
-                                      {selectedItem.raw_content.why_visit.map((reason: string, index: number) => (
-                                        <div key={index} className="flex items-start gap-3">
-                                          <div className="w-2 h-2 bg-red-500 rounded-full mt-2 flex-shrink-0"></div>
-                                          <p className="text-gray-600">{reason}</p>
-                                        </div>
-                                      ))}
-                                    </div>
-                                  </div>
-                                )}
+                                {/* Insider Tips Section */}
+                                <InsiderTipsSection 
+                                  venueName={selectedItem.raw_content?.name || selectedItem.title}
+                                  venueType={selectedItem.raw_content?.category || 'activity'}
+                                  location={selectedItem.raw_content?.address || selectedItem.raw_content?.location}
+                                />
 
-                                {/* Accessibility & Facilities */}
-                                <div className="grid lg:grid-cols-2 gap-8">
-                                  {/* Accessibility */}
-                                  <div>
-                                    <h3 className="text-xl font-bold mb-4 text-gray-900 flex items-center gap-2">
-                                      <Users className="h-5 w-5 text-green-600" />
-                                      Accessibility
-                                    </h3>
-                                    <div className="space-y-3">
-                                      {selectedItem.raw_content.accessibility && (
-                                        <>
-                                          {selectedItem.raw_content.accessibility.wheelchair_accessible && (
-                                            <div className="flex items-center gap-2">
-                                              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                                              <span className="text-sm text-gray-600">Wheelchair accessible</span>
-                                            </div>
-                                          )}
-                                          {selectedItem.raw_content.accessibility.stroller_friendly && (
-                                            <div className="flex items-center gap-2">
-                                              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                                              <span className="text-sm text-gray-600">Stroller friendly</span>
-                                            </div>
-                                          )}
-                                          {selectedItem.raw_content.accessibility.kid_friendly && (
-                                            <div className="flex items-center gap-2">
-                                              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                                              <span className="text-sm text-gray-600">Kid friendly</span>
-                                            </div>
-                                          )}
-                                          {selectedItem.raw_content.accessibility.senior_friendly && (
-                                            <div className="flex items-center gap-2">
-                                              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                                              <span className="text-sm text-gray-600">Senior friendly</span>
-                                            </div>
-                                          )}
-                                          {selectedItem.raw_content.accessibility.accessibility_notes && (
-                                            <p className="text-sm text-gray-600 mt-2">{selectedItem.raw_content.accessibility.accessibility_notes}</p>
-                                          )}
-                                        </>
-                                      )}
-                                      {(!selectedItem.raw_content.accessibility || Object.values(selectedItem.raw_content.accessibility).every(v => !v)) && (
-                                        <p className="text-sm text-gray-500 italic">Accessibility information not available</p>
-                                      )}
-                                    </div>
-                                  </div>
+                                {/* Large spacer to push content much lower and prevent clash with sidebar */}
+                                <div className="mb-20"></div>
 
-                                  {/* Facilities */}
-                                  <div>
-                                    <h3 className="text-xl font-bold mb-4 text-gray-900 flex items-center gap-2">
-                                      <Building className="h-5 w-5 text-blue-600" />
-                                      Facilities
-                                    </h3>
-                                    <div className="space-y-3">
-                                      {selectedItem.raw_content.facilities && (
-                                        <>
-                                          {selectedItem.raw_content.facilities.toilets && (
-                                            <div className="flex items-center gap-2">
-                                              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                                              <span className="text-sm text-gray-600">Toilets available</span>
-                                            </div>
-                                          )}
-                                          {selectedItem.raw_content.facilities.cafe_restaurant && (
-                                            <div className="flex items-center gap-2">
-                                              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                                              <span className="text-sm text-gray-600">Café/Restaurant</span>
-                                            </div>
-                                          )}
-                                          {selectedItem.raw_content.facilities.gift_shop && (
-                                            <div className="flex items-center gap-2">
-                                              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                                              <span className="text-sm text-gray-600">Gift shop</span>
-                                            </div>
-                                          )}
-                                          {selectedItem.raw_content.facilities.parking && (
-                                            <div className="flex items-center gap-2">
-                                              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                                              <span className="text-sm text-gray-600">Parking available</span>
-                                            </div>
-                                          )}
-                                          {selectedItem.raw_content.facilities.wifi && (
-                                            <div className="flex items-center gap-2">
-                                              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                                              <span className="text-sm text-gray-600">Free WiFi</span>
-                                            </div>
-                                          )}
-                                          {selectedItem.raw_content.facilities.audio_guide && (
-                                            <div className="flex items-center gap-2">
-                                              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                                              <span className="text-sm text-gray-600">Audio guide available</span>
-                                            </div>
-                                          )}
-                                          {selectedItem.raw_content.facilities.guided_tours && (
-                                            <div className="flex items-center gap-2">
-                                              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                                              <span className="text-sm text-gray-600">Guided tours available</span>
-                                            </div>
-                                          )}
-                                        </>
-                                      )}
-                                      {(!selectedItem.raw_content.facilities || Object.values(selectedItem.raw_content.facilities).every(v => !v)) && (
-                                        <p className="text-sm text-gray-500 italic">Facility information not available</p>
-                                      )}
-                                    </div>
-                                  </div>
-                                </div>
-
-                                {/* Practical Information */}
-                                {selectedItem.raw_content.practical_info && Object.values(selectedItem.raw_content.practical_info).some(v => v) && (
-                                  <div>
-                                    <h3 className="text-xl font-bold mb-4 text-gray-900 flex items-center gap-2">
-                                      <Info className="h-5 w-5 text-purple-600" />
-                                      Practical Information
-                                    </h3>
-                                    <div className="grid md:grid-cols-2 gap-6">
-                                      {selectedItem.raw_content.practical_info.dress_code && (
-                                        <div>
-                                          <h4 className="font-semibold text-gray-800 mb-2">Dress Code</h4>
-                                          <p className="text-sm text-gray-600">{selectedItem.raw_content.practical_info.dress_code}</p>
-                                        </div>
-                                      )}
-                                      {selectedItem.raw_content.practical_info.photography_policy && (
-                                        <div>
-                                          <h4 className="font-semibold text-gray-800 mb-2">Photography Policy</h4>
-                                          <p className="text-sm text-gray-600">{selectedItem.raw_content.practical_info.photography_policy}</p>
-                                        </div>
-                                      )}
-                                      {selectedItem.raw_content.practical_info.entry_requirements && (
-                                        <div>
-                                          <h4 className="font-semibold text-gray-800 mb-2">Entry Requirements</h4>
-                                          <p className="text-sm text-gray-600">{selectedItem.raw_content.practical_info.entry_requirements}</p>
-                                        </div>
-                                      )}
-                                      {selectedItem.raw_content.practical_info.safety_notes && (
-                                        <div>
-                                          <h4 className="font-semibold text-gray-800 mb-2">Safety Notes</h4>
-                                          <p className="text-sm text-gray-600">{selectedItem.raw_content.practical_info.safety_notes}</p>
-                                        </div>
-                                      )}
-                                      {selectedItem.raw_content.practical_info.etiquette_tips && (
-                                        <div>
-                                          <h4 className="font-semibold text-gray-800 mb-2">Etiquette Tips</h4>
-                                          <p className="text-sm text-gray-600">{selectedItem.raw_content.practical_info.etiquette_tips}</p>
-                                        </div>
-                                      )}
-                                    </div>
-                                  </div>
-                                )}
-
-                                {/* Photo Gallery - ENHANCED FOR VISIBILITY */}
-                                <div style={{backgroundColor: '#f0f9ff', padding: '20px', border: '2px solid #0ea5e9', borderRadius: '8px', marginTop: '40px'}}>
-                                  <h3 className="text-2xl font-bold mb-6 text-blue-900">📸 Photo Gallery ({selectedItem.images?.length || 0} images)</h3>
-                                  {!selectedItem.images || (selectedItem.images?.length || 0) === 0 ? (
-                                    <div className="text-gray-500 text-center py-8">
-                                      No images available for this item
-                                    </div>
-                                  ) : (
-                                    <div className="text-green-600 mb-4 font-semibold">
-                                      ✅ Found {selectedItem.images?.length || 0} images - Gallery should appear below:
-                                    </div>
-                                  )}
-                                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                                    {(selectedItem.images || []).map((image, index) => {
-                                      // Debug logging for gallery images
-                                      console.log(`🖼️ Preview gallery image ${index + 1}:`, image, `(isPrimary: ${image === selectedItem.primary_image})`);
-                                      return (
-                                        <div key={index} className="relative group">
-                                        <img
-                                          src={image}
-                                          alt={`${selectedItem.title} preview gallery ${index + 1}`}
-                                            className="w-full h-32 object-cover rounded-lg hover:opacity-80 transition-opacity cursor-pointer"
-                                          onError={(e) => {
-                                            console.error(`❌ Preview gallery image ${index + 1} failed:`, image);
-                                            e.currentTarget.style.display = 'none';
-                                            const fallbackDiv = document.createElement('div');
-                                            fallbackDiv.className = 'w-full h-32 bg-gray-200 flex items-center justify-center text-xs text-gray-500 rounded-lg';
-                                            fallbackDiv.textContent = `Preview image ${index + 1} failed`;
-                                            e.currentTarget.parentNode?.appendChild(fallbackDiv);
-                                          }}
-                                          onLoad={() => {
-                                            console.log(`✅ Preview gallery image ${index + 1} loaded:`, image);
-                                          }}
-                                          onClick={() => {
-                                            console.log(`🔍 Opening lightbox from preview gallery image ${index + 1}:`, image);
-                                            setLightboxImageIndex(index)
-                                            setLightboxOpen(true)
-                                          }}
-                                        />
-                                          {/* Primary Image Badge */}
-                                          {image === selectedItem.primary_image && (
-                                            <div className="absolute top-2 left-2 bg-blue-500 text-white text-xs px-2 py-1 rounded-full">
-                                              Primary
-                                      </div>
-                                          )}
-                                        </div>
-                                      )
-                                    })}
-                                  </div>
-                                </div>
                               </div>
 
                               {/* Sidebar - Matches Live Template */}
@@ -1876,10 +1727,25 @@ export default function StagingPage() {
                                     <CardContent className="space-y-6">
                                       <div className="text-center">
                                         <div className="text-3xl font-bold text-blue-600 mb-2">
-                                          {selectedItem.raw_content.price_range || 'From €25'}
+                                          {(() => {
+                                            const priceRange = selectedItem.raw_content.price_range;
+                                            if (priceRange && priceRange !== 'Free' && priceRange !== 'Free entry') {
+                                              return priceRange;
+                                            } else if (selectedItem.category === 'activities' && (!priceRange || priceRange === 'Free' || priceRange === 'Free entry')) {
+                                              return 'Free Entry';
+                                            } else if (selectedItem.category === 'hotels') {
+                                              return 'From €80';
+                                            } else if (selectedItem.category === 'restaurants') {
+                                              return 'From €15';
+                                            } else if (selectedItem.category === 'shopping') {
+                                              return 'Free Entry';
+                                            } else {
+                                              return 'Pricing varies';
+                                            }
+                                          })()}
                                         </div>
                                         <p className="text-sm text-gray-600">
-                                          Per person • Instant confirmation
+                                          {selectedItem.category === 'hotels' ? 'Per night • Instant confirmation' : 'Per person • Instant confirmation'}
                                         </p>
                                       </div>
 
@@ -1908,55 +1774,79 @@ export default function StagingPage() {
                                       </CardTitle>
                                     </CardHeader>
                                     <CardContent className="space-y-4">
-                                      <div className="space-y-3">
-                                        <div className="flex justify-between items-center">
-                                          <span className="text-gray-600">Duration</span>
-                                          <span className="font-semibold">{selectedItem.raw_content.duration || "2-3 hours"}</span>
+                                      <div className="space-y-4">
+                                        <div className="flex justify-between items-center py-2">
+                                          <span className="text-gray-600 font-medium">Duration</span>
+                                          <span className="font-semibold text-gray-900">{selectedItem.raw_content.duration || "2-3 hours"}</span>
                                         </div>
-                                        <div className="border-t"></div>
-                                        <div className="flex justify-between items-center">
-                                          <span className="text-gray-600">Location</span>
-                                          <span className="font-semibold text-right">{selectedItem.raw_content.location || "Istanbul, Turkey"}</span>
+                                        
+                                        <div className="flex justify-between items-start py-2">
+                                          <span className="text-gray-600 font-medium">Location</span>
+                                          <span className="font-semibold text-gray-900 text-right max-w-48 text-sm">
+                                            {selectedItem.raw_content.address || selectedItem.raw_content.location || "Istanbul, Turkey"}
+                                          </span>
                                         </div>
-                                        <div className="border-t"></div>
-                                        <div className="flex justify-between items-center">
-                                          <span className="text-gray-600">Type</span>
-                                          <span className="font-semibold">{selectedItem.category}</span>
+                                        
+                                        <div className="flex justify-between items-center py-2">
+                                          <span className="text-gray-600 font-medium">Type</span>
+                                          <span className="font-semibold text-gray-900 capitalize">{selectedItem.category?.slice(0, -1) || "Activity"}</span>
                                         </div>
-                                        {selectedItem.raw_content.opening_hours && (
-                                          <>
-                                            <div className="border-t"></div>
-                                            <div className="flex justify-between items-center">
-                                              <span className="text-gray-600">Hours</span>
-                                              <span className="font-semibold text-right">{selectedItem.raw_content.opening_hours}</span>
-                                            </div>
-                                          </>
-                                        )}
+                                        
+                                        <div className="flex justify-between items-start py-2">
+                                          <span className="text-gray-600 font-medium">Hours</span>
+                                          <span className="font-semibold text-gray-900 text-right max-w-48 text-sm">
+                                            {selectedItem.raw_content.opening_hours && Array.isArray(selectedItem.raw_content.opening_hours) 
+                                              ? selectedItem.raw_content.opening_hours.slice(0, 2).join(', ') + (selectedItem.raw_content.opening_hours.length > 2 ? '...' : '')
+                                              : "Check website for hours"
+                                            }
+                                          </span>
+                                        </div>
                                       </div>
                                     </CardContent>
                                   </Card>
 
                                   {/* Rating Card */}
-                                  {selectedItem.raw_content.rating > 0 && (
-                                    <Card>
-                                      <CardContent className="pt-6">
-                                        <div className="text-center space-y-2">
-                                          <div className="flex items-center justify-center gap-2">
-                                            <Star className="w-8 h-8 fill-yellow-400 text-yellow-400" />
-                                            <span className="text-3xl font-bold">{selectedItem.raw_content.rating}</span>
-                                          </div>
-                                          <p className="text-gray-600">
-                                            Based on {selectedItem.raw_content.review_count?.toLocaleString() || '1,000+'} reviews
-                                          </p>
-                                          <div className="text-sm text-gray-500">
-                                            Excellent rating on booking platforms
+                                  <Card>
+                                    <CardContent className="pt-6">
+                                      <div className="text-center">
+                                        <div className="flex items-center justify-center gap-2 mb-2">
+                                          <div className="text-4xl">⭐</div>
+                                          <div className="text-3xl font-bold text-gray-900">
+                                            {selectedItem.raw_content.rating || "4.5"}
                                           </div>
                                         </div>
-                                      </CardContent>
-                                    </Card>
-                                  )}
+                                        <p className="text-sm text-gray-600 mb-1">
+                                          Based on {selectedItem.raw_content.review_count?.toLocaleString() || "0"} reviews
+                                        </p>
+                                        <p className="text-sm text-gray-500">
+                                          Excellent rating on booking platforms
+                                        </p>
+                                      </div>
+                                    </CardContent>
+                                  </Card>
                                 </div>
                               </div>
+                            </div>
+
+                            {/* Full Width Related Content Rows - Outside Grid */}
+                            <div className="mt-16 w-full">
+                              <RelatedContentRows 
+                                currentItem={{
+                                  id: selectedItem.id.toString(),
+                                  title: selectedItem.title,
+                                  coordinates: selectedItem.raw_content?.coordinates || { lat: 0, lng: 0 },
+                                  category: selectedItem.category || 'activities'
+                                }}
+                              />
+                            </div>
+
+                            {/* Full Width Reviews Section */}
+                            <div className="mt-16 w-full">
+                              <ReviewsSection 
+                                reviews={selectedItem.raw_content?.reviews || []}
+                                overallRating={selectedItem.raw_content?.rating || 0}
+                                reviewCount={selectedItem.raw_content?.review_count || 0}
+                              />
                             </div>
                           </div>
                         </section>

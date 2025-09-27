@@ -1,6 +1,3 @@
-"use client"
-
-import { useEffect, useState } from "react"
 import { notFound } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
@@ -9,6 +6,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Separator } from "@/components/ui/separator"
 import { Star, Clock, MapPin, Calendar, Users, ArrowLeft, ExternalLink, Camera, Info } from "lucide-react"
 import ActivityGallery from "@/components/ActivityGallery"
+import TwoColumnCards from "@/components/TwoColumnCards"
+import RelatedContentRows from "@/components/RelatedContentRows"
+import ReviewsSection from "@/components/ReviewsSection"
 import { getActivityBySlug, getAllActivitySlugs } from "@/lib/api"
 import type { Activity } from "@/lib/supabase"
 
@@ -18,40 +18,9 @@ interface ActivityPageProps {
   }>
 }
 
-export default function ActivityPage({ params }: ActivityPageProps) {
-  const [activity, setActivity] = useState<Activity | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [slug, setSlug] = useState<string>('')
-
-  useEffect(() => {
-    async function fetchActivity() {
-      try {
-        const resolvedParams = await params
-        setSlug(resolvedParams.slug)
-
-        const data = await getActivityBySlug(resolvedParams.slug)
-        if (!data) {
-          notFound()
-        }
-        setActivity(data)
-      } catch (error) {
-        console.error('Error fetching activity:', error)
-        notFound()
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchActivity()
-  }, [params])
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
-      </div>
-    )
-  }
+export default async function ActivityPage({ params }: ActivityPageProps) {
+  const resolvedParams = await params
+  const activity = await getActivityBySlug(resolvedParams.slug)
 
   if (!activity) {
     notFound()
@@ -100,6 +69,11 @@ export default function ActivityPage({ params }: ActivityPageProps) {
               {activity.name}
             </h1>
 
+            {/* SEO Hook */}
+            <p className="text-lg text-gray-700 leading-relaxed mb-6">
+              {activity.seo_hook || "Discover one of Istanbul's most captivating destinations"}
+            </p>
+
             <p className="text-xl md:text-2xl text-gray-600 max-w-4xl">
               {activity.short_overview || activity.description}
             </p>
@@ -142,67 +116,23 @@ export default function ActivityPage({ params }: ActivityPageProps) {
                 </div>
               </div>
 
-              {/* What to Expect */}
-              {activity.highlights && activity.highlights.length > 0 && (
-                <div>
-                  <h3 className="text-2xl font-bold mb-6 text-gray-900 flex items-center gap-2">
-                    <Info className="w-6 h-6 text-blue-600" />
-                    What to Expect
-                  </h3>
-                  <div className="grid md:grid-cols-2 gap-6">
-                    {activity.highlights.map((highlight, index) => (
-                      <div key={index} className="flex items-start gap-3">
-                        <div className="w-2 h-2 bg-blue-600 rounded-full mt-2 flex-shrink-0"></div>
-                        <p className="text-gray-600">{highlight}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
+              {/* Two Column Cards */}
+              <TwoColumnCards 
+                whyVisit={activity.why_visit || []}
+                accessibility={activity.accessibility || {}}
+                facilities={activity.facilities || {}}
+                practicalInfo={activity.practical_info || {}}
+              />
 
-              {/* Trending Now Section */}
-              <div>
-                <h3 className="text-2xl font-bold mb-6 text-gray-900 flex items-center gap-2">
-                  <svg className="w-6 h-6 text-pink-600" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12.017 0L18.648 10.158L24 8.052L20.106 15.806L24 23.561L18.648 21.455L12.017 31.612L5.386 21.455L0 23.561L3.894 15.806L0 8.052L5.386 10.158L12.017 0Z" />
-                  </svg>
-                  Trending Now
-                </h3>
-                <div className="bg-gradient-to-r from-pink-50 to-purple-50 border border-pink-200 rounded-lg p-6">
-                  <p className="text-gray-700 mb-4">
-                    See what travelers are sharing about {activity.name} on social media:
-                  </p>
-                  <div className="grid md:grid-cols-3 gap-4">
-                    <div className="bg-white rounded-lg p-4 border">
-                      <div className="flex items-center gap-2 mb-2">
-                        <div className="w-6 h-6 bg-black rounded flex items-center justify-center">
-                          <span className="text-white text-xs font-bold">TT</span>
-                        </div>
-                        <span className="font-semibold text-sm">TikTok</span>
-                      </div>
-                      <p className="text-xs text-gray-600">Search: #{activity.name.replace(/\s+/g, '').toLowerCase()}istanbul</p>
-                    </div>
-                    <div className="bg-white rounded-lg p-4 border">
-                      <div className="flex items-center gap-2 mb-2">
-                        <div className="w-6 h-6 bg-gradient-to-r from-purple-500 to-pink-500 rounded flex items-center justify-center">
-                          <span className="text-white text-xs font-bold">IG</span>
-                        </div>
-                        <span className="font-semibold text-sm">Instagram</span>
-                      </div>
-                      <p className="text-xs text-gray-600">Search: #{activity.name.replace(/\s+/g, '').toLowerCase()}turkey</p>
-                    </div>
-                    <div className="bg-white rounded-lg p-4 border">
-                      <div className="flex items-center gap-2 mb-2">
-                        <div className="w-6 h-6 bg-red-600 rounded flex items-center justify-center">
-                          <span className="text-white text-xs font-bold">YT</span>
-                        </div>
-                        <span className="font-semibold text-sm">YouTube</span>
-                      </div>
-                      <p className="text-xs text-gray-600">Search: &ldquo;{activity.name} Istanbul vlog&rdquo;</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              {/* Related Content Rows */}
+              <RelatedContentRows 
+                currentItem={{
+                  id: activity.id.toString(),
+                  title: activity.name,
+                  coordinates: activity.coordinates || { lat: 0, lng: 0 },
+                  category: activity.category || 'activities'
+                }}
+              />
 
               {/* Reviews Section */}
               {activity.activity_reviews && activity.activity_reviews.length > 0 && (
@@ -266,6 +196,13 @@ export default function ActivityPage({ params }: ActivityPageProps) {
                   )}
                 </div>
               )}
+
+              {/* Enhanced Reviews Section */}
+              <ReviewsSection 
+                overallRating={activity.rating || 4.8}
+                reviewCount={activity.review_count || 1247}
+                reviews={activity.activity_reviews || []}
+              />
 
             </div>
 
