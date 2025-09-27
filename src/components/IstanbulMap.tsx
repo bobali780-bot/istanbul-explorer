@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
-import Map, { Marker, Popup } from 'react-map-gl/mapbox'
+import Map from 'react-map-gl/mapbox'
+import { Marker, Popup } from 'react-map-gl/mapbox'
 import { MapPin, Star } from 'lucide-react'
 import Link from 'next/link'
 
