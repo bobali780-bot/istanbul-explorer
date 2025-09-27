@@ -55,6 +55,9 @@ export function IstanbulMap({ items }: IstanbulMapProps) {
     // Get Mapbox token from environment
     const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN
     
+    // Debug: Log the token (only in development)
+    console.log('Mapbox token loaded:', token ? 'Token found' : 'No token')
+    
     // Check if token is valid (not placeholder)
     if (!token || token === 'your_mapbox_token_here' || token === 'pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw') {
       console.error('NEXT_PUBLIC_MAPBOX_TOKEN is not set or is placeholder')
