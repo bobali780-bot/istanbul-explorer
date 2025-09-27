@@ -11,10 +11,11 @@ export function Hero() {
         src="/istanbul-hero.jpg" 
         alt="Istanbul skyline" 
         className="absolute inset-0 h-full w-full object-cover z-0"
-        onError={(e) => {
-          console.error('Image failed to load:', e.target.src);
-          e.target.style.display = 'none';
-        }}
+         onError={(e) => {
+           const target = e.target as HTMLImageElement;
+           console.error('Image failed to load:', target.src);
+           target.style.display = 'none';
+         }}
         onLoad={() => console.log('Background image loaded successfully')}
       />
       <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(0,0,0,0.5),rgba(0,0,0,0.35))] z-20" />

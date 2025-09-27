@@ -148,12 +148,12 @@ export default async function ActivityPage({ params }: ActivityPageProps) {
                           <div className="flex items-center gap-3">
                             <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
                               <span className="text-blue-600 font-semibold text-sm">
-                                {review.author.split(' ').map(n => n[0]).join('')}
+                                {review.name.split(' ').map(n => n[0]).join('')}
                               </span>
                             </div>
                             <div>
-                              <p className="font-semibold text-gray-900">{review.author}</p>
-                              <p className="text-sm text-gray-500">{review.review_date}</p>
+                              <p className="font-semibold text-gray-900">{review.name}</p>
+                              <p className="text-sm text-gray-500">{review.date}</p>
                             </div>
                           </div>
                           <div className="flex items-center gap-1">
@@ -172,7 +172,7 @@ export default async function ActivityPage({ params }: ActivityPageProps) {
                             </span>
                           </div>
                         </div>
-                        <p className="text-gray-700 leading-relaxed">{review.comment}</p>
+                        <p className="text-gray-700 leading-relaxed">{review.text}</p>
                       </div>
                     ))}
                   </div>

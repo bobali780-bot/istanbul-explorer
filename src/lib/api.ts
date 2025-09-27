@@ -175,17 +175,22 @@ export async function getActivityBySlug(slug: string): Promise<Activity | null> 
       ...activity,
       activity_images: sortedMedia.map(m => ({
         id: m.id,
+        activity_id: m.activity_id,
         image_url: m.media_url,
         alt_text: m.alt_text,
         is_primary: m.is_primary,
-        sort_order: m.sort_order
+        sort_order: m.sort_order,
+        created_at: m.created_at
       })),
       activity_reviews: (reviews || []).map(r => ({
-        id: r.id,
-        author: r.reviewer_name,
+        id: r.id.toString(),
+        activity_id: r.activity_id,
+        name: r.reviewer_name,
         rating: r.rating,
-        comment: r.content,
-        review_date: r.review_date
+        text: r.content,
+        date: r.review_date,
+        verified: false,
+        created_at: r.created_at
       }))
     }
 

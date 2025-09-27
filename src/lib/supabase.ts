@@ -20,6 +20,7 @@ export interface Activity {
   description?: string
   short_overview?: string
   full_description?: string
+  seo_hook?: string
   booking_url?: string
   rating?: number
   review_count?: number
@@ -29,6 +30,12 @@ export interface Activity {
   location?: string
   highlights?: string[]
   trip_advisor_url?: string
+  why_visit?: string[]
+  accessibility?: Record<string, any>
+  facilities?: Record<string, any>
+  practical_info?: Record<string, any>
+  coordinates?: { lat: number; lng: number }
+  category?: string
   created_at: string
   updated_at: string
   activity_images: ActivityImage[]
@@ -46,11 +53,12 @@ export interface ActivityImage {
 }
 
 export interface ActivityReview {
-  id: number
+  id: string
   activity_id: number
-  author: string
+  name: string
   rating: number
-  comment?: string
-  review_date: string
+  text: string
+  date: string
+  verified?: boolean
   created_at: string
 }

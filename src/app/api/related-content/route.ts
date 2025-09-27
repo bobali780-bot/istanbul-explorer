@@ -53,7 +53,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error('Error fetching related content:', error);
     return NextResponse.json(
-      { success: false, error: `Failed to fetch related content: ${error.message}` },
+      { success: false, error: `Failed to fetch related content: ${error instanceof Error ? error.message : 'Unknown error'}` },
       { status: 500 }
     );
   }

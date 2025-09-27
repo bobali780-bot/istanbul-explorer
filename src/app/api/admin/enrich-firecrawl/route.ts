@@ -93,7 +93,7 @@ async function enrichWithFirecrawl(structuredData: any): Promise<any> {
 
   } catch (error) {
     console.error('Firecrawl enrichment error:', error);
-    return { success: false, creditsUsed: 0, error: error.message };
+    return { success: false, creditsUsed: 0, error: error instanceof Error ? error.message : 'Unknown error' };
   }
 }
 
