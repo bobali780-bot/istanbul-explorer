@@ -50,6 +50,7 @@ const CATEGORY_CONFIG = {
 export function IstanbulMap({ items }: IstanbulMapProps) {
   const [selectedItem, setSelectedItem] = useState<MapItem | null>(null)
   const [mapboxToken, setMapboxToken] = useState<string>('')
+  const [isLoading, setIsLoading] = useState<boolean>(true)
 
   useEffect(() => {
     // Get Mapbox token from environment
@@ -62,14 +63,38 @@ export function IstanbulMap({ items }: IstanbulMapProps) {
     // Check if token is valid (not placeholder)
     if (!token || token === 'your_mapbox_token_here' || token === 'pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw') {
       console.error('NEXT_PUBLIC_MAPBOX_TOKEN is not set or is placeholder')
+      setIsLoading(false)
       return
     }
     console.log('Setting mapbox token:', token)
     setMapboxToken(token)
+    setIsLoading(false)
   }, [])
 
   // Debug: Log the current token state
   console.log('Current mapboxToken state:', mapboxToken)
+  console.log('Is loading:', isLoading)
+  
+  if (isLoading) {
+    console.log('Still loading...')
+    return (
+      <section className="mx-auto max-w-7xl px-5 py-16">
+        <div className="mb-8 text-center">
+          <h2 className="text-3xl font-extrabold tracking-tight text-slate-900">
+            Explore Istanbul
+          </h2>
+          <p className="mt-2 text-lg text-slate-600">Loading interactive map...</p>
+        </div>
+        <div className="h-[500px] rounded-3xl bg-gradient-to-br from-slate-100 to-slate-200 shadow-xl flex items-center justify-center">
+          <div className="text-center">
+            <div className="mb-4 text-6xl">⏳</div>
+            <p className="text-lg font-medium text-slate-700 mb-2">Loading Map...</p>
+            <p className="text-sm text-slate-500">Please wait while we initialize the map</p>
+          </div>
+        </div>
+      </section>
+    )
+  }
   
   if (!mapboxToken) {
     console.log('Rendering fallback because no token')
