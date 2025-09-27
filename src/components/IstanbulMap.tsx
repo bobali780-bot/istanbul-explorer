@@ -57,16 +57,22 @@ export function IstanbulMap({ items }: IstanbulMapProps) {
     
     // Debug: Log the token (only in development)
     console.log('Mapbox token loaded:', token ? 'Token found' : 'No token')
+    console.log('Token value:', token)
     
     // Check if token is valid (not placeholder)
     if (!token || token === 'your_mapbox_token_here' || token === 'pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw') {
       console.error('NEXT_PUBLIC_MAPBOX_TOKEN is not set or is placeholder')
       return
     }
+    console.log('Setting mapbox token:', token)
     setMapboxToken(token)
   }, [])
 
+  // Debug: Log the current token state
+  console.log('Current mapboxToken state:', mapboxToken)
+  
   if (!mapboxToken) {
+    console.log('Rendering fallback because no token')
     return (
       <section className="mx-auto max-w-7xl px-5 py-16">
         <div className="mb-8 text-center">
