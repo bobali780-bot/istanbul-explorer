@@ -54,8 +54,10 @@ export function IstanbulMap({ items }: IstanbulMapProps) {
   useEffect(() => {
     // Get Mapbox token from environment
     const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN
-    if (!token) {
-      console.error('NEXT_PUBLIC_MAPBOX_TOKEN is not set')
+    
+    // Check if token is valid (not placeholder)
+    if (!token || token === 'your_mapbox_token_here' || token === 'pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw') {
+      console.error('NEXT_PUBLIC_MAPBOX_TOKEN is not set or is placeholder')
       return
     }
     setMapboxToken(token)
@@ -72,8 +74,12 @@ export function IstanbulMap({ items }: IstanbulMapProps) {
             Interactive map coming soon...
           </p>
         </div>
-        <div className="h-[500px] rounded-3xl bg-slate-100 shadow-xl flex items-center justify-center">
-          <p className="text-slate-500">Mapbox token not configured</p>
+        <div className="h-[500px] rounded-3xl bg-gradient-to-br from-slate-100 to-slate-200 shadow-xl flex items-center justify-center">
+          <div className="text-center">
+            <div className="mb-4 text-6xl">🗺️</div>
+            <p className="text-lg font-medium text-slate-700 mb-2">Interactive Map Coming Soon</p>
+            <p className="text-sm text-slate-500">Add your Mapbox token to see Istanbul's attractions</p>
+          </div>
         </div>
       </section>
     )
