@@ -2,6 +2,7 @@ import { Hero } from '@/components/Hero'
 import { EditorPicks } from '@/components/EditorPicks'
 import { CategoryGrid } from '@/components/CategoryGrid'
 import { IstanbulMap } from '@/components/IstanbulMap'
+import { GoogleAdsSection } from '@/components/GoogleAdsSection'
 
 export default function HomePage() {
   // Simple mock data for now - we'll make this dynamic later
@@ -43,7 +44,10 @@ export default function HomePage() {
       {/* Map section */}
       <div className="mt-16">
         <IstanbulMap items={mapItems} />
-        </div>
+      </div>
+      
+      {/* Google Ads section */}
+      <GoogleAdsSection />
     </main>
   )
 }
