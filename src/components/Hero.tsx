@@ -1,8 +1,11 @@
 'use client'
 import Link from 'next/link'
-import { Ticket, BedDouble, UtensilsCrossed, ShoppingBag, Landmark, Ship, Store } from 'lucide-react'
+import { useState } from 'react'
+import { Ticket, BedDouble, UtensilsCrossed, ShoppingBag, Landmark, Ship, Store, Search, X } from 'lucide-react'
 
 export function Hero() {
+  const [isSearchMode, setIsSearchMode] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
   return (
     // FULL-BLEED HERO — covers the full top viewport
     <section aria-label="Galata Tower and Istanbul skyline at golden hour" className="relative min-h-[100svh] w-screen text-white">
@@ -29,29 +32,61 @@ export function Hero() {
           Plan your perfect Istanbul trip with handpicked activities, hotels, food & drink, and shopping—everything in one place.
         </p>
 
-        {/* Category pill bar (even spacing) */}
+        {/* Frosted Glass Search Bar */}
         <div className="mt-7 flex w-full justify-center px-2 sm:px-0">
           <div
             role="group"
-            aria-label="Browse categories"
-            className="flex w-full max-w-[70rem] items-center gap-3 rounded-full bg-white/90 p-2 text-slate-900 shadow-[0_20px_40px_rgba(2,6,23,0.2)] backdrop-blur"
+            aria-label={isSearchMode ? "Search" : "Browse categories"}
+            className="relative flex w-full max-w-[70rem] items-center gap-3 rounded-full border border-white/20 bg-white/12 p-2 text-slate-900 shadow-[0_20px_40px_rgba(2,6,23,0.2)] backdrop-blur-lg transition-all duration-500 ease-out"
           >
-            {/* 4 equal columns so items are evenly spaced */}
-            <div className="grid flex-1 grid-cols-4 gap-2">
+            {/* Frosted glass inner gradient */}
+            <div className="pointer-events-none absolute inset-0 rounded-full bg-gradient-to-r from-white/10 via-white/5 to-white/10" />
+            <div className="pointer-events-none absolute inset-0 rounded-full bg-gradient-to-b from-white/8 to-transparent" />
+            
+            {/* Categories Grid - slides out to the left when searching */}
+            <div className={`grid flex-1 grid-cols-4 gap-2 transition-all duration-500 ease-out ${
+              isSearchMode 
+                ? 'transform -translate-x-full opacity-0 pointer-events-none' 
+                : 'transform translate-x-0 opacity-100'
+            }`}>
               <CategoryButton href="/category/activities" label="Activities" icon={<Ticket className="h-5 w-5" />} />
               <CategoryButton href="/category/hotel" label="Hotel" icon={<BedDouble className="h-5 w-5" />} />
               <CategoryButton href="/category/food-and-drink" label="Food &amp; Drink" icon={<UtensilsCrossed className="h-5 w-5" />} />
               <CategoryButton href="/category/shopping" label="Shopping" icon={<ShoppingBag className="h-5 w-5" />} />
             </div>
 
+            {/* Search Input - slides in from the right when searching */}
+            <div className={`absolute left-2 right-20 transition-all duration-500 ease-out ${
+              isSearchMode 
+                ? 'transform translate-x-0 opacity-100' 
+                : 'transform translate-x-full opacity-0 pointer-events-none'
+            }`}>
+              <input
+                type="text"
+                placeholder="Search places, activities, hotels..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full rounded-full border border-white/20 bg-white/10 px-6 py-3 text-white placeholder-white/70 backdrop-blur-md focus:outline-none focus:ring-2 focus:ring-white/30"
+                autoFocus={isSearchMode}
+              />
+            </div>
+
+            {/* Search/Close Button */}
             <button
-              aria-label="Search"
-              className="ml-1 grid h-14 w-14 place-items-center rounded-full bg-brand px-4 py-2 font-bold text-white shadow-[0_20px_40px_rgba(2,6,23,0.2)] hover:bg-brand-700"
+              onClick={() => {
+                setIsSearchMode(!isSearchMode)
+                if (isSearchMode) {
+                  setSearchQuery('')
+                }
+              }}
+              aria-label={isSearchMode ? "Close search" : "Search"}
+              className="relative ml-1 grid h-14 w-14 place-items-center rounded-full bg-brand px-4 py-2 font-bold text-white shadow-[0_20px_40px_rgba(2,6,23,0.2)] transition-all duration-300 hover:bg-brand-700 hover:scale-105"
             >
-              <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="11" cy="11" r="8" />
-                <path d="m21 21-4.3-4.3" />
-              </svg>
+              {isSearchMode ? (
+                <X className="h-5 w-5" />
+              ) : (
+                <Search className="h-5 w-5" />
+              )}
             </button>
           </div>
         </div>
@@ -77,10 +112,12 @@ function CategoryButton({ href, label, icon }: { href: string; label: string; ic
   return (
     <Link
       href={href}
-      className="flex w-full items-center justify-center gap-2 rounded-full border border-slate-900/10 bg-white px-5 py-3 font-semibold text-slate-900 hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2e9b47]/60"
+      className="relative flex w-full items-center justify-center gap-2 rounded-full border border-white/20 bg-white/10 px-5 py-3 font-semibold text-white backdrop-blur-md transition-all duration-300 hover:bg-white/20 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30"
     >
-      <span className="text-slate-500">{icon}</span>
-      <span className="truncate">{label}</span>
+      {/* Frosted glass inner highlight */}
+      <div className="pointer-events-none absolute inset-0 rounded-full bg-gradient-to-b from-white/10 to-transparent" />
+      <span className="relative text-white/90">{icon}</span>
+      <span className="relative truncate">{label}</span>
     </Link>
   )
 }
