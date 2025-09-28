@@ -6,7 +6,7 @@ export function Header() {
       {/* Completely transparent header */}
       <div className="mx-auto grid max-w-6xl grid-cols-[auto_1fr_auto] items-center gap-4 px-5 py-4">
         {/* Brand (top-left) */}
-        <Link href="/" className="font-extrabold tracking-tight text-white">
+        <Link href="/" className="font-extrabold tracking-tight text-white drop-shadow-lg">
           Love Istanbul
         </Link>
 
@@ -23,7 +23,7 @@ export function Header() {
             <Link
               key={label}
               href={href}
-                     className="font-semibold text-white hover:text-white/90"
+              className="font-semibold text-white drop-shadow-lg hover:text-white/90"
             >
               {label}
             </Link>
