@@ -3,8 +3,8 @@ import Link from 'next/link'
 export function Header() {
   return (
     <header className="relative">
-      {/* Transparent header; no grey banner */}
-      <div className="mx-auto grid max-w-6xl grid-cols-[auto_1fr_auto] items-center gap-4 px-5 py-4 bg-black/20 backdrop-blur-md">
+      {/* Completely transparent header */}
+      <div className="mx-auto grid max-w-6xl grid-cols-[auto_1fr_auto] items-center gap-4 px-5 py-4">
         {/* Brand (top-left) */}
         <Link href="/" className="font-extrabold tracking-tight text-white">
           Love Istanbul

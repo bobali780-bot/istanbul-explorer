@@ -8,7 +8,7 @@ export function Hero() {
   const [searchQuery, setSearchQuery] = useState('')
   return (
     // FULL-BLEED HERO — covers the full top viewport
-    <section aria-label="Galata Tower and Istanbul skyline at golden hour" className="relative min-h-[100svh] w-screen text-white">
+    <section aria-label="Galata Tower and Istanbul skyline at golden hour" className="absolute top-0 left-0 right-0 min-h-[100svh] w-full text-white">
       {/* Full-bleed background image + overlay */}
       <img 
         src="/istanbul-hero.jpg" 

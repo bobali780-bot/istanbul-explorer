@@ -39,15 +39,17 @@ export default function HomePage() {
   return (
     <main className="min-h-screen bg-white">
       <Hero />
-      <EditorPicks />
+      <div className="pt-[100svh]">
+        <EditorPicks />
       <CategoryGrid />
       {/* Map section */}
       <div className="mt-16">
         <IstanbulMap items={mapItems} />
-      </div>
-      
+        </div>
+        
       {/* Google Ads section */}
       <GoogleAdsSection />
+            </div>
     </main>
   )
 }
