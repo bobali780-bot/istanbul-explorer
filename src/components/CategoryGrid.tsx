@@ -17,7 +17,7 @@ const CATS: Cat[] = [
     key: 'activities',
     title: 'Activities',
     tagline: 'Cruises, culture & hidden corners',
-    href: '/category/activities',
+    href: '/activities',
     img: '/Activities.jpg',
     accent: '#0ea5e9', // sky
     icon: Ticket,
@@ -26,7 +26,7 @@ const CATS: Cat[] = [
     key: 'fooddrink',
     title: 'Food & Drink',
     tagline: 'Meze, kebabs & sunset bars',
-    href: '/category/food-and-drink',
+    href: '/food-drink',
     img: '/Food & Drink.jpg',
     accent: '#f59e0b', // saffron
     icon: UtensilsCrossed,
@@ -35,7 +35,7 @@ const CATS: Cat[] = [
     key: 'hotel',
     title: 'Hotels',
     tagline: 'Boutique stays & Bosphorus views',
-    href: '/category/hotel',
+    href: '/hotels',
     img: '/Hotel.jpg',
     accent: '#6366f1', // indigo
     icon: BedDouble,
@@ -44,7 +44,7 @@ const CATS: Cat[] = [
     key: 'shopping',
     title: 'Shopping',
     tagline: 'Bazaars, boutiques & design finds',
-    href: '/category/shopping',
+    href: '/shopping',
     img: '/Shopping.jpg',
     accent: '#ec4899', // rose
     icon: ShoppingBag,

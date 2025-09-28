@@ -49,10 +49,10 @@ export function Hero() {
                 ? 'transform -translate-x-full opacity-0 pointer-events-none' 
                 : 'transform translate-x-0 opacity-100'
             }`}>
-              <CategoryButton href="/category/activities" label="Activities" icon={<Ticket className="h-5 w-5" />} />
-              <CategoryButton href="/category/hotel" label="Hotel" icon={<BedDouble className="h-5 w-5" />} />
-              <CategoryButton href="/category/food-and-drink" label="Food &amp; Drink" icon={<UtensilsCrossed className="h-5 w-5" />} />
-              <CategoryButton href="/category/shopping" label="Shopping" icon={<ShoppingBag className="h-5 w-5" />} />
+              <CategoryButton href="/activities" label="Activities" icon={<Ticket className="h-5 w-5" />} />
+              <CategoryButton href="/hotels" label="Hotel" icon={<BedDouble className="h-5 w-5" />} />
+              <CategoryButton href="/food-drink" label="Food &amp; Drink" icon={<UtensilsCrossed className="h-5 w-5" />} />
+              <CategoryButton href="/shopping" label="Shopping" icon={<ShoppingBag className="h-5 w-5" />} />
             </div>
 
             {/* Search Input - slides in from the right when searching */}
