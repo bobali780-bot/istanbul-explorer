@@ -2,11 +2,11 @@ import Link from 'next/link'
 
 export function Header() {
   return (
-    <header className="relative">
+    <header className="fixed top-0 inset-x-0 z-50">
       {/* Transparent header; no grey banner */}
-      <div className="mx-auto grid max-w-6xl grid-cols-[auto_1fr_auto] items-center gap-4 px-5 py-4 bg-white shadow-sm">
+      <div className="mx-auto grid max-w-6xl grid-cols-[auto_1fr_auto] items-center gap-4 px-5 py-4 bg-black/20 backdrop-blur-md">
         {/* Brand (top-left) */}
-        <Link href="/" className="font-extrabold tracking-tight text-slate-900">
+        <Link href="/" className="font-extrabold tracking-tight text-white">
           Love Istanbul
         </Link>
 
@@ -23,7 +23,7 @@ export function Header() {
             <Link
               key={label}
               href={href}
-                     className="font-semibold text-slate-700 hover:text-slate-900"
+                     className="font-semibold text-white hover:text-white/90"
             >
               {label}
             </Link>
@@ -32,7 +32,7 @@ export function Header() {
 
         {/* CTA (right) */}
         <div className="justify-self-end">
-                 <button className="rounded-full bg-green-600 px-4 py-2 font-bold text-white shadow-[0_20px_40px_rgba(2,6,23,0.2)] hover:bg-green-700 transition-all duration-300">
+                 <button className="rounded-full bg-white/90 px-4 py-2 font-bold text-slate-900 shadow-[0_20px_40px_rgba(2,6,23,0.2)] backdrop-blur-md hover:bg-white transition-all duration-300">
             Book now
           </button>
         </div>
