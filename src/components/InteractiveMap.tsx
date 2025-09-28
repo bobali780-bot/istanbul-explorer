@@ -25,10 +25,14 @@ function normalizePin(pin: SimplePin): SimplePin & { latitude: number; longitude
   if (pin.latitude !== undefined && pin.longitude !== undefined) {
     return { ...pin, latitude: pin.latitude, longitude: pin.longitude }
   }
-  if (pin.coordinates && pin.coordinates.length === 2) {
+  if (pin.coordinates && pin.coordinates.length === 2 && 
+      typeof pin.coordinates[0] === 'number' && typeof pin.coordinates[1] === 'number' &&
+      !isNaN(pin.coordinates[0]) && !isNaN(pin.coordinates[1])) {
     return { ...pin, latitude: pin.coordinates[1], longitude: pin.coordinates[0] }
   }
-  throw new Error(`Invalid pin coordinates for ${pin.name}`)
+  // Fallback to Istanbul center coordinates for invalid pins
+  console.warn(`Invalid coordinates for ${pin.name}, using Istanbul center as fallback`)
+  return { ...pin, latitude: 41.0082, longitude: 28.9784 }
 }
 
 export default function InteractiveMap({ className = "", locations }: InteractiveMapProps) {
