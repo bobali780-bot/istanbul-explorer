@@ -37,7 +37,7 @@ export function Hero() {
           <div
             role="group"
             aria-label={isSearchMode ? "Search" : "Browse categories"}
-            className="relative flex w-full max-w-[70rem] items-center gap-3 rounded-full border border-white/20 bg-white/12 p-2 text-slate-900 shadow-[0_20px_40px_rgba(2,6,23,0.2)] backdrop-blur-lg transition-all duration-500 ease-out"
+            className="relative flex w-full max-w-[70rem] items-center gap-3 rounded-full border border-white/20 bg-white/12 p-2 text-slate-900 shadow-[0_20px_40px_rgba(2,6,23,0.2)] backdrop-blur-lg transition-all duration-500 ease-out overflow-hidden"
           >
             {/* Frosted glass inner gradient */}
             <div className="pointer-events-none absolute inset-0 rounded-full bg-gradient-to-r from-white/10 via-white/5 to-white/10" />
@@ -80,7 +80,7 @@ export function Hero() {
                 }
               }}
               aria-label={isSearchMode ? "Close search" : "Search"}
-              className="relative ml-1 grid h-14 w-14 place-items-center rounded-full bg-brand px-4 py-2 font-bold text-white shadow-[0_20px_40px_rgba(2,6,23,0.2)] transition-all duration-300 hover:bg-brand-700 hover:scale-105"
+              className="relative ml-1 grid h-14 w-14 place-items-center rounded-full bg-white/90 px-4 py-2 font-bold text-slate-900 shadow-[0_20px_40px_rgba(2,6,23,0.2)] backdrop-blur-md transition-all duration-300 hover:bg-white hover:scale-105"
             >
               {isSearchMode ? (
                 <X className="h-5 w-5" />

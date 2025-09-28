@@ -32,7 +32,7 @@ export function Header() {
 
         {/* CTA (right) */}
         <div className="justify-self-end">
-          <button className="rounded-pill bg-brand px-4 py-2 font-bold text-white shadow-soft hover:bg-brand-700">
+          <button className="rounded-full bg-white/90 px-4 py-2 font-bold text-slate-900 shadow-[0_20px_40px_rgba(2,6,23,0.2)] backdrop-blur-md hover:bg-white transition-all duration-300">
             Book now
           </button>
         </div>
