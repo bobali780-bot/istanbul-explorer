@@ -41,6 +41,7 @@ interface CategoryData {
     priceRanges: Array<{ value: string; label: string; count: number }>
     vibes: Array<{ value: string; label: string; count: number }>
     durations: Array<{ value: string; label: string; count: number }>
+    amenities: Array<{ value: string; label: string; count: number }>
   }
   editorsPicks: Activity[]
   totalCount: number
