@@ -146,7 +146,7 @@ export default async function RestaurantPage({ params }: RestaurantPageProps) {
                           <div className="flex items-center gap-3">
                             <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center">
                               <span className="text-orange-600 font-semibold text-sm">
-                                {review.name.split(' ').map(n => n[0]).join('')}
+                                {review.name.split(' ').map((n: string) => n[0]).join('')}
                               </span>
                             </div>
                             <div>
