@@ -1,6 +1,7 @@
 import './globals.css'
 import type { Metadata } from 'next'
-import { Header } from '@/components/Header'
+import { ConditionalHeader } from '@/components/ConditionalHeader'
+import { Footer } from '@/components/Footer'
 
 export const metadata: Metadata = {
   title: 'Istanbul City Guide | Best Things To Do, Eat, Shop & Stay',
@@ -11,8 +12,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body className="text-slate-900 antialiased">
-        <Header />
+        <ConditionalHeader />
         {children}
+        <Footer />
       </body>
     </html>
   )

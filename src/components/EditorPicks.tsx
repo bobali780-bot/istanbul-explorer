@@ -18,20 +18,20 @@ export function EditorPicks() {
   }
 
   const PICKS: PickItem[] = [
-    { title: 'Hagia Sophia',       subtitle: 'Sultanahmet',   img: '/Hagia Sophia.jpg',       href: '/place/hagia-sophia' },
-    { title: 'Blue Mosque',        subtitle: 'Sultanahmet',   img: '/Blue Mosque.jpg',        href: '/place/blue-mosque' },
-    { title: 'Grand Bazaar',       subtitle: 'Beyazıt',       img: '/Grand Bazaar.jpg',       href: '/place/grand-bazaar' },
-    { title: 'Galata Tower',       subtitle: 'Beyoğlu',       img: '/Galata Tower.jpg',       href: '/place/galata-tower' },
-    { title: 'Topkapı Palace',     subtitle: 'Sultanahmet',   img: '/Topkapi Palace.jpg',     href: '/place/topkapi-palace' },
-    { title: 'Basilica Cistern',   subtitle: 'Sultanahmet',   img: '/api/placeholder/340/520/0891B2/FFFFFF?text=Basilica+Cistern',   href: '/place/basilica-cistern' },
-    { title: 'Spice Bazaar',       subtitle: 'Eminönü',       img: '/api/placeholder/340/520/CA8A04/FFFFFF?text=Spice+Bazaar',       href: '/place/spice-bazaar' },
-    { title: 'İstiklal Avenue',    subtitle: 'Beyoğlu',       img: '/api/placeholder/340/520/BE185D/FFFFFF?text=Istiklal+Avenue',    href: '/place/istiklal-avenue' },
-    { title: 'Maiden&apos;s Tower',     subtitle: 'Üsküdar',       img: '/api/placeholder/340/520/059669/FFFFFF?text=Maiden+Tower',      href: '/place/maidens-tower' },
-    { title: 'Dolmabahçe Palace',  subtitle: 'Beşiktaş',      img: '/api/placeholder/340/520/7C2D12/FFFFFF?text=Dolmabahce+Palace',  href: '/place/dolmabahce-palace' },
+    { title: 'Suleymaniye Mosque', subtitle: 'Fatih',         img: '/Hagia Sophia.jpg',       href: '/activities/suleymaniye-mosque' },
+    { title: 'Basilica Cistern',   subtitle: 'Sultanahmet',   img: '/basilica cistern.jpg',   href: '/activities/basilica-cistern' },
+    { title: 'Zorlu Center',       subtitle: 'Beşiktaş',      img: '/Grand Bazaar.jpg',       href: '/shopping/zorlu-center' },
+    { title: 'Pera Museum',        subtitle: 'Beyoğlu',       img: '/Galata Tower.jpg',       href: '/activities/pera-museum' },
+    { title: 'Topkapi Palace Museum', subtitle: 'Sultanahmet', img: '/Topkapi Palace.jpg',    href: '/activities/topkapi-palace-museum' },
+    { title: 'Istanbul Modern',    subtitle: 'Beyoğlu',       img: '/Blue Mosque.jpg',        href: '/activities/istanbul-modern' },
+    { title: 'Galataport Istanbul', subtitle: 'Karaköy',      img: '/spice bazaar.jpg',       href: '/shopping/galataport-istanbul' },
+    { title: 'Maiden\'s Tower',    subtitle: 'Üsküdar',       img: '/Maiden tower.jpg',       href: '/activities/maidens-tower' },
+    { title: 'Dolmabahçe Palace',  subtitle: 'Beşiktaş',      img: '/Dolmabahce palace.avif', href: '/activities/dolmabahe-palace' },
+    { title: 'İstinye Park',       subtitle: 'Sarıyer',       img: '/istiklal avenue.jpg',    href: '/shopping/stinye-park-alveri-merkezi' },
   ]
 
   return (
-    <section aria-labelledby="editors-picks" className="relative mx-auto max-w-[100vw] py-16" style={{ backgroundColor: 'white' }}>
+    <section aria-labelledby="editors-picks" className="relative mx-auto max-w-[100vw] py-16 overflow-visible" style={{ backgroundColor: 'white' }}>
       <div className="mx-auto max-w-6xl px-5" style={{ backgroundColor: 'white' }}>
         {/* Centered header */}
         <div className="mb-6 text-center">
@@ -41,8 +41,8 @@ export function EditorPicks() {
       </div>
 
       {/* Horizontal scroller with hover arrows */}
-      <div ref={scrollContainerRef} className="no-scrollbar group mx-auto max-w-[100vw] overflow-x-auto px-5 pb-2" style={{ backgroundColor: 'white' }}>
-        <div className="flex snap-x snap-mandatory" style={{ backgroundColor: 'white' }}>
+      <div ref={scrollContainerRef} className="no-scrollbar group mx-auto max-w-[100vw] overflow-x-auto px-5 pt-2 pb-8" style={{ backgroundColor: 'white', overflowY: 'visible' }}>
+        <div className="flex snap-x snap-mandatory py-2" style={{ backgroundColor: 'white' }}>
           {PICKS.map((p, i) => (
             <div key={p.title} className="flex-shrink-0 snap-start" style={{ paddingRight: i === PICKS.length - 1 ? '0' : '24px', backgroundColor: 'white' }}>
               <PickCard item={p} priority={i < 2} />
@@ -87,9 +87,50 @@ interface PickItem {
 
 function PickCard({ item, priority }: { item: PickItem; priority?: boolean }) {
   const [liked, setLiked] = useState(false)
+  const [isHovered, setIsHovered] = useState(false)
   
   return (
-    <article className="relative h-[520px] w-[340px] overflow-hidden rounded-[28px] shadow-[0_8px_32px_rgba(0,0,0,0.12)] hover:shadow-[0_12px_48px_rgba(0,0,0,0.18)] transition-shadow duration-300" style={{ backgroundColor: 'white' }}>
+    <div 
+      className="relative h-[520px] w-[340px] group"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      {/* Moving badges layer - follows transform but maintains size */}
+      <div 
+        className="absolute inset-0 z-20 pointer-events-none"
+        style={{
+          transform: isHovered ? 'scale(1.02) translateY(-4px)' : 'scale(1) translateY(0)',
+          transition: 'transform 500ms ease-out'
+        }}
+      >
+        {/* Heart Button - positioned to match activities page */}
+        <button
+          aria-label={liked ? 'Remove from favourites' : 'Add to favourites'}
+          aria-pressed={liked}
+          onClick={() => setLiked(v => !v)}
+          className="absolute left-4 top-4 grid h-11 w-11 place-items-center rounded-full bg-white/80 text-slate-800 shadow-xl backdrop-blur-md transition hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 pointer-events-auto"
+          style={{
+            transform: isHovered ? 'scale(0.98)' : 'scale(1)',
+            transition: 'transform 500ms ease-out'
+          }}
+        >
+          <svg className={"h-5 w-5 transition " + (liked ? 'fill-red-500 text-red-500' : '')} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+          </svg>
+        </button>
+      </div>
+
+      {/* Transforming content layer */}
+      <article 
+        className="absolute inset-0 w-full h-full overflow-hidden rounded-[28px] shadow-[0_8px_32px_rgba(0,0,0,0.12)] hover:shadow-[0_12px_48px_rgba(0,0,0,0.18)]" 
+        style={{ 
+          backgroundColor: 'white',
+          transformOrigin: 'center center',
+          willChange: 'transform',
+          transition: 'transform 500ms ease-out, box-shadow 500ms ease-out',
+          transform: isHovered ? 'scale(1.02) translateY(-4px)' : 'scale(1) translateY(0)'
+        }}
+      >
       {/* Image */}
       <img
         src={item.img}
@@ -108,17 +149,6 @@ function PickCard({ item, priority }: { item: PickItem; priority?: boolean }) {
         }}
       />
 
-      {/* Heart (top-left) */}
-      <button
-        aria-label={liked ? 'Remove from favourites' : 'Add to favourites'}
-        aria-pressed={liked}
-        onClick={() => setLiked(v => !v)}
-        className="absolute left-4 top-4 grid h-11 w-11 place-items-center rounded-full bg-white/80 text-slate-800 shadow-xl backdrop-blur-md transition hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50"
-      >
-        <svg className={"h-5 w-5 transition " + (liked ? 'fill-red-500 text-red-500' : '')} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-        </svg>
-      </button>
 
       {/* Text block */}
       <div className="absolute inset-x-0 bottom-24 px-6 text-white drop-shadow-sm">
@@ -135,6 +165,10 @@ function PickCard({ item, priority }: { item: PickItem; priority?: boolean }) {
           Find out more
         </Link>
       </div>
-    </article>
+
+      {/* Hover Shine Effect */}
+      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 transform -skew-x-12 translate-x-full group-hover:translate-x-[-200%] transition-transform duration-1000 pointer-events-none"></div>
+      </article>
+    </div>
   )
 }

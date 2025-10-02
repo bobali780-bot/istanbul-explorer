@@ -1,108 +1,140 @@
-"use client"
+'use client'
 
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Star, Search, MapPin, Wifi, Car, Coffee, Dumbbell, Waves, Shield, Heart } from "lucide-react"
-import InteractiveMap from "@/components/InteractiveMap"
-import AffiliateButton from "@/components/AffiliateButton"
-import AdSenseBanner from "@/components/AdSenseBanner"
-import { useHotels } from "@/hooks/useScrapedData"
+import { useEffect, useState, useRef } from 'react'
+import { CategoryHero } from '@/components/CategoryHero'
+import { FilterBar } from '@/components/FilterBar'
+import { CategoryTile } from '@/components/CategoryTile'
+import { EditorPickTile } from '@/components/EditorPickTile'
+import { ActivitiesMap } from '@/components/ActivitiesMap'
+import { ChevronDown, ChevronUp, Filter, X, ArrowLeft, ArrowRight } from 'lucide-react'
+
+// Types for our data structure (same as activities page)
+interface Activity {
+  id: string
+  title: string
+  description: string
+  rating: number
+  reviewCount: number
+  location: string
+  neighborhood?: string
+  price?: string
+  duration?: string
+  category: string
+  slug: string
+  isEditorPick?: boolean
+  heroImage?: string
+  whyVisit?: string
+}
+
+interface CategoryData {
+  category: string
+  activities: Activity[]
+  heroData: {
+    title: string
+    subheading: string
+    heroImage: string
+    averageRating: number
+    topNeighborhoods: string[]
+    isTrending: boolean
+    activityCount: number
+  } | null
+  filters: {
+    neighborhoods: Array<{ value: string; label: string; count: number }>
+    priceRanges: Array<{ value: string; label: string; count: number }>
+    vibes: Array<{ value: string; label: string; count: number }>
+    durations: Array<{ value: string; label: string; count: number }>
+    amenities: Array<{ value: string; label: string; count: number }>
+  } | null
+  editorsPicks: Activity[]
+  totalCount: number
+}
 
 export default function HotelsPage() {
-  // Use scraped data from Firecrawl (only on client side)
-  const { hotels: scrapedHotels, loading, error } = useHotels()
-  
-  // Static data for build time
-  const staticHotelsLocations = [
-    {
-      id: "four-seasons-sultanahmet",
-      name: "Four Seasons Hotel Istanbul at Sultanahmet",
-      description: "Luxury hotel set in a former prison building in the heart of historic Sultanahmet. Features elegant rooms with Hagia Sophia views, a spa, and fine dining restaurant. Perfect for exploring Istanbul's most famous attractions.",
-      coordinates: [28.9801, 41.0086] as [number, number],
-      category: "hotels" as const,
-      price: "$$$$",
-      rating: 4.7,
-      ctaText: "Book Now",
-      ctaLink: "https://www.booking.com/city/tr/istanbul.html"
-    },
-    {
-      id: "pera-palace-hotel",
-      name: "Pera Palace Hotel",
-      description: "Historic Belle Époque hotel in Pera district, famous for hosting Agatha Christie and other notable guests. Features elegant rooms, a spa, and the iconic Orient Bar. A perfect blend of history and luxury.",
-      coordinates: [28.9846, 41.0340] as [number, number],
-      category: "hotels" as const,
-      price: "$$$",
-      rating: 4.5,
-      ctaText: "Book Now",
-      ctaLink: "https://www.booking.com/district/tr/istanbul/istanbulcitycentre.html"
-    },
-    {
-      id: "ciragan-palace-kempinski",
-      name: "Çırağan Palace Kempinski",
-      description: "Luxury hotel in a restored Ottoman palace on the Bosphorus shore. Features opulent suites, world-class spa, multiple restaurants, and stunning waterfront views. The ultimate in Istanbul luxury.",
-      coordinates: [29.0006, 41.0390] as [number, number],
-      category: "hotels" as const,
-      price: "$$$$",
-      rating: 4.6,
-      ctaText: "Book Now",
-      ctaLink: "https://www.booking.com/budget/city/tr/istanbul.en-gb.html"
-    },
-    {
-      id: "conrad-istanbul-bosphorus",
-      name: "Conrad Istanbul Bosphorus",
-      description: "Modern luxury hotel in Beşiktaş with panoramic Bosphorus views. Features contemporary rooms, multiple dining options, fitness center, and excellent business facilities. Ideal for both leisure and business travelers.",
-      coordinates: [29.0006, 41.0390] as [number, number],
-      category: "hotels" as const,
-      price: "$$$",
-      rating: 4.4,
-      ctaText: "Book Now",
-      ctaLink: "https://www.booking.com/district/tr/istanbul/oldcitysultanahmet.html"
-    },
-    {
-      id: "swissotel-bosphorus",
-      name: "Swissotel The Bosphorus",
-      description: "Family-friendly luxury resort in Beşiktaş with extensive gardens and Bosphorus views. Features multiple pools, kids' club, spa, and various dining options. Perfect for families seeking comfort and convenience.",
-      coordinates: [29.0006, 41.0390] as [number, number],
-      category: "hotels" as const,
-      price: "$$$",
-      rating: 4.3,
-      ctaText: "Book Now",
-      ctaLink: "https://www.booking.com/district/tr/istanbul/taksimsquare.html"
-    },
-    {
-      id: "ritz-carlton-istanbul",
-      name: "The Ritz-Carlton Istanbul",
-      description: "Ultimate luxury hotel in Beşiktaş with panoramic Bosphorus and city views. Features elegant rooms, Michelin-starred dining, world-class spa, and impeccable service. The pinnacle of Istanbul hospitality.",
-      coordinates: [29.0006, 41.0390] as [number, number],
-      category: "hotels" as const,
-      price: "$$$$",
-      rating: 4.8,
-      ctaText: "Book Now",
-      ctaLink: "https://www.booking.com/pool/city/tr/istanbul.en-gb.html"
+  const [data, setData] = useState<CategoryData | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [favorites, setFavorites] = useState<Set<string>>(new Set())
+  const [selectedFilters, setSelectedFilters] = useState<Record<string, string[]>>({})
+  const [isExpanded, setIsExpanded] = useState(false)
+  const [showFilters, setShowFilters] = useState(false)
+  const scrollRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await fetch('/api/categories/hotels')
+
+        if (!response.ok) {
+          throw new Error(`Failed to load hotels: ${response.status}`)
+        }
+
+        const result = await response.json()
+        setData(result)
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to load hotels')
+      } finally {
+        setLoading(false)
+      }
     }
-  ]
 
-  // Use static data during build, scraped data at runtime
-  const hotelsLocations = scrapedHotels.length > 0
-    ? scrapedHotels.map((item, index) => ({
-        id: `hotel-${index}`,
-        name: item.name,
-        description: item.description,
-        coordinates: item.coordinates || [28.9784, 41.0082] as [number, number],
-        category: "hotels" as const,
-        price: item.price || "$$$",
-        rating: item.rating || 4.0,
-        ctaText: "Book Now",
-        ctaLink: item.url
-      }))
-    : staticHotelsLocations
+    fetchData()
+  }, [])
 
-  // Log scraping results
-  if (scrapedHotels.length > 0) {
-    console.log(`✅ Scraped ${scrapedHotels.length} hotels from Booking.com`)
+  const handleFavoriteToggle = (id: string) => {
+    setFavorites(prev => {
+      const newFavorites = new Set(prev)
+      if (newFavorites.has(id)) {
+        newFavorites.delete(id)
+      } else {
+        newFavorites.add(id)
+      }
+      return newFavorites
+    })
+  }
+
+  const handleFilterChange = (filterType: string, values: string[]) => {
+    setSelectedFilters(prev => ({
+      ...prev,
+      [filterType]: values
+    }))
+  }
+
+  const handleHandpickedToggle = (enabled: boolean) => {
+    setSelectedFilters(prev => ({
+      ...prev,
+      handpicked: enabled ? ['only'] : []
+    }))
+  }
+
+  const handleToggleExpanded = () => {
+    const newExpanded = !isExpanded
+    setIsExpanded(newExpanded)
+    
+    // Show/hide filters simultaneously with expansion
+    if (newExpanded) {
+      setShowFilters(true) // Show immediately for simultaneous animation
+    } else {
+      setShowFilters(false)
+      // Auto-scroll to the section when collapsing
+      setTimeout(() => {
+        const section = document.getElementById('all-hotels-section')
+        if (section) {
+          section.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        }
+      }, 100)
+    }
+  }
+
+  const scrollLeft = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollBy({ left: -400, behavior: 'smooth' })
+    }
+  }
+
+  const scrollRight = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollBy({ left: 400, behavior: 'smooth' })
+    }
   }
 
   if (loading) {
@@ -111,514 +143,295 @@ export default function HotelsPage() {
         <div className="container mx-auto px-4 py-8">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
-            <p className="text-gray-600">Loading hotel data...</p>
+            <p className="text-gray-600">Loading hotels...</p>
           </div>
         </div>
       </div>
     )
   }
 
-  if (error) {
-    console.error('❌ Error loading hotel data:', error)
-  }
-
+  if (error || !data) {
   return (
-    <div className="min-h-screen bg-white">
-      {/* Hero Section */}
-      <section className="relative h-[50vh] flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-indigo-900/80 to-purple-900/80">
-          <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80')] bg-cover bg-center bg-no-repeat"></div>
-        </div>
-        <div className="relative z-10 text-center text-white px-4 max-w-4xl mx-auto">
-          <h1 className="text-5xl md:text-6xl font-bold mb-4 leading-tight">
-            Best Hotels in
-            <span className="block text-yellow-400">Istanbul</span>
-          </h1>
-          <p className="text-xl md:text-2xl mb-8 text-gray-200 max-w-2xl mx-auto">
-            From luxury palaces to boutique gems, find your perfect stay
-          </p>
-        </div>
-      </section>
-
-      {/* Intro Section */}
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-3xl md:text-4xl font-bold mb-6 text-gray-900">
-              Discover Istanbul&apos;s Finest Accommodations
-            </h2>
-            <p className="text-lg text-gray-600 leading-relaxed">
-              Whether you seek the grandeur of historic palaces, the charm of boutique hotels, 
-              or the comfort of modern accommodations, Istanbul offers an unparalleled range of 
-              stays. From luxury resorts with Bosphorus views to budget-friendly options in 
-              vibrant neighborhoods, find your perfect home away from home.
+      <div className="min-h-screen bg-gray-50">
+        <div className="container mx-auto px-4 py-8">
+          <div className="text-center">
+            <div className="text-6xl mb-4">🏨</div>
+            <h3 className="text-2xl font-serif font-bold text-slate-900 mb-2">
+              Unable to load hotels
+            </h3>
+            <p className="text-slate-600">
+              {error || 'Something went wrong while loading the hotels.'}
             </p>
           </div>
         </div>
-      </section>
+      </div>
+    )
+  }
 
-      {/* Filters & Sorting */}
-      <section className="py-12 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <div className="max-w-6xl mx-auto">
-            <h3 className="text-2xl font-bold mb-8 text-gray-900">Find Your Perfect Stay</h3>
+  return (
+    <div className="min-h-screen">
+      {/* Category Hero */}
+      {data.heroData && (
+        <CategoryHero
+          title={data.heroData.title}
+          subheading={data.heroData.subheading}
+          heroImage={data.heroData.heroImage}
+          averageRating={data.heroData.averageRating}
+          topNeighborhoods={data.heroData.topNeighborhoods}
+          isTrending={data.heroData.isTrending}
+          activityCount={data.heroData.activityCount}
+        />
+      )}
+
+      {/* Filter Bar */}
+      {data.filters && (
+        <FilterBar
+          filters={data.filters}
+          selectedFilters={selectedFilters}
+          onFilterChange={handleFilterChange}
+          showHandpickedOnly={true}
+          onHandpickedToggle={handleHandpickedToggle}
+        />
+      )}
+
+      {/* Editor's Picks Section - Homepage Style */}
+      {data.editorsPicks && data.editorsPicks.length > 0 && (
+        <section aria-labelledby="editors-picks" className="relative mx-auto max-w-[100vw] py-16 overflow-visible" style={{ backgroundColor: 'white' }}>
+          <div className="mx-auto max-w-6xl px-5" style={{ backgroundColor: 'white' }}>
+            {/* Centered header */}
+            <div className="mb-6 text-center">
+              <h2 id="editors-picks" className="text-2xl font-extrabold tracking-tight sm:text-3xl">Editor&apos;s Picks</h2>
+              <p className="text-slate-600">Handpicked highlights for the perfect Istanbul stay</p>
+            </div>
+          </div>
+
+          {/* Horizontal scroller with hover arrows */}
+          <div ref={scrollRef} className="no-scrollbar group mx-auto max-w-[100vw] overflow-x-auto px-5 pt-2 pb-8" style={{ backgroundColor: 'white', overflowY: 'visible' }}>
+            <div className="flex snap-x snap-mandatory py-2" style={{ backgroundColor: 'white' }}>
+              {data.editorsPicks.map((hotel, index) => {
+                // Cycle through colors: blue, green, red, yellow
+                const colors = ['blue', 'green', 'red', 'yellow'] as const
+                const colorVariant = colors[index % colors.length]
+                
+                return (
+                  <div key={hotel.id} className="flex-shrink-0 snap-start" style={{ paddingRight: index === data.editorsPicks.length - 1 ? '0' : '24px', backgroundColor: 'white' }}>
+                    <EditorPickTile
+                      {...hotel}
+                      isFavorite={favorites.has(hotel.id)}
+                      onToggleFavorite={handleFavoriteToggle}
+                      colorVariant={colorVariant}
+                    />
+                  </div>
+                )
+              })}
+            </div>
             
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-              {/* Price Range */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">Price Range</label>
-                <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Any Price" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="budget">$ - Budget</SelectItem>
-                    <SelectItem value="moderate">$$ - Moderate</SelectItem>
-                    <SelectItem value="upscale">$$$ - Upscale</SelectItem>
-                    <SelectItem value="luxury">$$$$ - Luxury</SelectItem>
-                  </SelectContent>
-                </Select>
+            {/* Clickable arrows */}
+            <button 
+              onClick={scrollLeft}
+              className="absolute left-0 top-1/2 -translate-y-1/2 opacity-0 transition-opacity duration-300 group-hover:opacity-100 hover:opacity-100 focus:opacity-100 focus:outline-none"
+              aria-label="Scroll left"
+            >
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/90 shadow-lg backdrop-blur-sm hover:bg-white transition-colors">
+                <ArrowLeft className="h-6 w-6 text-slate-700" />
               </div>
-
-              {/* Hotel Type */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">Hotel Type</label>
-                <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Any Type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="luxury">Luxury</SelectItem>
-                    <SelectItem value="boutique">Boutique</SelectItem>
-                    <SelectItem value="budget">Budget</SelectItem>
-                    <SelectItem value="family">Family</SelectItem>
-                    <SelectItem value="business">Business</SelectItem>
-                  </SelectContent>
-                </Select>
+            </button>
+            <button 
+              onClick={scrollRight}
+              className="absolute right-0 top-1/2 -translate-y-1/2 opacity-0 transition-opacity duration-300 group-hover:opacity-100 hover:opacity-100 focus:opacity-100 focus:outline-none"
+              aria-label="Scroll right"
+            >
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/90 shadow-lg backdrop-blur-sm hover:bg-white transition-colors">
+                <ArrowRight className="h-6 w-6 text-slate-700" />
               </div>
-
-              {/* Amenities */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">Amenities</label>
-                <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select Amenities" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="pool">Pool</SelectItem>
-                    <SelectItem value="spa">Spa</SelectItem>
-                    <SelectItem value="breakfast">Free Breakfast</SelectItem>
-                    <SelectItem value="attractions">Near Attractions</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* Neighborhood */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">Neighborhood</label>
-                <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Any Area" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="sultanahmet">Sultanahmet</SelectItem>
-                    <SelectItem value="taksim">Taksim</SelectItem>
-                    <SelectItem value="bosphorus">Bosphorus</SelectItem>
-                    <SelectItem value="kadikoy">Kadıköy</SelectItem>
-                    <SelectItem value="besiktas">Beşiktaş</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            {/* Sorting */}
-            <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
-              <div className="flex items-center gap-4">
-                <span className="text-sm font-medium text-gray-700">Sort by:</span>
-                <div className="flex gap-2">
-                  <Button variant="outline" size="sm">Most Popular</Button>
-                  <Button variant="outline" size="sm">Highest Rated</Button>
-                  <Button variant="outline" size="sm">Best Value</Button>
-                </div>
-              </div>
-              <div className="text-sm text-gray-600">
-                Showing 24 hotels in Istanbul
-              </div>
-            </div>
+            </button>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
-      {/* Curated Hotel Grid */}
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-4">
-          <div className="max-w-6xl mx-auto">
-            <h3 className="text-2xl font-bold mb-8 text-gray-900">Curated Hotel Collection</h3>
+      {/* All Hotels Section - Frosted Glass Container */}
+      <section id="all-hotels-section" className="py-16 px-6 bg-gradient-to-b from-white to-slate-50">
+        <div className="mx-auto max-w-7xl">
+          <div className="relative bg-white/60 backdrop-blur-xl rounded-3xl p-8 shadow-xl border border-white/20">
+            {/* Gradient Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-b from-white/5 to-white/8 rounded-3xl"></div>
             
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {/* Hotel 1 */}
-              <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-lg">
-                <div className="relative overflow-hidden rounded-t-lg">
-                  <div className="h-48 bg-gradient-to-br from-blue-600 to-indigo-700 flex items-center justify-center">
-                    <Shield className="w-16 h-16 text-white" />
+            {/* Content */}
+            <div className="relative z-10">
+              {/* Section Header */}
+              <div className="text-center mb-8">
+                <h2 className="text-3xl md:text-4xl font-extrabold leading-tight tracking-tight text-slate-900 mb-4">
+                  All Hotels
+                </h2>
+                <p className="text-base font-medium text-slate-600 max-w-2xl mx-auto">
+                  Discover {data.totalCount || 0} carefully curated accommodations in Istanbul
+                </p>
                   </div>
-                  <Badge className="absolute top-4 left-4 bg-yellow-500 text-black">Luxury</Badge>
-                </div>
-                <CardContent className="p-6">
-                  <h4 className="text-xl font-bold mb-2">Four Seasons Hotel Istanbul</h4>
-                  <p className="text-gray-600 mb-4">Historic luxury in Sultanahmet with stunning Hagia Sophia views</p>
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-1">
-                      {[...Array(5)].map((_, i) => (
-                        <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                      ))}
-                      <span className="text-sm text-gray-600 ml-2">4.9 (1,247)</span>
-                    </div>
-                    <Badge variant="outline">$$$$</Badge>
-                  </div>
-                  <div className="flex items-center gap-2 mb-4 text-sm text-gray-600">
-                    <Wifi className="w-4 h-4" />
-                    <Car className="w-4 h-4" />
-                    <Coffee className="w-4 h-4" />
-                    <span>Free WiFi • Parking • Breakfast</span>
-                  </div>
-                  <AffiliateButton 
-                    href={hotelsLocations[0].ctaLink}
-                    affiliateType="booking"
-                    trackingId="hotels-four-seasons"
-                    locationName={hotelsLocations[0].name}
-                    className="w-full bg-blue-600 hover:bg-blue-700"
-                  >
-                    {hotelsLocations[0].ctaText}
-                  </AffiliateButton>
-                </CardContent>
-              </Card>
 
-              {/* Hotel 2 */}
-              <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-lg">
-                <div className="relative overflow-hidden rounded-t-lg">
-                  <div className="h-48 bg-gradient-to-br from-purple-600 to-pink-600 flex items-center justify-center">
-                    <Heart className="w-16 h-16 text-white" />
-                  </div>
-                  <Badge className="absolute top-4 left-4 bg-pink-500 text-white">Boutique</Badge>
-                </div>
-                <CardContent className="p-6">
-                  <h4 className="text-xl font-bold mb-2">Pera Palace Hotel</h4>
-                  <p className="text-gray-600 mb-4">Iconic Belle Époque hotel with Agatha Christie connections</p>
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-1">
-                      {[...Array(5)].map((_, i) => (
-                        <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                      ))}
-                      <span className="text-sm text-gray-600 ml-2">4.8 (892)</span>
+              {/* Main Container with Filter Sidebar */}
+              <div className="relative flex gap-8">
+                {/* Filter Sidebar - Slides in from left */}
+                <div className={`transition-all duration-700 ease-out ${showFilters && isExpanded ? 'w-80 opacity-100 translate-x-0' : 'w-0 opacity-0 -translate-x-full overflow-hidden'}`}>
+                  {showFilters && isExpanded && (
+                    <div className="sticky top-6 bg-white/80 backdrop-blur-xl rounded-2xl p-6 shadow-xl border border-white/30 h-fit">
+                      <div className="flex items-center justify-between mb-6">
+                        <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+                          <Filter className="w-5 h-5" />
+                          Filters
+                        </h3>
+                        <button 
+                          onClick={() => setShowFilters(false)}
+                          className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center transition-colors"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                      
+                      {/* Filter Content */}
+                      <div className="space-y-6">
+                        {/* Neighborhoods */}
+                        <div>
+                          <h4 className="font-semibold text-slate-900 mb-3">Neighborhoods</h4>
+                          <div className="space-y-2">
+                            {data.filters?.neighborhoods.slice(0, 5).map((neighborhood, idx) => (
+                              <label key={idx} className="flex items-center gap-2 text-sm">
+                                <input type="checkbox" className="rounded" />
+                                <span>{neighborhood.label}</span>
+                              </label>
+                            ))}
+                          </div>
+                        </div>
+                        
+                        {/* Price Range */}
+                        <div>
+                          <h4 className="font-semibold text-slate-900 mb-3">Price Range</h4>
+                          <div className="space-y-2">
+                            {data.filters?.priceRanges.slice(0, 4).map((price, idx) => (
+                              <label key={idx} className="flex items-center gap-2 text-sm">
+                                <input type="checkbox" className="rounded" />
+                                <span>{price.label}</span>
+                              </label>
+                            ))}
+                          </div>
+                        </div>
+                        
+                        {/* Amenities */}
+                        <div>
+                          <h4 className="font-semibold text-slate-900 mb-3">Amenities</h4>
+                          <div className="space-y-2">
+                            {data.filters?.amenities.slice(0, 4).map((amenity, idx) => (
+                              <label key={idx} className="flex items-center gap-2 text-sm">
+                                <input type="checkbox" className="rounded" />
+                                <span>{amenity.label}</span>
+                              </label>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                    <Badge variant="outline">$$$</Badge>
-                  </div>
-                  <div className="flex items-center gap-2 mb-4 text-sm text-gray-600">
-                    <Waves className="w-4 h-4" />
-                    <Coffee className="w-4 h-4" />
-                    <span>Spa • Breakfast • Historic</span>
-                  </div>
-                  <AffiliateButton 
-                    href={hotelsLocations[1].ctaLink}
-                    affiliateType="booking"
-                    trackingId="hotels-pera-palace"
-                    locationName={hotelsLocations[1].name}
-                    className="w-full bg-purple-600 hover:bg-purple-700"
-                  >
-                    {hotelsLocations[1].ctaText}
-                  </AffiliateButton>
-                </CardContent>
-              </Card>
-
-              {/* Hotel 3 */}
-              <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-lg">
-                <div className="relative overflow-hidden rounded-t-lg">
-                  <div className="h-48 bg-gradient-to-br from-green-600 to-teal-600 flex items-center justify-center">
-                    <MapPin className="w-16 h-16 text-white" />
-                  </div>
-                  <Badge className="absolute top-4 left-4 bg-green-500 text-white">Budget</Badge>
+                  )}
                 </div>
-                <CardContent className="p-6">
-                  <h4 className="text-xl font-bold mb-2">Cheers Hostel</h4>
-                  <p className="text-gray-600 mb-4">Vibrant hostel in Taksim with rooftop views and social atmosphere</p>
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-1">
-                      {[...Array(4)].map((_, i) => (
-                        <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                      ))}
-                      <Star className="w-4 h-4 text-gray-300" />
-                      <span className="text-sm text-gray-600 ml-2">4.2 (567)</span>
-                    </div>
-                    <Badge variant="outline">$</Badge>
-                  </div>
-                  <div className="flex items-center gap-2 mb-4 text-sm text-gray-600">
-                    <Wifi className="w-4 h-4" />
-                    <Coffee className="w-4 h-4" />
-                    <span>Free WiFi • Breakfast • Social</span>
-                  </div>
-                  <AffiliateButton 
-                    href={hotelsLocations[2].ctaLink}
-                    affiliateType="booking"
-                    trackingId="hotels-ciragan-palace"
-                    locationName={hotelsLocations[2].name}
-                    className="w-full bg-green-600 hover:bg-green-700"
-                  >
-                    {hotelsLocations[2].ctaText}
-                  </AffiliateButton>
-                </CardContent>
-              </Card>
 
-              {/* Hotel 4 */}
-              <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-lg">
-                <div className="relative overflow-hidden rounded-t-lg">
-                  <div className="h-48 bg-gradient-to-br from-orange-600 to-red-600 flex items-center justify-center">
-                    <Waves className="w-16 h-16 text-white" />
+                {/* Hotels Grid - Smoothly shifts right when filters are shown */}
+                <div className={`flex-1 transition-all duration-700 ease-out ${showFilters && isExpanded ? 'translate-x-8' : 'translate-x-0'}`}>
+                  {data.activities && data.activities.length > 0 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8 min-h-[600px]">
+                      {/* Show hotels based on expansion state */}
+                      {data.activities.slice(0, isExpanded ? data.activities.length : 6).map((hotel, index) => (
+                        <div
+                          key={hotel.id}
+                          className="animate-fade-up"
+                          style={{
+                            animationDelay: `${index * 120}ms`,
+                            animationFillMode: 'both'
+                          }}
+                        >
+                          <CategoryTile
+                            {...hotel}
+                            isFavorite={favorites.has(hotel.id)}
+                            onToggleFavorite={handleFavoriteToggle}
+                          />
+                        </div>
+                      ))}
+                      
+                      {/* Empty placeholder tiles to maintain 6-tile grid layout */}
+                      {!isExpanded && data.activities.length < 6 && 
+                        Array.from({ length: 6 - data.activities.length }).map((_, index) => (
+                          <div
+                            key={`placeholder-${index}`}
+                            className="invisible animate-fade-up"
+                            style={{
+                              animationDelay: `${(data.activities.length + index) * 120}ms`,
+                              animationFillMode: 'both'
+                            }}
+                          >
+                            <div className="h-[500px] rounded-2xl bg-transparent"></div>
+                          </div>
+                        ))
+                      }
+                    </div>
+                  ) : (
+                  <div className="text-center py-16">
+                    <div className="text-6xl mb-4">🏨</div>
+                    <h3 className="text-2xl font-serif font-bold text-slate-900 mb-2">
+                      No hotels found
+                    </h3>
+                    <p className="text-slate-600">
+                      We&apos;re working on adding more amazing accommodations to Istanbul.
+                    </p>
                   </div>
-                  <Badge className="absolute top-4 left-4 bg-orange-500 text-white">Luxury</Badge>
+                )}
+
+                  {/* Toggle Button */}
+                  {data.activities && data.activities.length > 6 && (
+                    <div className="text-center">
+                      <button 
+                        onClick={handleToggleExpanded}
+                        className="group px-12 py-4 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white rounded-full font-bold hover:from-blue-700 hover:via-purple-700 hover:to-pink-700 transition-all duration-500 shadow-xl hover:shadow-2xl hover:scale-105 flex items-center gap-3 mx-auto hover:bg-gradient-to-r relative overflow-hidden"
+                      >
+                        {/* Button Shine Effect */}
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform -skew-x-12 translate-x-full group-hover:translate-x-[-200%] transition-transform duration-700"></div>
+                        
+                        <span className="relative z-10">{isExpanded ? 'Show Less' : 'See All Hotels'}</span>
+                        <div className={`relative z-10 transition-transform duration-500 ${isExpanded ? 'rotate-180' : 'rotate-0'}`}>
+                          {isExpanded ? (
+                            <ChevronUp className="w-5 h-5" />
+                          ) : (
+                            <ChevronDown className="w-5 h-5" />
+                          )}
+                        </div>
+                      </button>
+                    </div>
+                  )}
                 </div>
-                <CardContent className="p-6">
-                  <h4 className="text-xl font-bold mb-2">Çırağan Palace Kempinski</h4>
-                  <p className="text-gray-600 mb-4">Ottoman palace on the Bosphorus with world-class spa facilities</p>
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-1">
-                      {[...Array(5)].map((_, i) => (
-                        <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                      ))}
-                      <span className="text-sm text-gray-600 ml-2">4.9 (1,156)</span>
-                    </div>
-                    <Badge variant="outline">$$$$</Badge>
-                  </div>
-                  <div className="flex items-center gap-2 mb-4 text-sm text-gray-600">
-                    <Waves className="w-4 h-4" />
-                    <Car className="w-4 h-4" />
-                    <Coffee className="w-4 h-4" />
-                    <span>Spa • Parking • Breakfast</span>
-                  </div>
-                  <AffiliateButton 
-                    href={hotelsLocations[3].ctaLink}
-                    affiliateType="booking"
-                    trackingId="hotels-conrad-istanbul"
-                    locationName={hotelsLocations[3].name}
-                    className="w-full bg-orange-600 hover:bg-orange-700"
-                  >
-                    {hotelsLocations[3].ctaText}
-                  </AffiliateButton>
-                </CardContent>
-              </Card>
-
-              {/* Hotel 5 */}
-              <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-lg">
-                <div className="relative overflow-hidden rounded-t-lg">
-                  <div className="h-48 bg-gradient-to-br from-indigo-600 to-blue-600 flex items-center justify-center">
-                    <Dumbbell className="w-16 h-16 text-white" />
-                  </div>
-                  <Badge className="absolute top-4 left-4 bg-indigo-500 text-white">Business</Badge>
-                </div>
-                <CardContent className="p-6">
-                  <h4 className="text-xl font-bold mb-2">Conrad Istanbul Bosphorus</h4>
-                  <p className="text-gray-600 mb-4">Modern business hotel with fitness center and meeting facilities</p>
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-1">
-                      {[...Array(5)].map((_, i) => (
-                        <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                      ))}
-                      <span className="text-sm text-gray-600 ml-2">4.7 (743)</span>
-                    </div>
-                    <Badge variant="outline">$$$</Badge>
-                  </div>
-                  <div className="flex items-center gap-2 mb-4 text-sm text-gray-600">
-                    <Wifi className="w-4 h-4" />
-                    <Dumbbell className="w-4 h-4" />
-                    <Coffee className="w-4 h-4" />
-                    <span>Free WiFi • Gym • Breakfast</span>
-                  </div>
-                  <AffiliateButton 
-                    href={hotelsLocations[4].ctaLink}
-                    affiliateType="booking"
-                    trackingId="hotels-swissotel-bosphorus"
-                    locationName={hotelsLocations[4].name}
-                    className="w-full bg-indigo-600 hover:bg-indigo-700"
-                  >
-                    {hotelsLocations[4].ctaText}
-                  </AffiliateButton>
-                </CardContent>
-              </Card>
-
-              {/* Hotel 6 */}
-              <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-lg">
-                <div className="relative overflow-hidden rounded-t-lg">
-                  <div className="h-48 bg-gradient-to-br from-teal-600 to-cyan-600 flex items-center justify-center">
-                    <Heart className="w-16 h-16 text-white" />
-                  </div>
-                  <Badge className="absolute top-4 left-4 bg-teal-500 text-white">Family</Badge>
-                </div>
-                <CardContent className="p-6">
-                  <h4 className="text-xl font-bold mb-2">Swissotel The Bosphorus</h4>
-                  <p className="text-gray-600 mb-4">Family-friendly resort with pools and kids&apos; activities</p>
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-1">
-                      {[...Array(5)].map((_, i) => (
-                        <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                      ))}
-                      <span className="text-sm text-gray-600 ml-2">4.6 (1,089)</span>
-                    </div>
-                    <Badge variant="outline">$$$</Badge>
-                  </div>
-                  <div className="flex items-center gap-2 mb-4 text-sm text-gray-600">
-                    <Waves className="w-4 h-4" />
-                    <Car className="w-4 h-4" />
-                    <Coffee className="w-4 h-4" />
-                    <span>Pool • Parking • Breakfast</span>
-                  </div>
-                  <AffiliateButton 
-                    href={hotelsLocations[5].ctaLink}
-                    affiliateType="booking"
-                    trackingId="hotels-ritz-carlton"
-                    locationName={hotelsLocations[5].name}
-                    className="w-full bg-teal-600 hover:bg-teal-700"
-                  >
-                    {hotelsLocations[5].ctaText}
-                  </AffiliateButton>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Editor's Choice Section */}
-      <section className="py-16 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <div className="max-w-6xl mx-auto">
-            <h3 className="text-2xl font-bold mb-8 text-gray-900">Editor&apos;s Choice</h3>
-            
-            <div className="grid md:grid-cols-3 gap-8">
-              {/* Featured Hotel 1 */}
-              <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-lg">
-                <div className="relative overflow-hidden rounded-t-lg">
-                  <div className="h-56 bg-gradient-to-br from-yellow-600 to-orange-600 flex items-center justify-center">
-                    <Shield className="w-20 h-20 text-white" />
-                  </div>
-                  <Badge className="absolute top-4 left-4 bg-yellow-500 text-black">Editor&apos;s Pick</Badge>
-                </div>
-                <CardContent className="p-6">
-                  <h4 className="text-xl font-bold mb-2">The Ritz-Carlton Istanbul</h4>
-                  <p className="text-gray-600 mb-4">Ultimate luxury with panoramic Bosphorus views and Michelin-starred dining</p>
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-1">
-                      {[...Array(5)].map((_, i) => (
-                        <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                      ))}
-                      <span className="text-sm text-gray-600 ml-2">4.9 (1,456)</span>
-                    </div>
-                    <Badge variant="outline">$$$$</Badge>
-                  </div>
-                  <Button className="w-full bg-yellow-600 hover:bg-yellow-700">
-                    Book Now
-                  </Button>
-                </CardContent>
-              </Card>
-
-              {/* Featured Hotel 2 */}
-              <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-lg">
-                <div className="relative overflow-hidden rounded-t-lg">
-                  <div className="h-56 bg-gradient-to-br from-purple-600 to-pink-600 flex items-center justify-center">
-                    <Heart className="w-20 h-20 text-white" />
-                  </div>
-                  <Badge className="absolute top-4 left-4 bg-purple-500 text-white">Hidden Gem</Badge>
-                </div>
-                <CardContent className="p-6">
-                  <h4 className="text-xl font-bold mb-2">Georges Hotel Galata</h4>
-                  <p className="text-gray-600 mb-4">Boutique hotel in historic Galata with rooftop terrace and local charm</p>
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-1">
-                      {[...Array(5)].map((_, i) => (
-                        <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                      ))}
-                      <span className="text-sm text-gray-600 ml-2">4.8 (623)</span>
-                    </div>
-                    <Badge variant="outline">$$$</Badge>
-                  </div>
-                  <Button className="w-full bg-purple-600 hover:bg-purple-700">
-                    Book Now
-                  </Button>
-                </CardContent>
-              </Card>
-
-              {/* Featured Hotel 3 */}
-              <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-lg">
-                <div className="relative overflow-hidden rounded-t-lg">
-                  <div className="h-56 bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center">
-                    <Waves className="w-20 h-20 text-white" />
-                  </div>
-                  <Badge className="absolute top-4 left-4 bg-blue-500 text-white">Best Value</Badge>
-                </div>
-                <CardContent className="p-6">
-                  <h4 className="text-xl font-bold mb-2">DoubleTree by Hilton</h4>
-                  <p className="text-gray-600 mb-4">Modern comfort in Taksim with excellent location and great amenities</p>
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-1">
-                      {[...Array(4)].map((_, i) => (
-                        <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                      ))}
-                      <Star className="w-4 h-4 text-gray-300" />
-                      <span className="text-sm text-gray-600 ml-2">4.5 (892)</span>
-                    </div>
-                    <Badge variant="outline">$$</Badge>
-                  </div>
-                  <Button className="w-full bg-blue-600 hover:bg-blue-700">
-                    Book Now
-                  </Button>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Interactive Map Placeholder */}
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-4">
-          <div className="max-w-6xl mx-auto">
-            <h3 className="text-2xl font-bold mb-8 text-gray-900">Hotels on the Map</h3>
-            <div className="bg-gray-100 rounded-lg h-96 flex items-center justify-center">
-              <div className="text-center">
-                <MapPin className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                <h4 className="text-xl font-semibold text-gray-600 mb-2">Interactive Map</h4>
-                <p className="text-gray-500">Click on hotel pins to view details and book directly</p>
-                <p className="text-sm text-gray-400 mt-2">Map integration coming soon</p>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Interactive Map */}
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-4">
-          <div className="max-w-6xl mx-auto">
-            <h3 className="text-2xl font-bold mb-8 text-gray-900">Hotels on the Map</h3>
-            {(() => {
-              console.log("Category pins:", hotelsLocations?.length, hotelsLocations?.map(p => p.name))
-              return null
-            })()}
-            <InteractiveMap 
-              locations={hotelsLocations}
-              className="border-2 border-gray-200"
+      {/* Explore on Map Section - Frosted Glass Container */}
+      <section className="py-16 px-6 bg-gradient-to-b from-slate-50 to-white">
+        <div className="mx-auto max-w-7xl">
+          <div className="relative bg-white/60 backdrop-blur-xl rounded-3xl shadow-xl border border-white/20 overflow-hidden">
+            {/* Gradient Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-b from-white/5 to-white/8 rounded-3xl"></div>
+            
+            {/* Map Title Overlay */}
+            <div className="absolute top-6 left-6 z-20">
+              <div className="bg-white/40 backdrop-blur-sm rounded-2xl px-4 py-2 border border-white/30">
+                <h3 className="text-lg font-semibold text-slate-900">
+                  Explore Hotels on the Map
+                </h3>
+              </div>
+            </div>
+
+            {/* Hotels Map */}
+            <ActivitiesMap 
+              activities={data.activities || []}
+              favorites={favorites}
+              onToggleFavorite={handleFavoriteToggle}
             />
-            <div className="text-center mt-6">
-              <p className="text-gray-600 mb-4">Click on pins to view hotel details and book directly</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* AdSense Banner */}
-      <section className="py-8 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto">
-            <AdSenseBanner slot="hotels-page" format="auto" />
           </div>
         </div>
       </section>

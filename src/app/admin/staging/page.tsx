@@ -37,6 +37,9 @@ import {
   Users,
   Building,
   Info,
+  Upload,
+  Search,
+  Loader2,
 } from 'lucide-react'
 import { createClient } from '@supabase/supabase-js'
 import NextImage from 'next/image'
@@ -125,6 +128,14 @@ export default function StagingPage() {
   const [filterStatus, setFilterStatus] = useState<string>('pending')
   const [searchTerm, setSearchTerm] = useState('')
   const [refillDialogOpen, setRefillDialogOpen] = useState(false)
+  
+  // Google Search states
+  const [googleQuery, setGoogleQuery] = useState('')
+  const [googleResults, setGoogleResults] = useState<any[]>([])
+  const [googleLoading, setGoogleLoading] = useState(false)
+  const [googleQueue, setGoogleQueue] = useState<any[]>([])
+  const [showGoogleSearch, setShowGoogleSearch] = useState(false)
+  const [processingPlaces, setProcessingPlaces] = useState<Set<string>>(new Set())
   const [refillTarget, setRefillTarget] = useState<{ id: string; title: string; currentCount: number } | null>(null)
   const [refillTargetCount, setRefillTargetCount] = useState(15)
   const [jobsSheetOpen, setJobsSheetOpen] = useState(false)
@@ -288,6 +299,88 @@ export default function StagingPage() {
       setProcessing(prev => {
         const newSet = new Set(prev)
         newSet.delete(selectedItem.id)
+        return newSet
+      })
+    }
+  }
+
+  const handlePublish = async () => {
+    if (!selectedItem) return
+
+    try {
+      setProcessing(prev => new Set(prev).add(selectedItem.id))
+
+      const response = await fetch('/api/admin/staging-actions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          action: 'publish',
+          items: [selectedItem.id]
+        }),
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        setSuccessMessage('Item published to production successfully!')
+        setError(null)
+        setTimeout(() => setSuccessMessage(null), 3000)
+        await loadStagingData()
+        setSelectedItem(null)
+      } else {
+        throw new Error(data.message || 'Failed to publish item')
+      }
+    } catch (error) {
+      console.error('Error publishing item:', error)
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+      setError(`Error publishing item: ${errorMessage}`)
+      setSuccessMessage(null)
+      setTimeout(() => setError(null), 5000)
+    } finally {
+      setProcessing(prev => {
+        const newSet = new Set(prev)
+        newSet.delete(selectedItem.id)
+        return newSet
+      })
+    }
+  }
+
+  const handlePublishAllApproved = async () => {
+    try {
+      setProcessing(prev => new Set(prev).add('bulk-publish'))
+
+      const response = await fetch('/api/admin/staging-actions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          action: 'publish_all_approved'
+        }),
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        setSuccessMessage(`Successfully published ${data.published_items?.length || 0} approved items to production!`)
+        setError(null)
+        setTimeout(() => setSuccessMessage(null), 5000)
+        await loadStagingData()
+      } else {
+        throw new Error(data.message || 'Failed to publish all approved items')
+      }
+    } catch (error) {
+      console.error('Error publishing all approved items:', error)
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+      setError(`Error publishing all approved items: ${errorMessage}`)
+      setSuccessMessage(null)
+      setTimeout(() => setError(null), 5000)
+    } finally {
+      setProcessing(prev => {
+        const newSet = new Set(prev)
+        newSet.delete('bulk-publish')
         return newSet
       })
     }
@@ -752,6 +845,215 @@ export default function StagingPage() {
     return matchesCategory && matchesSearch && matchesFavourites
   })
 
+  // Google Search functions - Enhanced with multi-search
+  const searchGooglePlaces = async (query: string) => {
+    if (!query.trim() || query.length < 2) {
+      setGoogleResults([])
+      return
+    }
+
+    setGoogleLoading(true)
+    try {
+      // Define search expansions for common terms
+      const searchExpansions: Record<string, string[]> = {
+        'shopping': ['shopping', 'mall', 'market', 'store', 'boutique', 'center'],
+        'food': ['restaurant', 'cafe', 'food', 'dining', 'kitchen', 'bistro'],
+        'hotel': ['hotel', 'lodging', 'accommodation', 'resort', 'inn'],
+        'activity': ['museum', 'park', 'attraction', 'gallery', 'tour', 'experience'],
+        'restaurant': ['restaurant', 'cafe', 'food', 'dining', 'kitchen', 'bistro']
+      }
+
+      // Check if query matches any expansion keywords
+      const lowerQuery = query.toLowerCase()
+      let searchTerms = [query] // Default: just search the original query
+      
+      for (const [keyword, expansions] of Object.entries(searchExpansions)) {
+        if (lowerQuery.includes(keyword)) {
+          searchTerms = expansions.map(term => `${term} in Istanbul`)
+          break
+        }
+      }
+
+      // If no expansion found but query is generic, expand it
+      if (searchTerms.length === 1 && ['place', 'places'].includes(lowerQuery)) {
+        searchTerms = ['restaurant in Istanbul', 'hotel in Istanbul', 'attraction in Istanbul', 'shopping in Istanbul']
+      }
+
+      console.log(`🔍 Multi-search for "${query}": searching ${searchTerms.length} terms`)
+
+      // Perform all searches in parallel
+      const allResults = await Promise.all(
+        searchTerms.map(async (searchTerm) => {
+          try {
+            const response = await fetch('/api/admin/google-search', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                query: searchTerm,
+                location: "41.0082,28.9784",
+                radius: 50000,
+                types: [
+                  'tourist_attraction', 'restaurant', 'lodging', 'shopping_mall',
+                  // Shopping places
+                  'store', 'clothing_store', 'jewelry_store', 'book_store', 'electronics_store',
+                  'shoe_store', 'furniture_store', 'home_goods_store', 'department_store',
+                  'shopping_center', 'market', 'supermarket',
+                  // Activity places  
+                  'museum', 'art_gallery', 'park', 'zoo', 'aquarium', 'amusement_park',
+                  'church', 'mosque', 'temple', 'synagogue', 'cemetery',
+                  // Service places
+                  'spa', 'beauty_salon', 'gym', 'library', 'movie_theater', 'casino'
+                ]
+              })
+            })
+
+            if (!response.ok) return []
+            const data = await response.json()
+            return data.results || []
+          } catch (error) {
+            console.error(`Search failed for "${searchTerm}":`, error)
+            return []
+          }
+        })
+      )
+
+      // Combine and deduplicate results
+      const combinedResults: any[] = []
+      const seenPlaceIds = new Set<string>()
+
+      allResults.flat().forEach(place => {
+        if (!seenPlaceIds.has(place.place_id)) {
+          seenPlaceIds.add(place.place_id)
+          combinedResults.push(place)
+        }
+      })
+
+      console.log(`✅ Multi-search complete: Found ${combinedResults.length} unique places`)
+      setGoogleResults(combinedResults)
+    } catch (error) {
+      console.error('Google Places multi-search error:', error)
+      setGoogleResults([])
+    } finally {
+      setGoogleLoading(false)
+    }
+  }
+
+  const addToGoogleQueue = (place: any) => {
+    if (!googleQueue.find(p => p.place_id === place.place_id)) {
+      setGoogleQueue(prev => [...prev, place])
+    }
+  }
+
+  const removeFromGoogleQueue = (placeId: string) => {
+    setGoogleQueue(prev => prev.filter(p => p.place_id !== placeId))
+  }
+
+  const isPlaceProcessing = (placeId: string) => {
+    return processingPlaces.has(placeId)
+  }
+
+  const isPlaceInQueue = (placeId: string) => {
+    return googleQueue.some(p => p.place_id === placeId)
+  }
+
+  const addDirectlyToStaging = async (place: any) => {
+    if (isPlaceInQueue(place.place_id) || isPlaceProcessing(place.place_id)) return
+
+    // Add to processing set
+    setProcessingPlaces(prev => new Set(prev).add(place.place_id))
+
+    try {
+      const response = await fetch('/api/admin/google-to-staging', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          places: [place]
+        })
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        // Add to googleQueue to show green checkmark
+        setGoogleQueue(prev => [...prev, place])
+        
+        // Show success message
+        setSuccessMessage(`✅ ${place.name} added to staging with 15 premium images!`)
+        
+        // Refresh staging data to show new items
+        loadStagingData()
+      } else {
+        setError(`❌ Error adding ${place.name}: ${data.error}`)
+      }
+    } catch (error) {
+      console.error('Error adding place to staging:', error)
+      setError(`❌ Failed to add ${place.name} to staging`)
+    } finally {
+      // Remove from processing set
+      setProcessingPlaces(prev => {
+        const newSet = new Set(prev)
+        newSet.delete(place.place_id)
+        return newSet
+      })
+    }
+  }
+
+  const sendGooglePlacesToStaging = async () => {
+    if (googleQueue.length === 0) return
+
+    setGoogleLoading(true)
+    try {
+      const response = await fetch('/api/admin/google-to-staging', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          places: googleQueue
+        })
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        setSuccessMessage(`Successfully added ${data.total_processed} places to staging!`)
+        setGoogleQueue([])
+        setShowGoogleSearch(false)
+        // Refresh staging data to show new items
+        loadStagingData()
+      } else {
+        setError(`Error: ${data.error}`)
+      }
+    } catch (error) {
+      console.error('Error sending to staging:', error)
+      setError('Failed to send places to staging')
+    } finally {
+      setGoogleLoading(false)
+    }
+  }
+
+  const getPlaceTypeDisplay = (types: string[]) => {
+    const typeMap: Record<string, string> = {
+      'tourist_attraction': '🏛️ Attraction',
+      'restaurant': '🍽️ Restaurant', 
+      'lodging': '🏨 Hotel',
+      'shopping_mall': '🛍️ Shopping',
+      'museum': '🏛️ Museum',
+      'park': '🌳 Park',
+      'church': '⛪ Religious',
+      'mosque': '🕌 Mosque'
+    }
+    
+    for (const type of types) {
+      if (typeMap[type]) return typeMap[type]
+    }
+    return '📍 Place'
+  }
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -849,6 +1151,34 @@ export default function StagingPage() {
           )}
         </div>
         <div className="flex gap-2">
+          {/* Google Search Button */}
+          <Button
+            onClick={() => setShowGoogleSearch(true)}
+            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700"
+          >
+            <Search className="h-4 w-4" />
+            Google Search
+          </Button>
+          {/* Publish All Approved Button - Only show when on approved tab */}
+          {filterStatus === 'approved' && stats.approved > 0 && (
+            <Button 
+              onClick={handlePublishAllApproved}
+              disabled={processing.has('bulk-publish')}
+              className="bg-blue-600 hover:bg-blue-700 text-white"
+            >
+              {processing.has('bulk-publish') ? (
+                <>
+                  <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                  Publishing...
+                </>
+              ) : (
+                <>
+                  <Upload className="h-4 w-4 mr-2" />
+                  Publish All Approved ({stats.approved})
+                </>
+              )}
+            </Button>
+          )}
           <Sheet open={jobsSheetOpen} onOpenChange={setJobsSheetOpen}>
             <SheetTrigger asChild>
               <Button variant="outline" onClick={loadRecentJobs}>
@@ -1432,31 +1762,31 @@ export default function StagingPage() {
                           <div className="mb-8">
                             {/* Main Image */}
                             <div className="relative h-96 mb-4 overflow-hidden rounded-lg">
-                              <img
-                                src={selectedItem.primary_image}
-                                alt={selectedItem.title}
+                            <img
+                              src={selectedItem.primary_image}
+                              alt={selectedItem.title}
                                 className="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform duration-300"
                                 onClick={() => {
                                   setLightboxImageIndex(0);
                                   setLightboxOpen(true);
-                                }}
-                                onError={(e) => {
-                                  console.error(`❌ Hero image failed to load:`, selectedItem.primary_image);
-                                  e.currentTarget.style.display = 'none';
-                                  const fallbackDiv = document.createElement('div');
-                                  fallbackDiv.className = 'w-full h-full bg-gray-200 flex items-center justify-center text-gray-500';
-                                  fallbackDiv.textContent = 'Hero image failed';
-                                  e.currentTarget.parentNode?.appendChild(fallbackDiv);
-                                }}
-                                onLoad={() => {
-                                  console.log(`✅ Hero image loaded:`, selectedItem.primary_image);
-                                }}
-                              />
-                              <div className="absolute top-4 right-4">
-                                <Badge className="bg-black bg-opacity-70 text-white text-xs">
-                                  <Camera className="h-3 w-3 mr-1" />
+                              }}
+                              onError={(e) => {
+                                console.error(`❌ Hero image failed to load:`, selectedItem.primary_image);
+                                e.currentTarget.style.display = 'none';
+                                const fallbackDiv = document.createElement('div');
+                                fallbackDiv.className = 'w-full h-full bg-gray-200 flex items-center justify-center text-gray-500';
+                                fallbackDiv.textContent = 'Hero image failed';
+                                e.currentTarget.parentNode?.appendChild(fallbackDiv);
+                              }}
+                              onLoad={() => {
+                                console.log(`✅ Hero image loaded:`, selectedItem.primary_image);
+                              }}
+                            />
+                            <div className="absolute top-4 right-4">
+                              <Badge className="bg-black bg-opacity-70 text-white text-xs">
+                                <Camera className="h-3 w-3 mr-1" />
                                   {selectedItem.images?.length || 0} photos
-                                </Badge>
+                              </Badge>
                               </div>
                               <div className="absolute top-4 left-4">
                                 <button
@@ -1595,12 +1925,12 @@ export default function StagingPage() {
                                           return (
                                             <div className="whitespace-pre-line text-sm leading-relaxed">
                                               {cleanMarkdownForDisplay(formatted)}
-                                            </div>
+                                </div>
                                           )
                                         })()}
                                       </div>
                                     ) : selectedItem.raw_content?.enhanced_description ? (
-                                      <div>
+                                  <div>
                                         <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
                                           <p className="text-sm text-blue-700">
                                             ✅ <strong>Enhanced with AI:</strong> Premium description generated by GPT-4 for luxury travel experience.
@@ -1608,7 +1938,7 @@ export default function StagingPage() {
                                         </div>
                                         <div className="whitespace-pre-line text-sm leading-relaxed">
                                           {cleanMarkdownForDisplay(selectedItem.raw_content.enhanced_description)}
-                                        </div>
+                                    </div>
                                       </div>
                                     ) : selectedItem.raw_content?.description && selectedItem.raw_content.description !== `Experience ${selectedItem.title} in Istanbul, Turkey.` ? (
                                       <div>
@@ -1618,10 +1948,10 @@ export default function StagingPage() {
                                             <p className="text-sm text-green-700">
                                               ✅ <strong>Enhanced with Firecrawl:</strong> Description enriched from official sources.
                                             </p>
-                                          </div>
-                                        )}
-                                      </div>
-                                    ) : (
+                                  </div>
+                                )}
+                                    </div>
+                                  ) : (
                                       <div className="space-y-4">
                                         <div className="p-4 bg-orange-50 border border-orange-200 rounded-lg">
                                           <p className="text-orange-800">
@@ -1684,13 +2014,13 @@ export default function StagingPage() {
                                             <Wand2 className="h-4 w-4 mr-2" />
                                             Generate Premium Description
                                           </Button>
-                                        </div>
+                                      </div>
                                         <p className="text-gray-500 italic">
                                           Basic info: {selectedItem.title} is a {selectedItem.category.slice(0, -1)} located at {selectedItem.raw_content?.address || 'Istanbul, Turkey'}.
                                         </p>
-                                      </div>
-                                    )}
                                   </div>
+                                    )}
+                                </div>
                                 </div>
 
                                 {/* Two Column Cards */}
@@ -1800,14 +2130,14 @@ export default function StagingPage() {
                                               : "Check website for hours"
                                             }
                                           </span>
-                                        </div>
+                                            </div>
                                       </div>
                                     </CardContent>
                                   </Card>
 
                                   {/* Rating Card */}
-                                  <Card>
-                                    <CardContent className="pt-6">
+                                    <Card>
+                                      <CardContent className="pt-6">
                                       <div className="text-center">
                                         <div className="flex items-center justify-center gap-2 mb-2">
                                           <div className="text-4xl">⭐</div>
@@ -1817,13 +2147,13 @@ export default function StagingPage() {
                                         </div>
                                         <p className="text-sm text-gray-600 mb-1">
                                           Based on {selectedItem.raw_content.review_count?.toLocaleString() || "0"} reviews
-                                        </p>
+                                          </p>
                                         <p className="text-sm text-gray-500">
-                                          Excellent rating on booking platforms
+                                            Excellent rating on booking platforms
                                         </p>
-                                      </div>
-                                    </CardContent>
-                                  </Card>
+                                        </div>
+                                      </CardContent>
+                                    </Card>
                                 </div>
                               </div>
                             </div>
@@ -1969,8 +2299,8 @@ export default function StagingPage() {
                                 onClick={() => {
                                   setLightboxImageIndex(index)
                                   setLightboxOpen(true)
-                                }}
-                                onError={(e) => {
+                                  }}
+                                  onError={(e) => {
                                   console.error(`❌ Gallery image ${index + 1} FAILED:`, image);
                                   console.error('Error details:', e);
                                   e.currentTarget.style.display = 'none';
@@ -2004,7 +2334,7 @@ export default function StagingPage() {
                               {image === selectedItem.primary_image && (
                                 <div className="absolute top-2 left-2 bg-blue-500 text-white text-xs px-2 py-1 rounded-full">
                                   Primary
-                                </div>
+                              </div>
                               )}
 
                               {/* Set as Primary Button */}
@@ -2137,9 +2467,44 @@ export default function StagingPage() {
                           </Button>
                         </div>
                         )}
+
+                        {/* Action Buttons - For approved items */}
+                        {filterStatus === 'approved' && selectedItem.status === 'approved' && (
+                        <div className="flex gap-3 pt-4 border-t">
+                          <Button
+                            onClick={handlePublish}
+                            disabled={processing.has(selectedItem.id)}
+                            className="flex-1 bg-blue-600 hover:bg-blue-700"
+                          >
+                            {processing.has(selectedItem.id) ? (
+                              <>
+                                <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                                Publishing...
+                              </>
+                            ) : (
+                              <>
+                                <Upload className="h-4 w-4 mr-2" />
+                                Publish to Production
+                              </>
+                            )}
+                          </Button>
+                          <Button variant="outline" onClick={() => setSelectedItem(null)}>
+                            Close Preview
+                          </Button>
+                        </div>
+                        )}
                         
-                        {/* Close button for non-pending items */}
-                        {filterStatus !== 'pending' && (
+                        {/* Close button for other statuses */}
+                        {filterStatus !== 'pending' && filterStatus !== 'approved' && (
+                          <div className="flex justify-end pt-4 border-t">
+                            <Button variant="outline" onClick={() => setSelectedItem(null)}>
+                              Close Preview
+                            </Button>
+                          </div>
+                        )}
+
+                        {/* Close button for published items */}
+                        {filterStatus === 'approved' && selectedItem.status !== 'approved' && (
                           <div className="flex justify-end pt-4 border-t">
                             <Button variant="outline" onClick={() => setSelectedItem(null)}>
                               Close Preview
@@ -2392,6 +2757,188 @@ export default function StagingPage() {
                 </div>
               </>
             )}
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Google Search Dialog */}
+      <Dialog open={showGoogleSearch} onOpenChange={setShowGoogleSearch}>
+        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Search className="h-5 w-5 text-blue-600" />
+              Google Places Search
+            </DialogTitle>
+            <DialogDescription>
+              Search for places in Istanbul using Google Places API and add them to staging
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-4">
+            {/* Search Section */}
+            <div className="space-y-4">
+              <div>
+                <label className="text-sm font-medium mb-2 block">Search for places</label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    {googleLoading ? (
+                      <Loader2 className="h-4 w-4 text-slate-400 animate-spin" />
+                    ) : (
+                      <Search className="h-4 w-4 text-slate-400" />
+                    )}
+                  </div>
+                  <Input
+                    type="text"
+                    value={googleQuery}
+                    onChange={(e) => {
+                      setGoogleQuery(e.target.value)
+                      searchGooglePlaces(e.target.value)
+                    }}
+                      placeholder="Try: shopping, food, hotel, activity (auto-expands to multiple searches)"
+                    className="pl-10"
+                  />
+                </div>
+              </div>
+
+              {/* Search Results */}
+              {googleQuery.length >= 2 && (
+                <div className="max-h-64 overflow-y-auto border rounded-lg">
+                  {googleResults.length === 0 && !googleLoading ? (
+                    <div className="text-center py-4 text-slate-500">
+                      No places found for "{googleQuery}"
+                    </div>
+                  ) : (
+                    <div className="space-y-1 p-2">
+                      {googleResults.map((place) => (
+                        <div
+                          key={place.place_id}
+                          className="p-3 bg-slate-50 rounded-lg border border-transparent hover:border-blue-200 transition-colors"
+                        >
+                          <div className="flex items-center justify-between">
+                            <div 
+                              className="flex-1 min-w-0 cursor-pointer"
+                              onClick={() => addToGoogleQueue(place)}
+                            >
+                              <h3 className="font-medium text-slate-900 truncate">{place.name}</h3>
+                              <p className="text-sm text-slate-600 truncate">{place.formatted_address}</p>
+                              {place.rating && (
+                                <div className="flex items-center gap-1 mt-1">
+                                  <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                                  <span className="text-xs">{place.rating}</span>
+                                </div>
+                              )}
+                            </div>
+                            <div className="flex items-center gap-2 ml-2">
+                              <span className="text-xs bg-white px-2 py-1 rounded-full text-slate-600 border">
+                                {getPlaceTypeDisplay(place.types)}
+                              </span>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  addDirectlyToStaging(place)
+                                }}
+                                disabled={isPlaceProcessing(place.place_id)}
+                                className={`flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200 ${
+                                  isPlaceProcessing(place.place_id)
+                                    ? 'bg-gray-100 cursor-not-allowed'
+                                    : isPlaceInQueue(place.place_id)
+                                    ? 'bg-green-100 text-green-600 cursor-not-allowed'
+                                    : 'bg-green-500 hover:bg-green-600 text-white hover:scale-110 shadow-lg'
+                                }`}
+                                title={isPlaceInQueue(place.place_id) ? 'Already in queue' : 'Add directly to staging'}
+                              >
+                                {isPlaceProcessing(place.place_id) ? (
+                                  <Loader2 className="h-4 w-4 animate-spin" />
+                                ) : isPlaceInQueue(place.place_id) ? (
+                                  <Check className="h-4 w-4" />
+                                ) : (
+                                  <Plus className="h-4 w-4" />
+                                )}
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              <div className="text-sm text-slate-500 bg-slate-50 rounded-lg p-3">
+                <p className="font-medium mb-1">🚀 Smart Multi-Search Tips:</p>
+                <ul className="space-y-1">
+                  <li>• <strong>"shopping"</strong> → searches: mall, market, store, boutique, center</li>
+                  <li>• <strong>"food"</strong> → searches: restaurant, cafe, dining, kitchen, bistro</li>
+                  <li>• <strong>"hotel"</strong> → searches: hotel, lodging, accommodation, resort, inn</li>
+                  <li>• <strong>"activity"</strong> → searches: museum, park, attraction, gallery, tour</li>
+                  <li>• Or search specific places: "Blue Mosque", "Galata Tower"</li>
+                </ul>
+              </div>
+            </div>
+
+            {/* Queue Section */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <label className="text-sm font-medium">
+                  Search Queue ({googleQueue.length})
+                </label>
+                {googleQueue.length > 0 && (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setGoogleQueue([])}
+                  >
+                    Clear All
+                  </Button>
+                )}
+              </div>
+
+              {googleQueue.length > 0 ? (
+                <div className="space-y-2 max-h-64 overflow-y-auto border rounded-lg p-2">
+                  {googleQueue.map((place) => (
+                    <div key={place.place_id} className="flex items-center justify-between p-2 bg-green-50 border border-green-200 rounded-lg">
+                      <div className="flex-1 min-w-0">
+                        <h4 className="text-sm font-medium text-slate-900 truncate">{place.name}</h4>
+                        <p className="text-xs text-slate-600 truncate">{place.formatted_address}</p>
+                      </div>
+                      <button
+                        onClick={() => removeFromGoogleQueue(place.place_id)}
+                        className="ml-2 p-1 text-red-500 hover:bg-red-100 rounded"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8 text-slate-500 border rounded-lg">
+                  <Plus className="h-8 w-8 mx-auto mb-2 text-slate-300" />
+                  <p>No places in queue</p>
+                  <p className="text-xs">Search and click on results to add them</p>
+                </div>
+              )}
+
+              {/* Add to Staging Button */}
+              {googleQueue.length > 0 && (
+                <Button 
+                  onClick={sendGooglePlacesToStaging}
+                  disabled={googleLoading}
+                  className="w-full bg-green-600 hover:bg-green-700"
+                >
+                  {googleLoading ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                      Processing...
+                    </>
+                  ) : (
+                    <>
+                      <Plus className="h-4 w-4 mr-2" />
+                      Add {googleQueue.length} Places to Staging
+                    </>
+                  )}
+                </Button>
+              )}
+            </div>
           </div>
         </DialogContent>
       </Dialog>

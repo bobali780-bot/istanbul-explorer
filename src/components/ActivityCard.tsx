@@ -14,8 +14,13 @@ interface ActivityCardProps {
 export default function ActivityCard({ activity, index }: ActivityCardProps) {
   const firstImage = activity.activity_images?.[0]
 
-  // Standardize price display
-  const getPriceDisplay = (priceRange?: string) => {
+  // Standardize price display - show "From £X" if available, otherwise fallback
+  const getPriceDisplay = () => {
+    if (activity.price_from) {
+      return `From £${activity.price_from.toFixed(0)}`
+    }
+
+    const priceRange = activity.price_range
     if (!priceRange || priceRange.toLowerCase() === 'free') return 'Free'
     if (priceRange === '$$') return 'Moderate'
 
@@ -91,7 +96,7 @@ export default function ActivityCard({ activity, index }: ActivityCardProps) {
 
             <div className="flex items-center justify-between">
               <Badge variant="outline" className="font-semibold px-3 py-1 text-sm">
-                {getPriceDisplay(activity.price_range)}
+                {getPriceDisplay()}
               </Badge>
               {activity.review_count && (
                 <span className="text-xs text-gray-500">

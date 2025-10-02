@@ -18,6 +18,7 @@
     "automation:all": "npm run automation:content activity && npm run automation:content restaurant && npm run automation:content hotel && npm run automation:content shopping_venue && npm run automation:rankings && npm run automation:recommendations"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.65.0",
     "@mendable/firecrawl-js": "^4.3.5",
     "@radix-ui/react-avatar": "^1.1.10",
     "@radix-ui/react-dialog": "^1.1.15",
@@ -40,7 +41,7 @@
     "mapbox-gl": "^3.15.0",
     "next": "^15.0.0",
     "node-fetch": "^3.3.2",
-    "openai": "^5.23.0",
+    "openai": "^5.23.2",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-map-gl": "^8.0.4",

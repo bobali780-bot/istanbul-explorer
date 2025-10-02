@@ -1,127 +1,140 @@
-"use client"
+'use client'
 
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { 
-  MapPin, 
-  Star, 
-  Filter, 
-  Search,
-  Utensils,
-  Coffee,
-  Wine,
-  Clock,
-  Users,
-  ArrowLeft,
-  ArrowRight,
-  Heart,
-  Share2,
-  Bookmark,
-  Phone,
-  Globe,
-  Navigation
-} from "lucide-react"
-import InteractiveMap from "@/components/InteractiveMap"
-import AffiliateButton from "@/components/AffiliateButton"
-import AdSenseBanner from "@/components/AdSenseBanner"
-import { useRestaurants } from "@/hooks/useScrapedData"
+import { useEffect, useState, useRef } from 'react'
+import { CategoryHero } from '@/components/CategoryHero'
+import { FilterBar } from '@/components/FilterBar'
+import { CategoryTile } from '@/components/CategoryTile'
+import { EditorPickTile } from '@/components/EditorPickTile'
+import { ActivitiesMap } from '@/components/ActivitiesMap'
+import { ChevronDown, ChevronUp, Filter, X, ArrowLeft, ArrowRight } from 'lucide-react'
+
+// Types for our data structure (same as activities page)
+interface Activity {
+  id: string
+  title: string
+  description: string
+  rating: number
+  reviewCount: number
+  location: string
+  neighborhood?: string
+  price?: string
+  duration?: string
+  category: string
+  slug: string
+  isEditorPick?: boolean
+  heroImage?: string
+  whyVisit?: string
+}
+
+interface CategoryData {
+  category: string
+  activities: Activity[]
+  heroData: {
+    title: string
+    subheading: string
+    heroImage: string
+    averageRating: number
+    topNeighborhoods: string[]
+    isTrending: boolean
+    activityCount: number
+  } | null
+  filters: {
+    neighborhoods: Array<{ value: string; label: string; count: number }>
+    priceRanges: Array<{ value: string; label: string; count: number }>
+    vibes: Array<{ value: string; label: string; count: number }>
+    durations: Array<{ value: string; label: string; count: number }>
+    amenities: Array<{ value: string; label: string; count: number }>
+  } | null
+  editorsPicks: Activity[]
+  totalCount: number
+}
 
 export default function FoodDrinkPage() {
-  // Use scraped data from Firecrawl (only on client side)
-  const { restaurants: scrapedRestaurants, loading, error } = useRestaurants()
-  
-  // Static data for build time
-  const staticFoodLocations = [
-    {
-      id: "balikci-sabahattin",
-      name: "Balıkçı Sabahattin",
-      description: "Renowned seafood restaurant in Sultanahmet serving the freshest fish and traditional Turkish mezes. Famous for its grilled sea bass and authentic Ottoman atmosphere in a historic setting.",
-      coordinates: [28.9780, 41.0085] as [number, number],
-      category: "food" as const,
-      price: "$$$",
-      rating: 4.5,
-      ctaText: "Reserve Table",
-      ctaLink: "https://www.tripadvisor.com/Restaurants-g293974-Istanbul.html"
-    },
-    {
-      id: "sultanahmet-koftecisi",
-      name: "Sultanahmet Köftecisi",
-      description: "Historic restaurant serving authentic Turkish meatballs (köfte) since 1920. Located near the Blue Mosque, it's famous for its traditional recipes and quick, delicious meals.",
-      coordinates: [28.9769, 41.0057] as [number, number],
-      category: "food" as const,
-      price: "$$",
-      rating: 4.3,
-      ctaText: "Order Now",
-      ctaLink: "https://www.tripadvisor.com/Restaurants-g293974-zfg16556-Istanbul.html"
-    },
-    {
-      id: "deraliye-ottoman-cuisine",
-      name: "Deraliye Ottoman Palace Cuisine",
-      description: "Experience authentic Ottoman-era recipes in an elegant setting near Topkapi Palace. Features traditional dishes like lamb stew, stuffed vegetables, and imperial desserts.",
-      coordinates: [28.9784, 41.0082] as [number, number],
-      category: "food" as const,
-      price: "$$$$",
-      rating: 4.6,
-      ctaText: "Reserve Table",
-      ctaLink: "https://www.tripadvisor.com/Restaurants-g293974-zfp43-Istanbul.html"
-    },
-    {
-      id: "karakoy-lokantasi",
-      name: "Karaköy Lokantası",
-      description: "Modern Turkish restaurant in trendy Karaköy district offering contemporary takes on traditional dishes. Known for its fresh ingredients, creative presentations, and vibrant atmosphere.",
-      coordinates: [28.9744, 41.0256] as [number, number],
-      category: "food" as const,
-      price: "$$$",
-      rating: 4.4,
-      ctaText: "Reserve Table",
-      ctaLink: "https://www.tripadvisor.com/Restaurants-g293974-zfp10955-Istanbul.html"
-    },
-    {
-      id: "cafe-privet",
-      name: "Café Privet",
-      description: "Charming café in Galata offering excellent Turkish coffee, homemade pastries, and light meals. Perfect for breakfast or afternoon tea with a cozy, European-style ambiance.",
-      coordinates: [28.9744, 41.0256] as [number, number],
-      category: "food" as const,
-      price: "$$",
-      rating: 4.2,
-      ctaText: "Visit Location",
-      ctaLink: "https://www.tripadvisor.com/Restaurants-g293974-zfp58-Istanbul.html"
-    },
-    {
-      id: "mikla-restaurant",
-      name: "Mikla Restaurant",
-      description: "Award-winning rooftop restaurant offering modern Turkish cuisine with panoramic city views. Chef Mehmet Gürs creates innovative dishes using local ingredients and traditional techniques.",
-      coordinates: [28.9846, 41.0340] as [number, number],
-      category: "food" as const,
-      price: "$$$$",
-      rating: 4.7,
-      ctaText: "Reserve Table",
-      ctaLink: "https://www.tripadvisor.com/Restaurants-g293974-oa180-Istanbul.html"
+  const [data, setData] = useState<CategoryData | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [favorites, setFavorites] = useState<Set<string>>(new Set())
+  const [selectedFilters, setSelectedFilters] = useState<Record<string, string[]>>({})
+  const [isExpanded, setIsExpanded] = useState(false)
+  const [showFilters, setShowFilters] = useState(false)
+  const scrollRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await fetch('/api/categories/food-drink')
+
+        if (!response.ok) {
+          throw new Error(`Failed to load food & drink: ${response.status}`)
+        }
+
+        const result = await response.json()
+        setData(result)
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to load food & drink')
+      } finally {
+        setLoading(false)
+      }
     }
-  ]
 
-  // Use static data during build, scraped data at runtime
-  const foodLocations = scrapedRestaurants.length > 0
-    ? scrapedRestaurants.map((item, index) => ({
-        id: `restaurant-${index}`,
-        name: item.name,
-        description: item.description,
-        coordinates: item.coordinates || [28.9784, 41.0082] as [number, number],
-        category: "food" as const,
-        price: item.price || "$$",
-        rating: item.rating || 4.0,
-        ctaText: "Reserve Table",
-        ctaLink: item.url
-      }))
-    : staticFoodLocations
+    fetchData()
+  }, [])
 
-  // Log scraping results
-  if (scrapedRestaurants.length > 0) {
-    console.log(`✅ Scraped ${scrapedRestaurants.length} restaurants from TripAdvisor`)
+  const handleFavoriteToggle = (id: string) => {
+    setFavorites(prev => {
+      const newFavorites = new Set(prev)
+      if (newFavorites.has(id)) {
+        newFavorites.delete(id)
+      } else {
+        newFavorites.add(id)
+      }
+      return newFavorites
+    })
+  }
+
+  const handleFilterChange = (filterType: string, values: string[]) => {
+    setSelectedFilters(prev => ({
+      ...prev,
+      [filterType]: values
+    }))
+  }
+
+  const handleHandpickedToggle = (enabled: boolean) => {
+    setSelectedFilters(prev => ({
+      ...prev,
+      handpicked: enabled ? ['only'] : []
+    }))
+  }
+
+  const handleToggleExpanded = () => {
+    const newExpanded = !isExpanded
+    setIsExpanded(newExpanded)
+    
+    // Show/hide filters simultaneously with expansion
+    if (newExpanded) {
+      setShowFilters(true) // Show immediately for simultaneous animation
+    } else {
+      setShowFilters(false)
+      // Auto-scroll to the section when collapsing
+      setTimeout(() => {
+        const section = document.getElementById('all-food-drink-section')
+        if (section) {
+          section.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        }
+      }, 100)
+    }
+  }
+
+  const scrollLeft = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollBy({ left: -400, behavior: 'smooth' })
+    }
+  }
+
+  const scrollRight = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollBy({ left: 400, behavior: 'smooth' })
+    }
   }
 
   if (loading) {
@@ -129,633 +142,292 @@ export default function FoodDrinkPage() {
       <div className="min-h-screen bg-gray-50">
         <div className="container mx-auto px-4 py-8">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600 mx-auto mb-4"></div>
-            <p className="text-gray-600">Loading restaurant data...</p>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
+            <p className="text-gray-600">Loading food & drink...</p>
           </div>
         </div>
       </div>
     )
   }
 
-  if (error) {
-    console.error('❌ Error loading restaurant data:', error)
+  if (error || !data) {
+  return (
+      <div className="min-h-screen bg-gray-50">
+        <div className="container mx-auto px-4 py-8">
+          <div className="text-center">
+            <div className="text-6xl mb-4">🍽️</div>
+            <h3 className="text-2xl font-serif font-bold text-slate-900 mb-2">
+              Unable to load food & drink
+            </h3>
+            <p className="text-slate-600">
+              {error || 'Something went wrong while loading the food & drink.'}
+          </p>
+        </div>
+        </div>
+      </div>
+    )
   }
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Hero Banner */}
-      <section className="relative h-96 flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-orange-900/80 to-red-900/80">
-          <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1555939594-58d7cb561ad1?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80')] bg-cover bg-center bg-no-repeat"></div>
-        </div>
-        
-        <div className="relative z-10 text-center text-white px-4 max-w-4xl mx-auto">
-          <h1 className="text-4xl md:text-6xl font-bold mb-6">
-            Best Places to Eat in Istanbul
-          </h1>
-          <p className="text-xl md:text-2xl text-gray-200 max-w-2xl mx-auto">
-            Discover Istanbul&apos;s rich food culture from street vendors to fine dining
-          </p>
-        </div>
-      </section>
+    <div className="min-h-screen">
+      {/* Category Hero */}
+      {data.heroData && (
+        <CategoryHero
+          title={data.heroData.title}
+          subheading={data.heroData.subheading}
+          heroImage={data.heroData.heroImage}
+          averageRating={data.heroData.averageRating}
+          topNeighborhoods={data.heroData.topNeighborhoods}
+          isTrending={data.heroData.isTrending}
+          activityCount={data.heroData.activityCount}
+        />
+      )}
 
-      {/* Navigation */}
-      <div className="bg-gray-50 py-4">
-        <div className="container mx-auto px-4">
-          <Link href="/" className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700">
-            <ArrowLeft className="w-4 h-4" />
-            Back to Home
-          </Link>
-        </div>
-      </div>
+      {/* Filter Bar */}
+      {data.filters && (
+        <FilterBar
+          filters={data.filters}
+          selectedFilters={selectedFilters}
+          onFilterChange={handleFilterChange}
+          showHandpickedOnly={true}
+          onHandpickedToggle={handleHandpickedToggle}
+        />
+      )}
 
-      {/* Intro Text */}
-      <section className="py-12 bg-white">
-        <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-3xl font-bold mb-6 text-gray-900">
-              A Culinary Journey Through Istanbul
-            </h2>
-            <p className="text-lg text-gray-600 leading-relaxed">
-              From sizzling kebabs in historic markets to innovative fusion cuisine in trendy neighborhoods, 
-              Istanbul&apos;s dining scene is as diverse as its culture. Experience authentic Turkish flavors, 
-              fresh Mediterranean ingredients, and world-class hospitality in settings that range from 
-              centuries-old caravanserais to modern rooftop terraces with Bosphorus views.
-            </p>
+      {/* Editor's Picks Section - Homepage Style */}
+      {data.editorsPicks && data.editorsPicks.length > 0 && (
+        <section aria-labelledby="editors-picks" className="relative mx-auto max-w-[100vw] py-16 overflow-visible" style={{ backgroundColor: 'white' }}>
+          <div className="mx-auto max-w-6xl px-5" style={{ backgroundColor: 'white' }}>
+            {/* Centered header */}
+            <div className="mb-6 text-center">
+              <h2 id="editors-picks" className="text-2xl font-extrabold tracking-tight sm:text-3xl">Editor&apos;s Picks</h2>
+              <p className="text-slate-600">Handpicked restaurants and dining experiences in Istanbul</p>
+            </div>
           </div>
-        </div>
-      </section>
 
-      {/* Filters & Sorting */}
-      <section className="py-8 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
-            <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
-              <Select>
-                <SelectTrigger className="w-full sm:w-48">
-                  <SelectValue placeholder="Cuisine Type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Cuisines</SelectItem>
-                  <SelectItem value="turkish">Turkish</SelectItem>
-                  <SelectItem value="mediterranean">Mediterranean</SelectItem>
-                  <SelectItem value="street-food">Street Food</SelectItem>
-                  <SelectItem value="fine-dining">Fine Dining</SelectItem>
-                  <SelectItem value="cafe">Café</SelectItem>
-                  <SelectItem value="seafood">Seafood</SelectItem>
-                  <SelectItem value="bakery">Bakery</SelectItem>
-                </SelectContent>
-              </Select>
-              
-              <Select>
-                <SelectTrigger className="w-full sm:w-48">
-                  <SelectValue placeholder="Price Range" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Prices</SelectItem>
-                  <SelectItem value="budget">$ - Budget</SelectItem>
-                  <SelectItem value="moderate">$$ - Moderate</SelectItem>
-                  <SelectItem value="expensive">$$$ - Expensive</SelectItem>
-                  <SelectItem value="luxury">$$$$ - Luxury</SelectItem>
-                </SelectContent>
-              </Select>
-              
-              <Select>
-                <SelectTrigger className="w-full sm:w-48">
-                  <SelectValue placeholder="Neighborhood" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Areas</SelectItem>
-                  <SelectItem value="sultanahmet">Sultanahmet</SelectItem>
-                  <SelectItem value="taksim">Taksim</SelectItem>
-                  <SelectItem value="kadikoy">Kadıköy</SelectItem>
-                  <SelectItem value="beyoglu">Beyoğlu</SelectItem>
-                  <SelectItem value="besiktas">Beşiktaş</SelectItem>
-                  <SelectItem value="karakoy">Karaköy</SelectItem>
-                </SelectContent>
-              </Select>
+          {/* Horizontal scroller with hover arrows */}
+          <div ref={scrollRef} className="no-scrollbar group mx-auto max-w-[100vw] overflow-x-auto px-5 pt-2 pb-8" style={{ backgroundColor: 'white', overflowY: 'visible' }}>
+            <div className="flex snap-x snap-mandatory py-2" style={{ backgroundColor: 'white' }}>
+              {data.editorsPicks.map((restaurant, index) => {
+                // Cycle through colors: blue, green, red, yellow
+                const colors = ['blue', 'green', 'red', 'yellow'] as const
+                const colorVariant = colors[index % colors.length]
+                
+                return (
+                  <div key={restaurant.id} className="flex-shrink-0 snap-start" style={{ paddingRight: index === data.editorsPicks.length - 1 ? '0' : '24px', backgroundColor: 'white' }}>
+                    <EditorPickTile
+                      {...restaurant}
+                      isFavorite={favorites.has(restaurant.id)}
+                      onToggleFavorite={handleFavoriteToggle}
+                      colorVariant={colorVariant}
+                    />
+                  </div>
+                )
+              })}
             </div>
             
-            <div className="flex gap-2">
-              <Select>
-                <SelectTrigger className="w-48">
-                  <SelectValue placeholder="Sort by" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="popular">Most Popular</SelectItem>
-                  <SelectItem value="rating">Highest Rated</SelectItem>
-                  <SelectItem value="hidden-gems">Hidden Gems</SelectItem>
-                  <SelectItem value="price-low">Price: Low to High</SelectItem>
-                  <SelectItem value="price-high">Price: High to Low</SelectItem>
-                </SelectContent>
-              </Select>
+            {/* Clickable arrows */}
+            <button 
+              onClick={scrollLeft}
+              className="absolute left-0 top-1/2 -translate-y-1/2 opacity-0 transition-opacity duration-300 group-hover:opacity-100 hover:opacity-100 focus:opacity-100 focus:outline-none"
+              aria-label="Scroll left"
+            >
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/90 shadow-lg backdrop-blur-sm hover:bg-white transition-colors">
+                <ArrowLeft className="h-6 w-6 text-slate-700" />
+              </div>
+            </button>
+            <button 
+              onClick={scrollRight}
+              className="absolute right-0 top-1/2 -translate-y-1/2 opacity-0 transition-opacity duration-300 group-hover:opacity-100 hover:opacity-100 focus:opacity-100 focus:outline-none"
+              aria-label="Scroll right"
+            >
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/90 shadow-lg backdrop-blur-sm hover:bg-white transition-colors">
+                <ArrowRight className="h-6 w-6 text-slate-700" />
+              </div>
+            </button>
+          </div>
+        </section>
+      )}
+
+      {/* All Food & Drink Section - With Filter Sidebar */}
+      <section id="all-food-drink-section" className="py-16 px-6 bg-gradient-to-b from-white to-slate-50">
+        <div className="mx-auto max-w-7xl">
+          <div className="relative bg-white/60 backdrop-blur-xl rounded-3xl p-8 shadow-xl border border-white/20">
+            {/* Gradient Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-b from-white/5 to-white/8 rounded-3xl"></div>
+            
+            {/* Content */}
+            <div className="relative z-10">
+              {/* Section Header */}
+              <div className="text-center mb-8">
+                <h2 className="text-3xl md:text-4xl font-extrabold leading-tight tracking-tight text-slate-900 mb-4">
+                  All Food & Drink
+                </h2>
+                <p className="text-base font-medium text-slate-600 max-w-2xl mx-auto">
+                  Discover {data.totalCount || 0} carefully curated dining experiences in Istanbul
+                </p>
+              </div>
+
+              {/* Main Content with Filter Sidebar */}
+              <div className="flex gap-8">
+                {/* Filter Sidebar */}
+                <div className={`transition-all duration-700 ease-out ${showFilters && isExpanded ? 'w-80 opacity-100 translate-x-0' : 'w-0 opacity-0 -translate-x-full overflow-hidden'}`}>
+                  {showFilters && isExpanded && (
+                    <div className="sticky top-8 bg-white/80 backdrop-blur-xl rounded-2xl p-6 border border-white/30 shadow-lg">
+                      <div className="flex items-center justify-between mb-6">
+                        <h3 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
+                          <Filter className="h-5 w-5" />
+                          Filters
+                        </h3>
+                        <button
+                          onClick={() => setShowFilters(false)}
+                          className="p-1 hover:bg-slate-100 rounded-full transition-colors"
+                        >
+                          <X className="h-4 w-4 text-slate-500" />
+                        </button>
+                      </div>
+
+                      <div className="space-y-6">
+                        {/* Neighborhoods */}
+                        <div>
+                          <h4 className="font-semibold text-slate-900 mb-3">Neighborhoods</h4>
+                          <div className="space-y-2">
+                            {data.filters?.neighborhoods.slice(0, 5).map((neighborhood, idx) => (
+                              <label key={idx} className="flex items-center gap-2 text-sm">
+                                <input type="checkbox" className="rounded" />
+                                <span>{neighborhood.label}</span>
+                              </label>
+                            ))}
+                          </div>
+                        </div>
+                        
+                        {/* Price Range */}
+                        <div>
+                          <h4 className="font-semibold text-slate-900 mb-3">Price Range</h4>
+                          <div className="space-y-2">
+                            {data.filters?.priceRanges.slice(0, 4).map((price, idx) => (
+                              <label key={idx} className="flex items-center gap-2 text-sm">
+                                <input type="checkbox" className="rounded" />
+                                <span>{price.label}</span>
+                              </label>
+                            ))}
+                          </div>
+                        </div>
+                        
+                        {/* Amenities */}
+                        <div>
+                          <h4 className="font-semibold text-slate-900 mb-3">Amenities</h4>
+                          <div className="space-y-2">
+                            {data.filters?.amenities.slice(0, 4).map((amenity, idx) => (
+                              <label key={idx} className="flex items-center gap-2 text-sm">
+                                <input type="checkbox" className="rounded" />
+                                <span>{amenity.label}</span>
+                              </label>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Grid Container with Animation */}
+                <div className={`flex-1 transition-all duration-700 ease-out ${showFilters && isExpanded ? 'translate-x-8' : 'translate-x-0'}`}>
+                  {data.activities && data.activities.length > 0 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8 min-h-[600px]">
+                      {/* Show restaurants based on expansion state */}
+                      {data.activities.slice(0, isExpanded ? data.activities.length : 6).map((restaurant, index) => (
+                        <div
+                          key={restaurant.id}
+                          className="animate-fade-up"
+                          style={{
+                            animationDelay: `${index * 120}ms`,
+                            animationFillMode: 'both'
+                          }}
+                        >
+                          <CategoryTile
+                            {...restaurant}
+                            isFavorite={favorites.has(restaurant.id)}
+                            onToggleFavorite={handleFavoriteToggle}
+                          />
+                        </div>
+                      ))}
+                      
+                      {/* Empty placeholder tiles to maintain 6-tile grid layout */}
+                      {!isExpanded && data.activities.length < 6 && 
+                        Array.from({ length: 6 - data.activities.length }).map((_, index) => (
+                          <div
+                            key={`placeholder-${index}`}
+                            className="invisible animate-fade-up"
+                            style={{
+                              animationDelay: `${(data.activities.length + index) * 120}ms`,
+                              animationFillMode: 'both'
+                            }}
+                          >
+                            <div className="h-[500px] rounded-2xl bg-transparent"></div>
+                          </div>
+                        ))
+                      }
+                    </div>
+                  ) : (
+                    <div className="text-center py-16">
+                      <div className="text-6xl mb-4">🍽️</div>
+                      <h3 className="text-2xl font-serif font-bold text-slate-900 mb-2">
+                        No restaurants found
+                      </h3>
+                      <p className="text-slate-600">
+                        We&apos;re working on adding more amazing dining experiences to Istanbul.
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Toggle Button */}
+                  {data.activities && data.activities.length > 6 && (
+                    <div className="text-center">
+                      <button 
+                        onClick={handleToggleExpanded}
+                        className="group px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 flex items-center gap-2 mx-auto"
+                      >
+                        {isExpanded ? 'Show Less' : 'See All Food & Drink'}
+                        <div className={`transition-transform duration-300 ${isExpanded ? 'rotate-180' : 'rotate-0'}`}>
+                          {isExpanded ? (
+                            <ChevronUp className="w-5 h-5" />
+                          ) : (
+                            <ChevronDown className="w-5 h-5" />
+                          )}
+                        </div>
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Editor's Choice Section */}
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">
-            Editor&apos;s Choice
-          </h2>
-          <div className="grid md:grid-cols-3 gap-8">
-            {/* Featured Restaurant 1 */}
-            <Card className="group hover:shadow-2xl transition-all duration-300 border-0 shadow-lg">
-              <div className="relative overflow-hidden rounded-t-lg">
-                <div className="h-64 bg-gradient-to-br from-orange-600 to-red-700 flex items-center justify-center">
-                  <Utensils className="w-20 h-20 text-white" />
-                </div>
-                <Badge className="absolute top-4 left-4 bg-yellow-500 text-black">Editor&apos;s Pick</Badge>
-                <div className="absolute top-4 right-4 flex gap-2">
-                  <Button size="sm" variant="ghost" className="bg-white/20 hover:bg-white/30 text-white">
-                    <Heart className="w-4 h-4" />
-                  </Button>
-                  <Button size="sm" variant="ghost" className="bg-white/20 hover:bg-white/30 text-white">
-                    <Share2 className="w-4 h-4" />
-                  </Button>
-                </div>
-              </div>
-              <CardContent className="p-6">
-                <div className="flex items-center gap-2 mb-2">
-                  <Badge variant="outline">Fine Dining</Badge>
-                  <Badge variant="outline">Sultanahmet</Badge>
-                </div>
-                <h3 className="text-xl font-bold mb-2">Asitane Restaurant</h3>
-                <p className="text-gray-600 mb-4">
-                  Historic Ottoman cuisine in a 15th-century caravanserai. 
-                  Experience authentic recipes from the palace kitchens with modern presentation.
-                </p>
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-1">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                    ))}
-                    <span className="text-sm text-gray-600 ml-2">4.9 (1,234)</span>
-                  </div>
-                  <Badge variant="outline">$$$$</Badge>
-                </div>
-                <div className="flex gap-2">
-                  <Button variant="outline" className="flex-1">
-                    <MapPin className="w-4 h-4 mr-2" />
-                    View on Map
-                  </Button>
-                  <AffiliateButton 
-                    href={foodLocations[0].ctaLink}
-                    affiliateType="tripadvisor"
-                    trackingId="food-balikci-sabahattin"
-                    locationName={foodLocations[0].name}
-                    className="flex-1 bg-orange-600 hover:bg-orange-700"
-                  >
-                    {foodLocations[0].ctaText}
-                  </AffiliateButton>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Featured Restaurant 2 */}
-            <Card className="group hover:shadow-2xl transition-all duration-300 border-0 shadow-lg">
-              <div className="relative overflow-hidden rounded-t-lg">
-                <div className="h-64 bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center">
-                  <Coffee className="w-20 h-20 text-white" />
-                </div>
-                <Badge className="absolute top-4 left-4 bg-yellow-500 text-black">Editor&apos;s Pick</Badge>
-                <div className="absolute top-4 right-4 flex gap-2">
-                  <Button size="sm" variant="ghost" className="bg-white/20 hover:bg-white/30 text-white">
-                    <Heart className="w-4 h-4" />
-                  </Button>
-                  <Button size="sm" variant="ghost" className="bg-white/20 hover:bg-white/30 text-white">
-                    <Share2 className="w-4 h-4" />
-                  </Button>
-                </div>
-              </div>
-              <CardContent className="p-6">
-                <div className="flex items-center gap-2 mb-2">
-                  <Badge variant="outline">Café</Badge>
-                  <Badge variant="outline">Karaköy</Badge>
-                </div>
-                <h3 className="text-xl font-bold mb-2">Karabatak Coffee</h3>
-                <p className="text-gray-600 mb-4">
-                  Artisanal coffee roastery in a converted warehouse. 
-                  Single-origin beans, expert baristas, and the perfect Turkish coffee experience.
-                </p>
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-1">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                    ))}
-                    <span className="text-sm text-gray-600 ml-2">4.8 (856)</span>
-                  </div>
-                  <Badge variant="outline">$$</Badge>
-                </div>
-                <div className="flex gap-2">
-                  <Button variant="outline" className="flex-1">
-                    <MapPin className="w-4 h-4 mr-2" />
-                    View on Map
-                  </Button>
-                  <Button className="flex-1 bg-amber-600 hover:bg-amber-700">
-                    Order Takeout
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Featured Restaurant 3 */}
-            <Card className="group hover:shadow-2xl transition-all duration-300 border-0 shadow-lg">
-              <div className="relative overflow-hidden rounded-t-lg">
-                <div className="h-64 bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center">
-                  <Wine className="w-20 h-20 text-white" />
-                </div>
-                <Badge className="absolute top-4 left-4 bg-yellow-500 text-black">Editor&apos;s Pick</Badge>
-                <div className="absolute top-4 right-4 flex gap-2">
-                  <Button size="sm" variant="ghost" className="bg-white/20 hover:bg-white/30 text-white">
-                    <Heart className="w-4 h-4" />
-                  </Button>
-                  <Button size="sm" variant="ghost" className="bg-white/20 hover:bg-white/30 text-white">
-                    <Share2 className="w-4 h-4" />
-                  </Button>
-                </div>
-              </div>
-              <CardContent className="p-6">
-                <div className="flex items-center gap-2 mb-2">
-                  <Badge variant="outline">Mediterranean</Badge>
-                  <Badge variant="outline">Beyoğlu</Badge>
-                </div>
-                <h3 className="text-xl font-bold mb-2">360 Istanbul</h3>
-                <p className="text-gray-600 mb-4">
-                  Rooftop dining with panoramic Bosphorus views. 
-                  Modern Mediterranean cuisine, extensive wine list, and unforgettable sunsets.
-                </p>
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-1">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                    ))}
-                    <span className="text-sm text-gray-600 ml-2">4.7 (2,134)</span>
-                  </div>
-                  <Badge variant="outline">$$$$</Badge>
-                </div>
-                <div className="flex gap-2">
-                  <Button variant="outline" className="flex-1">
-                    <MapPin className="w-4 h-4 mr-2" />
-                    View on Map
-                  </Button>
-                  <AffiliateButton 
-                    href={foodLocations[1].ctaLink}
-                    affiliateType="tripadvisor"
-                    trackingId="food-sultanahmet-koftecisi"
-                    locationName={foodLocations[1].name}
-                    className="flex-1 bg-green-600 hover:bg-green-700"
-                  >
-                    {foodLocations[1].ctaText}
-                  </AffiliateButton>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* Curated Grid */}
-      <section className="py-16 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">
-            All Restaurants & Cafés
-          </h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {/* Restaurant Card 1 */}
-            <Card className="group hover:shadow-2xl transition-all duration-300 border-0 shadow-lg">
-              <div className="relative overflow-hidden rounded-t-lg">
-                <div className="h-48 bg-gradient-to-br from-red-500 to-pink-600 flex items-center justify-center">
-                  <Utensils className="w-16 h-16 text-white" />
-                </div>
-                <div className="absolute top-4 right-4">
-                  <Button size="sm" variant="ghost" className="bg-white/20 hover:bg-white/30 text-white">
-                    <Bookmark className="w-4 h-4" />
-                  </Button>
-                </div>
-              </div>
-              <CardContent className="p-6">
-                <div className="flex items-center gap-2 mb-2">
-                  <Badge variant="outline">Turkish</Badge>
-                  <Badge variant="outline">Taksim</Badge>
-                </div>
-                <h3 className="text-lg font-bold mb-2">Çiya Sofrası</h3>
-                <p className="text-gray-600 mb-4 text-sm">
-                  Authentic Anatolian cuisine with recipes from different regions. 
-                  Fresh ingredients and traditional cooking methods in a cozy setting.
-                </p>
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-1">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                    ))}
-                    <span className="text-sm text-gray-600 ml-2">4.8 (1,456)</span>
-                  </div>
-                  <Badge variant="outline">$$</Badge>
-                </div>
-                <div className="flex gap-2">
-                  <Button variant="outline" size="sm" className="flex-1">
-                    <MapPin className="w-4 h-4 mr-1" />
-                    Map
-                  </Button>
-                  <AffiliateButton 
-                    href={foodLocations[2].ctaLink}
-                    affiliateType="tripadvisor"
-                    trackingId="food-deraliye-ottoman"
-                    locationName={foodLocations[2].name}
-                    size="sm"
-                    className="flex-1 bg-red-600 hover:bg-red-700"
-                  >
-                    {foodLocations[2].ctaText}
-                  </AffiliateButton>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Restaurant Card 2 */}
-            <Card className="group hover:shadow-2xl transition-all duration-300 border-0 shadow-lg">
-              <div className="relative overflow-hidden rounded-t-lg">
-                <div className="h-48 bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
-                  <Navigation className="w-16 h-16 text-white" />
-                </div>
-                <div className="absolute top-4 right-4">
-                  <Button size="sm" variant="ghost" className="bg-white/20 hover:bg-white/30 text-white">
-                    <Bookmark className="w-4 h-4" />
-                  </Button>
-                </div>
-              </div>
-              <CardContent className="p-6">
-                <div className="flex items-center gap-2 mb-2">
-                  <Badge variant="outline">Street Food</Badge>
-                  <Badge variant="outline">Kadıköy</Badge>
-                </div>
-                <h3 className="text-lg font-bold mb-2">Kadıköy Fish Market</h3>
-                <p className="text-gray-600 mb-4 text-sm">
-                  Fresh seafood and traditional fish restaurants. 
-                  Choose your fish and have it cooked to perfection with local spices.
-                </p>
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-1">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                    ))}
-                    <span className="text-sm text-gray-600 ml-2">4.6 (892)</span>
-                  </div>
-                  <Badge variant="outline">$$</Badge>
-                </div>
-                <div className="flex gap-2">
-                  <Button variant="outline" size="sm" className="flex-1">
-                    <MapPin className="w-4 h-4 mr-1" />
-                    Map
-                  </Button>
-                  <Button size="sm" className="flex-1 bg-blue-600 hover:bg-blue-700">
-                    Order Takeout
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Restaurant Card 3 */}
-            <Card className="group hover:shadow-2xl transition-all duration-300 border-0 shadow-lg">
-              <div className="relative overflow-hidden rounded-t-lg">
-                <div className="h-48 bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center">
-                  <Coffee className="w-16 h-16 text-white" />
-                </div>
-                <div className="absolute top-4 right-4">
-                  <Button size="sm" variant="ghost" className="bg-white/20 hover:bg-white/30 text-white">
-                    <Bookmark className="w-4 h-4" />
-                  </Button>
-                </div>
-              </div>
-              <CardContent className="p-6">
-                <div className="flex items-center gap-2 mb-2">
-                  <Badge variant="outline">Café</Badge>
-                  <Badge variant="outline">Beşiktaş</Badge>
-                </div>
-                <h3 className="text-lg font-bold mb-2">Mandabatmaz</h3>
-                <p className="text-gray-600 mb-4 text-sm">
-                  Historic coffee house serving traditional Turkish coffee since 1967. 
-                  Authentic atmosphere and the perfect cup of coffee experience.
-                </p>
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-1">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                    ))}
-                    <span className="text-sm text-gray-600 ml-2">4.9 (567)</span>
-                  </div>
-                  <Badge variant="outline">$</Badge>
-                </div>
-                <div className="flex gap-2">
-                  <Button variant="outline" size="sm" className="flex-1">
-                    <MapPin className="w-4 h-4 mr-1" />
-                    Map
-                  </Button>
-                  <Button size="sm" className="flex-1 bg-purple-600 hover:bg-purple-700">
-                    Order Takeout
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Restaurant Card 4 */}
-            <Card className="group hover:shadow-2xl transition-all duration-300 border-0 shadow-lg">
-              <div className="relative overflow-hidden rounded-t-lg">
-                <div className="h-48 bg-gradient-to-br from-teal-500 to-cyan-600 flex items-center justify-center">
-                  <Wine className="w-16 h-16 text-white" />
-                </div>
-                <div className="absolute top-4 right-4">
-                  <Button size="sm" variant="ghost" className="bg-white/20 hover:bg-white/30 text-white">
-                    <Bookmark className="w-4 h-4" />
-                  </Button>
-                </div>
-              </div>
-              <CardContent className="p-6">
-                <div className="flex items-center gap-2 mb-2">
-                  <Badge variant="outline">Fine Dining</Badge>
-                  <Badge variant="outline">Beyoğlu</Badge>
-                </div>
-                <h3 className="text-lg font-bold mb-2">Mikla</h3>
-                <p className="text-gray-600 mb-4 text-sm">
-                  Contemporary Turkish cuisine with Scandinavian influences. 
-                  Rooftop location with stunning city views and innovative dishes.
-                </p>
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-1">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                    ))}
-                    <span className="text-sm text-gray-600 ml-2">4.8 (1,234)</span>
-                  </div>
-                  <Badge variant="outline">$$$$</Badge>
-                </div>
-                <div className="flex gap-2">
-                  <Button variant="outline" size="sm" className="flex-1">
-                    <MapPin className="w-4 h-4 mr-1" />
-                    Map
-                  </Button>
-                  <AffiliateButton 
-                    href={foodLocations[3].ctaLink}
-                    affiliateType="tripadvisor"
-                    trackingId="food-karakoy-lokantasi"
-                    locationName={foodLocations[3].name}
-                    size="sm"
-                    className="flex-1 bg-teal-600 hover:bg-teal-700"
-                  >
-                    {foodLocations[3].ctaText}
-                  </AffiliateButton>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Restaurant Card 5 */}
-            <Card className="group hover:shadow-2xl transition-all duration-300 border-0 shadow-lg">
-              <div className="relative overflow-hidden rounded-t-lg">
-                <div className="h-48 bg-gradient-to-br from-yellow-500 to-orange-600 flex items-center justify-center">
-                  <Utensils className="w-16 h-16 text-white" />
-                </div>
-                <div className="absolute top-4 right-4">
-                  <Button size="sm" variant="ghost" className="bg-white/20 hover:bg-white/30 text-white">
-                    <Bookmark className="w-4 h-4" />
-                  </Button>
-                </div>
-              </div>
-              <CardContent className="p-6">
-                <div className="flex items-center gap-2 mb-2">
-                  <Badge variant="outline">Turkish</Badge>
-                  <Badge variant="outline">Sultanahmet</Badge>
-                </div>
-                <h3 className="text-lg font-bold mb-2">Deraliye Ottoman Cuisine</h3>
-                <p className="text-gray-600 mb-4 text-sm">
-                  Traditional Ottoman recipes in a historic setting. 
-                  Authentic flavors with modern presentation and excellent service.
-                </p>
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-1">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                    ))}
-                    <span className="text-sm text-gray-600 ml-2">4.7 (789)</span>
-                  </div>
-                  <Badge variant="outline">$$$</Badge>
-                </div>
-                <div className="flex gap-2">
-                  <Button variant="outline" size="sm" className="flex-1">
-                    <MapPin className="w-4 h-4 mr-1" />
-                    Map
-                  </Button>
-                  <AffiliateButton 
-                    href={foodLocations[4].ctaLink}
-                    affiliateType="tripadvisor"
-                    trackingId="food-cafe-privet"
-                    locationName={foodLocations[4].name}
-                    size="sm"
-                    className="flex-1 bg-yellow-600 hover:bg-yellow-700"
-                  >
-                    {foodLocations[4].ctaText}
-                  </AffiliateButton>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Restaurant Card 6 */}
-            <Card className="group hover:shadow-2xl transition-all duration-300 border-0 shadow-lg">
-              <div className="relative overflow-hidden rounded-t-lg">
-                <div className="h-48 bg-gradient-to-br from-pink-500 to-rose-600 flex items-center justify-center">
-                  <Coffee className="w-16 h-16 text-white" />
-                </div>
-                <div className="absolute top-4 right-4">
-                  <Button size="sm" variant="ghost" className="bg-white/20 hover:bg-white/30 text-white">
-                    <Bookmark className="w-4 h-4" />
-                  </Button>
-                </div>
-              </div>
-              <CardContent className="p-6">
-                <div className="flex items-center gap-2 mb-2">
-                  <Badge variant="outline">Café</Badge>
-                  <Badge variant="outline">Karaköy</Badge>
-                </div>
-                <h3 className="text-lg font-bold mb-2">Federal Coffee Company</h3>
-                <p className="text-gray-600 mb-4 text-sm">
-                  Modern coffee culture meets traditional Turkish hospitality. 
-                  Specialty drinks, light meals, and a trendy atmosphere.
-                </p>
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-1">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                    ))}
-                    <span className="text-sm text-gray-600 ml-2">4.5 (1,123)</span>
-                  </div>
-                  <Badge variant="outline">$$</Badge>
-                </div>
-                <div className="flex gap-2">
-                  <Button variant="outline" size="sm" className="flex-1">
-                    <MapPin className="w-4 h-4 mr-1" />
-                    Map
-                  </Button>
-                  <AffiliateButton 
-                    href={foodLocations[5].ctaLink}
-                    affiliateType="tripadvisor"
-                    trackingId="food-mikla-restaurant"
-                    locationName={foodLocations[5].name}
-                    size="sm"
-                    className="flex-1 bg-pink-600 hover:bg-pink-700"
-                  >
-                    {foodLocations[5].ctaText}
-                  </AffiliateButton>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* Interactive Map Placeholder */}
-      <section className="py-20 bg-white">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">
-            Explore Restaurants on the Map
-          </h2>
-          <Card className="border-0 shadow-lg">
-            <div className="h-96 bg-gradient-to-br from-orange-100 to-red-100 flex items-center justify-center rounded-lg">
-              <div className="text-center">
-                <MapPin className="w-16 h-16 text-orange-600 mx-auto mb-4" />
-                <h3 className="text-xl font-semibold mb-2">Interactive Map Coming Soon</h3>
-                <p className="text-gray-600">View all restaurants with pins and detailed information</p>
+      {/* Explore on Map Section - Frosted Glass Container */}
+      <section className="py-16 px-6 bg-gradient-to-b from-slate-50 to-white">
+        <div className="mx-auto max-w-7xl">
+          <div className="relative bg-white/60 backdrop-blur-xl rounded-3xl shadow-xl border border-white/20 overflow-hidden">
+            {/* Gradient Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-b from-white/5 to-white/8 rounded-3xl"></div>
+            
+            {/* Map Title Overlay */}
+            <div className="absolute top-6 left-6 z-20">
+              <div className="bg-white/40 backdrop-blur-sm rounded-2xl px-4 py-2 border border-white/30">
+                <h3 className="text-lg font-semibold text-slate-900">
+                  Explore Food & Drink on the Map
+                </h3>
               </div>
             </div>
-          </Card>
-        </div>
-      </section>
 
-      {/* Interactive Map */}
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-4">
-          <div className="max-w-6xl mx-auto">
-            <h3 className="text-2xl font-bold mb-8 text-gray-900">Restaurants & Cafés on the Map</h3>
-            {(() => {
-              console.log("Category pins:", foodLocations?.length, foodLocations?.map(p => p.name))
-              return null
-            })()}
-            <InteractiveMap 
-              locations={foodLocations}
-              className="border-2 border-gray-200"
+            {/* Food & Drink Map */}
+            <ActivitiesMap 
+              activities={data.activities || []}
+              favorites={favorites}
+              onToggleFavorite={handleFavoriteToggle}
             />
-            <div className="text-center mt-6">
-              <p className="text-gray-600 mb-4">Click on pins to view restaurant details and make reservations</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* AdSense Banner */}
-      <section className="py-8 bg-gray-100">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto">
-            <AdSenseBanner slot="food-drink-page" format="auto" />
           </div>
         </div>
       </section>

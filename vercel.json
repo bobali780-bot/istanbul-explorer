@@ -1,28 +1,4 @@
 {
-  "redirects": [
-    {
-      "source": "/(.*)",
-      "has": [
-        {
-          "type": "host",
-          "value": "istanbul-explorer.vercel.app"
-        }
-      ],
-      "destination": "https://love-istanbul.com/$1",
-      "permanent": true
-    },
-    {
-      "source": "/(.*)",
-      "has": [
-        {
-          "type": "host",
-          "value": "www.love-istanbul.com"
-        }
-      ],
-      "destination": "https://love-istanbul.com/$1",
-      "permanent": true
-    }
-  ],
   "headers": [
     {
       "source": "/(.*)",

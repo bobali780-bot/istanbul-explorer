@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Image from "next/image"
 import { ChevronLeft, ChevronRight, X } from "lucide-react"
 import type { ActivityImage } from "@/lib/supabase"
@@ -13,6 +13,8 @@ interface ActivityGalleryProps {
 export default function ActivityGallery({ images, activityName }: ActivityGalleryProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [showLightbox, setShowLightbox] = useState(false)
+  const [imageLoading, setImageLoading] = useState(false)
+  const [imageError, setImageError] = useState(false)
 
   if (!images || images.length === 0) {
     return (
@@ -26,17 +28,63 @@ export default function ActivityGallery({ images, activityName }: ActivityGaller
   const additionalImages = images.slice(1, 4)
 
   const openLightbox = (index: number) => {
+    console.log('🎯 Opening lightbox with image index:', index);
+    console.log('🖼️ Image URL:', images[index]?.image_url);
+    console.log('📊 Total images:', images.length);
     setCurrentImageIndex(index)
+    setImageLoading(true)
+    setImageError(false)
     setShowLightbox(true)
   }
 
   const nextImage = () => {
+    setImageLoading(true)
+    setImageError(false)
     setCurrentImageIndex((prev) => (prev + 1) % images.length)
   }
 
   const prevImage = () => {
+    setImageLoading(true)
+    setImageError(false)
     setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length)
   }
+
+  // Keyboard navigation
+  useEffect(() => {
+    if (!showLightbox) return
+
+    const handleKeyPress = (e: KeyboardEvent) => {
+      switch (e.key) {
+        case 'Escape':
+          setShowLightbox(false)
+          break
+        case 'ArrowLeft':
+          prevImage()
+          break
+        case 'ArrowRight':
+          nextImage()
+          break
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyPress)
+    return () => document.removeEventListener('keydown', handleKeyPress)
+  }, [showLightbox, prevImage, nextImage])
+
+  // Prevent body scroll when lightbox is open
+  useEffect(() => {
+    if (showLightbox) {
+      document.body.style.overflow = 'hidden'
+      console.log('🚀 Rendering lightbox with currentImageIndex:', currentImageIndex);
+      console.log('🔍 Current image object:', images[currentImageIndex]);
+    } else {
+      document.body.style.overflow = 'unset'
+    }
+
+    return () => {
+      document.body.style.overflow = 'unset'
+    }
+  }, [showLightbox, currentImageIndex, images])
 
   return (
     <>
@@ -98,8 +146,20 @@ export default function ActivityGallery({ images, activityName }: ActivityGaller
 
       {/* Lightbox/Slideshow Modal */}
       {showLightbox && (
-        <div className="fixed inset-0 z-50 bg-black bg-opacity-95 flex items-center justify-center">
-          <div className="relative w-full h-full flex items-center justify-center p-4">
+        <div 
+          className="fixed inset-0 flex items-center justify-center"
+          style={{ 
+            zIndex: 99999,
+            backgroundColor: 'rgba(0, 0, 0, 0.95)'
+          }}
+          onClick={(e) => {
+            // Close lightbox when clicking on the backdrop
+            if (e.target === e.currentTarget) {
+              setShowLightbox(false)
+            }
+          }}
+        >
+          <div className="relative w-full h-full flex items-center justify-center p-4 max-w-7xl max-h-screen">
             {/* Close button */}
             <button
               onClick={() => setShowLightbox(false)}
@@ -125,15 +185,54 @@ export default function ActivityGallery({ images, activityName }: ActivityGaller
             </button>
 
             {/* Main image */}
-            <div className="relative max-w-5xl max-h-full">
-              <Image
-                src={images[currentImageIndex].image_url}
-                alt={images[currentImageIndex].alt_text || `${activityName} image ${currentImageIndex + 1}`}
-                width={1200}
-                height={800}
-                className="object-contain max-h-[80vh] w-auto"
-                unoptimized
-              />
+            <div className="relative flex items-center justify-center w-full h-full" style={{ minHeight: '400px' }}>
+              {/* Debug text - always visible */}
+              <div className="absolute top-4 left-4 text-white bg-red-500 px-2 py-1 text-sm z-50">
+                DEBUG: Image {currentImageIndex + 1}/{images.length}
+              </div>
+              
+              {imageLoading && (
+                <div className="absolute inset-0 flex items-center justify-center z-10">
+                  <div className="text-white text-xl bg-black bg-opacity-50 px-4 py-2 rounded">Loading...</div>
+                </div>
+              )}
+              {imageError ? (
+                <div className="text-white text-center">
+                  <div className="text-xl mb-4">Failed to load image</div>
+                  <button 
+                    onClick={() => {
+                      setImageError(false)
+                      setImageLoading(true)
+                    }}
+                    className="text-blue-400 hover:text-blue-300 underline text-lg"
+                  >
+                    Try again
+                  </button>
+                </div>
+              ) : (
+                <img
+                  src={images[currentImageIndex].image_url}
+                  alt={images[currentImageIndex].alt_text || `${activityName} image ${currentImageIndex + 1}`}
+                  style={{
+                    maxWidth: '90vw',
+                    maxHeight: '80vh',
+                    width: 'auto',
+                    height: 'auto',
+                    objectFit: 'contain',
+                    display: 'block',
+                    margin: 'auto'
+                  }}
+                  onError={(e) => {
+                    console.error('🚨 Lightbox image failed to load:', images[currentImageIndex].image_url);
+                    setImageLoading(false)
+                    setImageError(true)
+                  }}
+                  onLoad={() => {
+                    console.log('🖼️ Lightbox image loaded successfully:', images[currentImageIndex].image_url);
+                    setImageLoading(false)
+                  }}
+                />
+              )}
             </div>
 
             {/* Image counter */}
@@ -151,12 +250,10 @@ export default function ActivityGallery({ images, activityName }: ActivityGaller
                     index === currentImageIndex ? 'border-white' : 'border-transparent opacity-70'
                   }`}
                 >
-                  <Image
+                  <img
                     src={image.image_url}
                     alt={`Thumbnail ${index + 1}`}
-                    fill
-                    className="object-cover"
-                    unoptimized
+                    className="object-cover w-full h-full"
                   />
                 </button>
               ))}

@@ -30,9 +30,20 @@ interface TwoColumnCardsProps {
 }
 
 export default function TwoColumnCards({ whyVisit, accessibility, facilities, practicalInfo }: TwoColumnCardsProps) {
-  const InfoCard = ({ title, icon, children, className = "" }: { 
-    title: string; 
-    icon: React.ReactNode; 
+  // Check if any section has content
+  const hasWhyVisit = Array.isArray(whyVisit) ? whyVisit.length > 0 : (whyVisit && Object.keys(whyVisit).length > 0);
+  const hasAccessibility = accessibility && Object.values(accessibility).some(v => v);
+  const hasFacilities = facilities && Object.values(facilities).some(v => v);
+  const hasPracticalInfo = practicalInfo && Object.values(practicalInfo).some(v => v);
+
+  // If nothing to show, don't render anything
+  if (!hasWhyVisit && !hasAccessibility && !hasFacilities && !hasPracticalInfo) {
+    return null;
+  }
+
+  const InfoCard = ({ title, icon, children, className = "" }: {
+    title: string;
+    icon: React.ReactNode;
     children: React.ReactNode;
     className?: string;
   }) => (
@@ -68,10 +79,11 @@ export default function TwoColumnCards({ whyVisit, accessibility, facilities, pr
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       {/* Why Visit */}
-      <InfoCard 
-        title="Why Visit" 
-        icon={<Heart className="w-5 h-5 text-red-600" />}
-      >
+      {hasWhyVisit && (
+        <InfoCard
+          title="Why Visit"
+          icon={<Heart className="w-5 h-5 text-red-600" />}
+        >
         <div className="space-y-3">
           {(() => {
             let reasons: string[] = [];
@@ -96,12 +108,14 @@ export default function TwoColumnCards({ whyVisit, accessibility, facilities, pr
           })()}
         </div>
       </InfoCard>
+      )}
 
       {/* Accessibility */}
-      <InfoCard 
-        title="Accessibility" 
-        icon={<Accessibility className="w-5 h-5 text-blue-600" />}
-      >
+      {hasAccessibility && (
+        <InfoCard
+          title="Accessibility"
+          icon={<Accessibility className="w-5 h-5 text-blue-600" />}
+        >
         <div className="space-y-2">
           {accessibility.wheelchair && (
             <InfoItem 
@@ -141,12 +155,14 @@ export default function TwoColumnCards({ whyVisit, accessibility, facilities, pr
           )}
         </div>
       </InfoCard>
+      )}
 
       {/* Facilities */}
-      <InfoCard 
-        title="Facilities" 
-        icon={<Gift className="w-5 h-5 text-green-600" />}
-      >
+      {hasFacilities && (
+        <InfoCard
+          title="Facilities"
+          icon={<Gift className="w-5 h-5 text-green-600" />}
+        >
         <div className="space-y-2">
           {facilities.toilets && (
             <InfoItem 
@@ -199,12 +215,14 @@ export default function TwoColumnCards({ whyVisit, accessibility, facilities, pr
           )}
         </div>
       </InfoCard>
+      )}
 
       {/* Practical Information */}
-      <InfoCard 
-        title="Practical Information" 
-        icon={<Shield className="w-5 h-5 text-orange-600" />}
-      >
+      {hasPracticalInfo && (
+        <InfoCard
+          title="Practical Information"
+          icon={<Shield className="w-5 h-5 text-orange-600" />}
+        >
         <div className="space-y-3">
           {practicalInfo.dress_code && (
             <div className="flex items-start gap-3">
@@ -267,6 +285,7 @@ export default function TwoColumnCards({ whyVisit, accessibility, facilities, pr
           )}
         </div>
       </InfoCard>
+      )}
     </div>
   );
 }

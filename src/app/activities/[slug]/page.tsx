@@ -5,11 +5,12 @@ import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { Star, Clock, MapPin, Calendar, Users, ArrowLeft, ExternalLink, Camera, Info } from "lucide-react"
-import ActivityGallery from "@/components/ActivityGallery"
+import ProductionLightbox from "@/components/ProductionLightbox"
 import TwoColumnCards from "@/components/TwoColumnCards"
 import RelatedContentRows from "@/components/RelatedContentRows"
 import ReviewsSection from "@/components/ReviewsSection"
-import { getActivityBySlug, getAllActivitySlugs } from "@/lib/api"
+import { getActivityBySlug, getAllActivitySlugs, getNearbyVenues } from "@/lib/api"
+import { getBookingUrl } from "@/lib/booking-urls"
 import type { Activity } from "@/lib/supabase"
 
 interface ActivityPageProps {
@@ -25,6 +26,23 @@ export default async function ActivityPage({ params }: ActivityPageProps) {
   if (!activity) {
     notFound()
   }
+
+  // Get nearby venues
+  const coordinates = activity.coordinates || { lat: 0, lng: 0 }
+
+  const [relatedActivities, nearbyShopping, nearbyRestaurants] = await Promise.all([
+    getNearbyVenues(coordinates.lat, coordinates.lng, 'activities', activity.id, 2, 6),
+    getNearbyVenues(coordinates.lat, coordinates.lng, 'shopping', activity.id, 2, 6),
+    getNearbyVenues(coordinates.lat, coordinates.lng, 'restaurants', activity.id, 2, 6)
+  ])
+
+  // Get booking URL - use custom URL if exists, otherwise generate search URL
+  const bookingUrl = getBookingUrl(
+    activity.name,
+    'activities',
+    activity.booking_url,
+    activity.location
+  )
 
   return (
     <div className="min-h-screen bg-white">
@@ -42,7 +60,7 @@ export default async function ActivityPage({ params }: ActivityPageProps) {
 
         {/* Activity Gallery */}
         <div className="container mx-auto px-8 max-w-6xl mb-8">
-          <ActivityGallery images={activity.activity_images} activityName={activity.name} />
+          <ProductionLightbox images={activity.activity_images} activityName={activity.name} />
         </div>
 
         {/* Activity Info */}
@@ -125,13 +143,11 @@ export default async function ActivityPage({ params }: ActivityPageProps) {
               />
 
               {/* Related Content Rows */}
-              <RelatedContentRows 
-                currentItem={{
-                  id: activity.id.toString(),
-                  title: activity.name,
-                  coordinates: activity.coordinates || { lat: 0, lng: 0 },
-                  category: activity.category || 'activities'
-                }}
+              <RelatedContentRows
+                relatedExperiences={relatedActivities}
+                shoppingNearby={nearbyShopping}
+                foodDrinkNearby={nearbyRestaurants}
+                currentCategory="activities"
               />
 
               {/* Reviews Section */}
@@ -208,37 +224,50 @@ export default async function ActivityPage({ params }: ActivityPageProps) {
 
             {/* Sidebar */}
             <div className="lg:col-span-1">
-              <div className="sticky top-8 space-y-6">
+              <div className="sticky top-24 space-y-3 max-h-[calc(100vh-7rem)] overflow-y-auto">
                 {/* Booking Card */}
                 <Card className="shadow-lg border-2">
-                  <CardHeader className="text-center">
-                    <CardTitle className="text-2xl text-gray-900">Book This Experience</CardTitle>
-                    <CardDescription>
+                  <CardHeader className="text-center pb-3">
+                    <CardTitle className="text-xl text-gray-900">Book This Experience</CardTitle>
+                    <CardDescription className="text-sm">
                       Skip the lines and secure your spot today
                     </CardDescription>
                   </CardHeader>
-                  <CardContent className="space-y-6">
+                  <CardContent className="space-y-4">
                     <div className="text-center">
-                      <div className="text-3xl font-bold text-blue-600 mb-2">
-                        {activity.price_range}
-                      </div>
-                      <p className="text-sm text-gray-600">
-                        Per person • Instant confirmation
-                      </p>
+                      {activity.price_from ? (
+                        <>
+                          <div className="text-2xl font-bold text-blue-600 mb-1">
+                            From £{activity.price_from.toFixed(0)}
+                          </div>
+                          <p className="text-xs text-gray-600">
+                            {activity.price_unit || 'Per person'} • Instant confirmation
+                          </p>
+                        </>
+                      ) : (
+                        <>
+                          <div className="text-2xl font-bold text-blue-600 mb-1">
+                            {activity.price_range || 'Check availability'}
+                          </div>
+                          <p className="text-xs text-gray-600">
+                            Per person • Instant confirmation
+                          </p>
+                        </>
+                      )}
                     </div>
 
                     <Button
                       asChild
-                      size="lg"
-                      className="w-full bg-blue-600 hover:bg-blue-700 text-lg py-6"
+                      size="default"
+                      className="w-full bg-blue-600 hover:bg-blue-700"
                     >
                       <a
-                        href={activity.booking_url}
+                        href={bookingUrl}
                         target="_blank"
                         rel="noopener noreferrer"
                       >
                         Book Now
-                        <ExternalLink className="w-5 h-5 ml-2" />
+                        <ExternalLink className="w-4 h-4 ml-2" />
                       </a>
                     </Button>
 
@@ -252,42 +281,70 @@ export default async function ActivityPage({ params }: ActivityPageProps) {
 
                 {/* Details Card */}
                 <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Calendar className="w-5 h-5 text-blue-600" />
+                  <CardHeader className="pb-3">
+                    <CardTitle className="flex items-center gap-2 text-base">
+                      <Calendar className="w-4 h-4 text-blue-600" />
                       Experience Details
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="space-y-3">
-                      <div className="flex justify-between items-center">
-                        <span className="text-gray-600">Duration</span>
-                        <span className="font-semibold">{activity.duration || "Varies"}</span>
+                  <CardContent className="space-y-3">
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-start gap-2">
+                        <span className="text-sm text-gray-600">Duration</span>
+                        <span className="text-sm font-semibold text-right">{activity.duration || "Varies"}</span>
                       </div>
                       <Separator />
-                      <div className="flex justify-between items-center">
-                        <span className="text-gray-600">Location</span>
-                        <span className="font-semibold text-right">{activity.location}</span>
+                      <div className="flex justify-between items-start gap-2">
+                        <span className="text-sm text-gray-600">Location</span>
+                        <span className="text-sm font-semibold text-right max-w-[60%]">{activity.location}</span>
                       </div>
                       <Separator />
-                      <div className="flex justify-between items-center">
-                        <span className="text-gray-600">Type</span>
-                        <span className="font-semibold">Cultural Experience</span>
+                      <div className="flex justify-between items-start gap-2">
+                        <span className="text-sm text-gray-600">Type</span>
+                        <span className="text-sm font-semibold text-right">Cultural Experience</span>
                       </div>
                       {activity.opening_hours && (
                         <>
                           <Separator />
-                          <div className="flex justify-between items-center">
-                            <span className="text-gray-600">Hours</span>
-                            <span className="font-semibold text-right">{activity.opening_hours}</span>
+                          <div className="flex justify-between items-start gap-2">
+                            <span className="text-sm text-gray-600">Hours</span>
+                            <div className="text-xs font-semibold text-gray-900 text-right space-y-0.5">
+                              {(() => {
+                                const hours = activity.opening_hours;
+                                let hoursArray: string[] = [];
+
+                                if (typeof hours === 'string') {
+                                  try {
+                                    const parsed = JSON.parse(hours);
+                                    if (Array.isArray(parsed)) {
+                                      hoursArray = parsed;
+                                    } else {
+                                      return <div>{hours}</div>;
+                                    }
+                                  } catch {
+                                    return <div>{hours}</div>;
+                                  }
+                                } else if (Array.isArray(hours)) {
+                                  hoursArray = hours;
+                                }
+
+                                if (hoursArray.length === 0) {
+                                  return <div>Daily: 9:00 AM – 6:00 PM</div>;
+                                }
+
+                                return hoursArray.map((day, idx) => (
+                                  <div key={idx} className="leading-tight">{day}</div>
+                                ));
+                              })()}
+                            </div>
                           </div>
                         </>
                       )}
                       <Separator />
-                      <div className="flex justify-between items-center">
-                        <span className="text-gray-600">Group Size</span>
-                        <span className="font-semibold">
-                          <Users className="w-4 h-4 inline mr-1" />
+                      <div className="flex justify-between items-start gap-2">
+                        <span className="text-sm text-gray-600">Group Size</span>
+                        <span className="text-sm font-semibold">
+                          <Users className="w-3 h-3 inline mr-1" />
                           Small groups
                         </span>
                       </div>
@@ -298,16 +355,16 @@ export default async function ActivityPage({ params }: ActivityPageProps) {
                 {/* Rating Card */}
                 {activity.rating && (
                   <Card>
-                    <CardContent className="pt-6">
-                      <div className="text-center space-y-2">
+                    <CardContent className="pt-4 pb-4">
+                      <div className="text-center space-y-1">
                         <div className="flex items-center justify-center gap-2">
-                          <Star className="w-8 h-8 fill-yellow-400 text-yellow-400" />
-                          <span className="text-3xl font-bold">{activity.rating}</span>
+                          <Star className="w-6 h-6 fill-yellow-400 text-yellow-400" />
+                          <span className="text-2xl font-bold">{activity.rating}</span>
                         </div>
-                        <p className="text-gray-600">
+                        <p className="text-sm text-gray-600">
                           Based on {activity.review_count?.toLocaleString()} reviews
                         </p>
-                        <div className="text-sm text-gray-500">
+                        <div className="text-xs text-gray-500">
                           Excellent rating on booking platforms
                         </div>
                       </div>

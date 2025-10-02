@@ -18,6 +18,7 @@ interface MapItem {
   rating?: number
   neighborhood?: string
   slug: string
+  image?: string | null
 }
 
 interface IstanbulMapProps {
@@ -51,6 +52,7 @@ export function IstanbulMap({ items }: IstanbulMapProps) {
   const [selectedItem, setSelectedItem] = useState<MapItem | null>(null)
   const [mapboxToken, setMapboxToken] = useState<string>('')
   const [isLoading, setIsLoading] = useState<boolean>(true)
+  const [activeFilter, setActiveFilter] = useState<string | null>(null)
 
   useEffect(() => {
     // Get Mapbox token from environment
@@ -74,6 +76,20 @@ export function IstanbulMap({ items }: IstanbulMapProps) {
   // Debug: Log the current token state
   console.log('Current mapboxToken state:', mapboxToken)
   console.log('Is loading:', isLoading)
+
+  // Filter items based on active filter
+  const filteredItems = activeFilter 
+    ? items.filter(item => item.category === activeFilter)
+    : items
+
+  // Handle filter toggle
+  const handleFilterClick = (category: string) => {
+    if (activeFilter === category) {
+      setActiveFilter(null) // Clear filter if same category clicked
+    } else {
+      setActiveFilter(category) // Set new filter
+    }
+  }
   
   if (isLoading) {
     console.log('Still loading...')
@@ -112,7 +128,7 @@ export function IstanbulMap({ items }: IstanbulMapProps) {
           <div className="text-center">
             <div className="mb-4 text-6xl">🗺️</div>
             <p className="text-lg font-medium text-slate-700 mb-2">Interactive Map Coming Soon</p>
-            <p className="text-sm text-slate-500">Add your Mapbox token to see Istanbul's attractions</p>
+            <p className="text-sm text-slate-500">Add your Mapbox token to see Istanbul&apos;s attractions</p>
           </div>
         </div>
       </section>
@@ -141,7 +157,7 @@ export function IstanbulMap({ items }: IstanbulMapProps) {
           mapStyle="mapbox://styles/mapbox/streets-v12"
           mapboxAccessToken={mapboxToken}
         >
-          {items.map((item) => {
+          {filteredItems.map((item) => {
             const config = CATEGORY_CONFIG[item.category]
             return (
               <Marker
@@ -186,63 +202,111 @@ export function IstanbulMap({ items }: IstanbulMapProps) {
                 maxWidth: '300px'
               }}
             >
-              <div className="p-2">
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="text-lg">
-                    {CATEGORY_CONFIG[selectedItem.category].icon}
-                  </span>
-                  <span
-                    className="px-2 py-1 text-xs font-medium text-white rounded-full"
-                    style={{ backgroundColor: CATEGORY_CONFIG[selectedItem.category].color }}
-                  >
-                    {CATEGORY_CONFIG[selectedItem.category].label}
-                  </span>
-                </div>
-                
-                <h3 className="font-semibold text-slate-900 mb-1">
-                  {selectedItem.name}
-                </h3>
-                
-                {selectedItem.neighborhood && (
-                  <p className="text-sm text-slate-600 mb-2">
-                    📍 {selectedItem.neighborhood}
-                  </p>
-                )}
-                
-                {selectedItem.rating && (
-                  <div className="flex items-center gap-1 mb-3">
-                    <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                    <span className="text-sm font-medium text-slate-700">
-                      {selectedItem.rating.toFixed(1)}
-                    </span>
+              <div className="p-0">
+                {/* Thumbnail Image */}
+                {selectedItem.image && (
+                  <div className="w-full h-32 overflow-hidden rounded-t-lg">
+                    <img 
+                      src={selectedItem.image} 
+                      alt={selectedItem.name}
+                      className="w-full h-full object-cover"
+                    />
                   </div>
                 )}
                 
-                <Link
-                  href={`/activities/${selectedItem.slug}`}
-                  className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-white bg-slate-900 rounded-lg hover:bg-slate-800 transition-colors"
-                  onClick={() => setSelectedItem(null)}
-                >
-                  <MapPin className="h-4 w-4" />
-                  View Details
-                </Link>
+                <div className="p-3">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-lg">
+                      {CATEGORY_CONFIG[selectedItem.category].icon}
+                    </span>
+                    <span
+                      className="px-2 py-1 text-xs font-medium text-white rounded-full"
+                      style={{ backgroundColor: CATEGORY_CONFIG[selectedItem.category].color }}
+                    >
+                      {CATEGORY_CONFIG[selectedItem.category].label}
+                    </span>
+                  </div>
+                  
+                  <h3 className="font-semibold text-slate-900 mb-1">
+                    {selectedItem.name}
+                  </h3>
+                  
+                  {selectedItem.neighborhood && (
+                    <p className="text-sm text-slate-600 mb-2">
+                      📍 {selectedItem.neighborhood}
+                    </p>
+                  )}
+                  
+                  {selectedItem.rating && (
+                    <div className="flex items-center gap-1 mb-3">
+                      <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                      <span className="text-sm font-medium text-slate-700">
+                        {selectedItem.rating.toFixed(1)}
+                      </span>
+                    </div>
+                  )}
+                  
+                  <Link
+                    href={`/${selectedItem.category}/${selectedItem.slug}`}
+                    className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-white bg-slate-900 rounded-lg hover:bg-slate-800 transition-colors"
+                    onClick={() => setSelectedItem(null)}
+                  >
+                    <MapPin className="h-4 w-4" />
+                    View Details
+                  </Link>
+                </div>
               </div>
             </Popup>
           )}
         </Map>
       </div>
 
-      {/* Legend */}
+      {/* Interactive Legend */}
       <div className="mt-6 flex flex-wrap justify-center gap-4">
-        {Object.entries(CATEGORY_CONFIG).map(([category, config]) => (
-          <div key={category} className="flex items-center gap-2">
-            <div
-              className="w-4 h-4 rounded-full"
-              style={{ backgroundColor: config.color }}
-            />
-            <span className="text-sm text-slate-600">{config.label}</span>
-          </div>
-        ))}
+        {Object.entries(CATEGORY_CONFIG).map(([category, config]) => {
+          const isActive = activeFilter === category
+          const itemCount = items.filter(item => item.category === category).length
+          
+          return (
+            <button
+              key={category}
+              onClick={() => handleFilterClick(category)}
+              className={`flex items-center gap-2 px-3 py-2 rounded-full transition-all duration-200 hover:scale-105 ${
+                isActive 
+                  ? 'bg-slate-900 text-white shadow-lg' 
+                  : 'bg-white text-slate-600 hover:bg-slate-50 border border-slate-200'
+              }`}
+            >
+              <div
+                className={`w-4 h-4 rounded-full transition-all duration-200 ${
+                  isActive ? 'ring-2 ring-white' : ''
+                }`}
+                style={{ backgroundColor: config.color }}
+              />
+              <span className="text-sm font-medium">{config.label}</span>
+              <span className={`text-xs px-2 py-1 rounded-full ${
+                isActive 
+                  ? 'bg-white/20 text-white' 
+                  : 'bg-slate-100 text-slate-600'
+              }`}>
+                {itemCount}
+              </span>
+            </button>
+          )
+        })}
+        
+        {/* Clear Filter Button */}
+        {activeFilter && (
+          <button
+            onClick={() => setActiveFilter(null)}
+            className="flex items-center gap-2 px-3 py-2 rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 transition-all duration-200 hover:scale-105 border border-slate-200"
+          >
+            <span className="text-sm font-medium">Show All</span>
+            <span className="text-xs px-2 py-1 rounded-full bg-slate-200 text-slate-600">
+              {items.length}
+            </span>
+          </button>
+        )}
       </div>
     </section>
   )

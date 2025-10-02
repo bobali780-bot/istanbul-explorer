@@ -1,606 +1,506 @@
-"use client"
+'use client'
 
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Star, Search, MapPin, ShoppingBag, Store, Crown, Gift, Sparkles, Heart, Star as StarIcon } from "lucide-react"
-import InteractiveMap from "@/components/InteractiveMap"
-import AffiliateButton from "@/components/AffiliateButton"
-import AdSenseBanner from "@/components/AdSenseBanner"
-import { useShopping } from "@/hooks/useScrapedData"
+import { useEffect, useState, useRef } from 'react'
+import { CategoryHero } from '@/components/CategoryHero'
+import { FilterBar } from '@/components/FilterBar'
+import { CategoryTile } from '@/components/CategoryTile'
+import { EditorPickTile } from '@/components/EditorPickTile'
+import { ActivitiesMap } from '@/components/ActivitiesMap'
+import { ChevronDown, ChevronUp, Filter, X, ArrowLeft, ArrowRight } from 'lucide-react'
+
+// Types for our data structure (same as activities page)
+interface Activity {
+  id: string
+  title: string
+  description: string
+  rating: number
+  reviewCount: number
+  location: string
+  neighborhood?: string
+  price?: string
+  duration?: string
+  category: string
+  slug: string
+  isEditorPick?: boolean
+  heroImage?: string
+  whyVisit?: string
+}
+
+interface CategoryData {
+  category: string
+  activities: Activity[]
+  heroData: {
+    title: string
+    subheading: string
+    heroImage: string
+    averageRating: number
+    topNeighborhoods: string[]
+    isTrending: boolean
+    activityCount: number
+  } | null
+  filters: {
+    neighborhoods: Array<{ value: string; label: string; count: number }>
+    priceRanges: Array<{ value: string; label: string; count: number }>
+    vibes: Array<{ value: string; label: string; count: number }>
+    durations: Array<{ value: string; label: string; count: number }>
+    amenities: Array<{ value: string; label: string; count: number }>
+  } | null
+  editorsPicks: Activity[]
+  totalCount: number
+}
 
 export default function ShoppingPage() {
-  // Use scraped data from Firecrawl (only on client side)
-  const { shopping: scrapedShopping, loading, error } = useShopping()
-  
-  // Static data for build time
-  const staticShoppingLocations = [
-    {
-      id: "grand-bazaar",
-      name: "Grand Bazaar (Kapalı Çarşı)",
-      description: "The world's oldest and largest covered market with over 4,000 shops selling jewelry, carpets, ceramics, textiles, and traditional Turkish crafts. A UNESCO World Heritage site and must-visit shopping destination.",
-      coordinates: [28.9680, 41.0106] as [number, number],
-      category: "shopping" as const,
-      price: "$$",
-      rating: 4.3,
-      ctaText: "Visit Location",
-      ctaLink: "https://www.viator.com/Istanbul-tours/City-Tours/d585-g12-c5330"
-    },
-    {
-      id: "spice-bazaar",
-      name: "Spice Bazaar (Mısır Çarşısı)",
-      description: "Historic covered market specializing in spices, dried fruits, nuts, Turkish delight, and traditional sweets. Built in 1660, it's a sensory delight with colorful displays and aromatic scents.",
-      coordinates: [28.9700, 41.0165] as [number, number],
-      category: "shopping" as const,
-      price: "$",
-      rating: 4.2,
-      ctaText: "Visit Location",
-      ctaLink: "https://www.viator.com/Istanbul/d585"
-    },
-    {
-      id: "istinye-park",
-      name: "İstinye Park",
-      description: "Modern shopping mall featuring international luxury brands, Turkish designers, restaurants, and entertainment. Located in the upscale Sarıyer district with beautiful architecture and excellent facilities.",
-      coordinates: [29.0000, 41.1000] as [number, number],
-      category: "shopping" as const,
-      price: "$$$",
-      rating: 4.4,
-      ctaText: "Visit Location",
-      ctaLink: "https://www.tripadvisor.com/Restaurants-g293974-Istanbul.html"
-    },
-    {
-      id: "nisantasi-shopping",
-      name: "Nişantaşı Shopping District",
-      description: "Upscale neighborhood known for luxury boutiques, designer stores, and high-end shopping. Features international brands, Turkish fashion designers, and elegant cafes in a sophisticated atmosphere.",
-      coordinates: [28.9945, 41.0430] as [number, number],
-      category: "shopping" as const,
-      price: "$$$$",
-      rating: 4.5,
-      ctaText: "Visit Location",
-      ctaLink: "https://www.booking.com/landmark/tr/metro-osmanbey.html"
-    },
-    {
-      id: "cukurcuma-antiques",
-      name: "Çukurcuma Antiques District",
-      description: "Charming neighborhood in Beyoğlu filled with antique shops, vintage furniture stores, and unique finds. Perfect for discovering one-of-a-kind pieces and experiencing Istanbul's bohemian side.",
-      coordinates: [28.9846, 41.0340] as [number, number],
-      category: "shopping" as const,
-      price: "$$",
-      rating: 4.1,
-      ctaText: "Visit Location",
-      ctaLink: "https://www.booking.com/pool/city/tr/istanbul.en-gb.html"
-    },
-    {
-      id: "kadikoy-moda",
-      name: "Kadıköy Moda District",
-      description: "Trendy neighborhood on the Asian side featuring local designers, hip boutiques, vintage shops, and artisanal stores. Known for its creative atmosphere and unique shopping experiences.",
-      coordinates: [29.0000, 40.9900] as [number, number],
-      category: "shopping" as const,
-      price: "$$",
-      rating: 4.0,
-      ctaText: "Visit Location",
-      ctaLink: "https://www.booking.com/district/tr/istanbul/istanbulcitycentre.html"
+  const [data, setData] = useState<CategoryData | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [favorites, setFavorites] = useState<Set<string>>(new Set())
+  const [selectedFilters, setSelectedFilters] = useState<Record<string, string[]>>({})
+  const [isExpanded, setIsExpanded] = useState(false)
+  const [showFilters, setShowFilters] = useState(false)
+  const [mapExpanded, setMapExpanded] = useState(false)
+  const scrollRef = useRef<HTMLDivElement>(null)
+  const [showScrollHint, setShowScrollHint] = useState(true)
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await fetch('/api/categories/shopping')
+
+        if (!response.ok) {
+          throw new Error(`Failed to load shopping: ${response.status}`)
+        }
+
+        const result = await response.json()
+        setData(result)
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to load shopping')
+      } finally {
+        setLoading(false)
+      }
     }
-  ]
 
-  // Use static data during build, scraped data at runtime
-  const shoppingLocations = scrapedShopping.length > 0
-    ? scrapedShopping.map((item, index) => ({
-        id: `shopping-${index}`,
-        name: item.name,
-        description: item.description,
-        coordinates: item.coordinates || [28.9784, 41.0082] as [number, number],
-        category: "shopping" as const,
-        price: item.price || "$$",
-        rating: item.rating || 4.0,
-        ctaText: "Visit Location",
-        ctaLink: item.url
-      }))
-    : staticShoppingLocations
+    fetchData()
+  }, [])
 
-  // Log scraping results
-  if (scrapedShopping.length > 0) {
-    console.log(`✅ Scraped ${scrapedShopping.length} shops from TripAdvisor`)
+  const handleFavoriteToggle = (id: string) => {
+    setFavorites(prev => {
+      const newFavorites = new Set(prev)
+      if (newFavorites.has(id)) {
+        newFavorites.delete(id)
+      } else {
+        newFavorites.add(id)
+      }
+      return newFavorites
+    })
   }
+
+  const handleFilterChange = (filterType: string, values: string[]) => {
+    setSelectedFilters(prev => ({
+      ...prev,
+      [filterType]: values
+    }))
+  }
+
+  const handleHandpickedToggle = (enabled: boolean) => {
+    setSelectedFilters(prev => ({
+      ...prev,
+      handpicked: enabled ? ['only'] : []
+    }))
+  }
+
+  const handleToggleExpanded = () => {
+    const newExpanded = !isExpanded
+    setIsExpanded(newExpanded)
+    
+    // Show/hide filters simultaneously with expansion
+    if (newExpanded) {
+      setShowFilters(true) // Show immediately for simultaneous animation
+    } else {
+      setShowFilters(false)
+      // Auto-scroll to the section when collapsing
+      setTimeout(() => {
+        const section = document.getElementById('all-shopping-section')
+        if (section) {
+          section.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        }
+      }, 100)
+    }
+  }
+
+  const scrollLeft = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollBy({ left: -400, behavior: 'smooth' })
+    }
+  }
+
+  const scrollRight = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollBy({ left: 400, behavior: 'smooth' })
+      setShowScrollHint(false)
+    }
+  }
+
+  const toggleMap = () => {
+    setMapExpanded(!mapExpanded)
+  }
+
+  // Optimized Intersection Observer for scroll animations
+  useEffect(() => {
+    if (!data) return
+    
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('animate-in')
+            // Unobserve after animation to improve performance
+            observer.unobserve(entry.target)
+          }
+        })
+      },
+      { 
+        threshold: 0.1,
+        rootMargin: '50px' // Trigger earlier for smoother experience
+      }
+    )
+
+    // Debounce element observation
+    const timeoutId = setTimeout(() => {
+      const elements = document.querySelectorAll('.scroll-animate')
+      elements.forEach((el) => observer.observe(el))
+    }, 100)
+
+    return () => {
+      clearTimeout(timeoutId)
+      observer.disconnect()
+    }
+  }, [data])
 
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50">
         <div className="container mx-auto px-4 py-8">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mx-auto mb-4"></div>
-            <p className="text-gray-600">Loading shopping data...</p>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
+            <p className="text-gray-600">Loading shopping...</p>
           </div>
         </div>
       </div>
     )
   }
 
-  if (error) {
-    console.error('❌ Error loading shopping data:', error)
-  }
-
+  if (error || !data) {
   return (
-    <div className="min-h-screen bg-white">
-      {/* Hero Section */}
-      <section className="relative h-[50vh] flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-emerald-900/80 to-teal-900/80">
-          <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1555529902-0b7b0b4b0b4b?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80')] bg-cover bg-center bg-no-repeat"></div>
-        </div>
-        <div className="relative z-10 text-center text-white px-4 max-w-4xl mx-auto">
-          <h1 className="text-5xl md:text-6xl font-bold mb-4 leading-tight">
-            Best Shopping in
-            <span className="block text-yellow-400">Istanbul</span>
-          </h1>
-          <p className="text-xl md:text-2xl mb-8 text-gray-200 max-w-2xl mx-auto">
-            From ancient bazaars to modern malls, discover Istanbul&apos;s shopping treasures
-          </p>
-        </div>
-      </section>
-
-      {/* Intro Section */}
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-3xl md:text-4xl font-bold mb-6 text-gray-900">
-              Discover Istanbul&apos;s Shopping Paradise
-            </h2>
-            <p className="text-lg text-gray-600 leading-relaxed">
-              Step into a world where ancient traditions meet modern luxury. From the legendary 
-              Grand Bazaar with its 4,000 shops to chic boutiques in Nişantaşı, Istanbul offers 
-              an unparalleled shopping experience. Discover handcrafted treasures, designer 
-              fashion, authentic souvenirs, and everything in between.
+      <div className="min-h-screen bg-gray-50">
+        <div className="container mx-auto px-4 py-8">
+          <div className="text-center">
+            <div className="text-6xl mb-4">🛍️</div>
+            <h3 className="text-2xl font-serif font-bold text-slate-900 mb-2">
+              Unable to load shopping
+            </h3>
+            <p className="text-slate-600">
+              {error || 'Something went wrong while loading the shopping.'}
             </p>
           </div>
         </div>
-      </section>
+      </div>
+    )
+  }
 
-      {/* Filters & Sorting */}
-      <section className="py-12 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <div className="max-w-6xl mx-auto">
-            <h3 className="text-2xl font-bold mb-8 text-gray-900">Find Your Perfect Shopping Experience</h3>
+  return (
+    <div className="min-h-screen overflow-x-hidden">
+      {/* Category Hero */}
+      {data.heroData && (
+        <CategoryHero
+          title={data.heroData.title}
+          subheading={data.heroData.subheading}
+          heroImage={data.heroData.heroImage}
+          averageRating={data.heroData.averageRating}
+          topNeighborhoods={data.heroData.topNeighborhoods}
+          isTrending={data.heroData.isTrending}
+          activityCount={data.heroData.activityCount}
+        />
+      )}
+
+      {/* Filter Bar */}
+      {data.filters && (
+        <FilterBar
+          filters={data.filters}
+          selectedFilters={selectedFilters}
+          onFilterChange={handleFilterChange}
+          showHandpickedOnly={true}
+          onHandpickedToggle={handleHandpickedToggle}
+        />
+      )}
+
+      {/* Editor's Picks Section - Homepage Style */}
+      {data.editorsPicks && data.editorsPicks.length > 0 && (
+        <section aria-labelledby="editors-picks" className="relative mx-auto max-w-[100vw] py-16 overflow-visible" style={{ backgroundColor: 'white' }}>
+          <div className="mx-auto max-w-6xl px-5" style={{ backgroundColor: 'white' }}>
+            {/* Centered header */}
+            <div className="mb-6 text-center">
+              <h2 id="editors-picks" className="text-2xl font-extrabold tracking-tight sm:text-3xl">Editor&apos;s Picks</h2>
+              <p className="text-slate-600">Handpicked shopping destinations in Istanbul</p>
+            </div>
+          </div>
+
+          {/* Horizontal scroller with hover arrows */}
+          <div ref={scrollRef} className="no-scrollbar group mx-auto max-w-[100vw] overflow-x-auto px-5 pt-2 pb-8" style={{ backgroundColor: 'white', overflowY: 'visible' }}>
+            <div className="flex snap-x snap-mandatory py-2" style={{ backgroundColor: 'white' }}>
+              {data.editorsPicks.map((shop, index) => {
+                // Cycle through colors: blue, green, red, yellow
+                const colors = ['blue', 'green', 'red', 'yellow'] as const
+                const colorVariant = colors[index % colors.length]
+                
+                return (
+                  <div key={shop.id} className="flex-shrink-0 snap-start" style={{ paddingRight: index === data.editorsPicks.length - 1 ? '0' : '24px', backgroundColor: 'white' }}>
+                    <EditorPickTile
+                      {...shop}
+                      isFavorite={favorites.has(shop.id)}
+                      onToggleFavorite={handleFavoriteToggle}
+                      colorVariant={colorVariant}
+                    />
+                  </div>
+                )
+              })}
+            </div>
             
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-              {/* Shopping Type */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">Type</label>
-                <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Any Type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="market">Market</SelectItem>
-                    <SelectItem value="boutique">Boutique</SelectItem>
-                    <SelectItem value="mall">Mall</SelectItem>
-                    <SelectItem value="souvenir">Souvenir</SelectItem>
-                    <SelectItem value="luxury">Luxury Brand</SelectItem>
-                  </SelectContent>
-                </Select>
+            {/* Clickable arrows */}
+            <button 
+              onClick={scrollLeft}
+              className="absolute left-0 top-1/2 -translate-y-1/2 opacity-0 transition-opacity duration-300 group-hover:opacity-100 hover:opacity-100 focus:opacity-100 focus:outline-none"
+              aria-label="Scroll left"
+            >
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/90 shadow-lg backdrop-blur-sm hover:bg-white transition-colors">
+                <ArrowLeft className="h-6 w-6 text-slate-700" />
               </div>
-
-              {/* Price Range */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">Price Range</label>
-                <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Any Price" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="budget">$ - Budget</SelectItem>
-                    <SelectItem value="moderate">$$ - Moderate</SelectItem>
-                    <SelectItem value="upscale">$$$ - Upscale</SelectItem>
-                    <SelectItem value="luxury">$$$$ - Luxury</SelectItem>
-                  </SelectContent>
-                </Select>
+            </button>
+            <button 
+              onClick={scrollRight}
+              className="absolute right-0 top-1/2 -translate-y-1/2 opacity-0 transition-opacity duration-300 group-hover:opacity-100 hover:opacity-100 focus:opacity-100 focus:outline-none"
+              aria-label="Scroll right"
+            >
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/90 shadow-lg backdrop-blur-sm hover:bg-white transition-colors">
+                <ArrowRight className="h-6 w-6 text-slate-700" />
               </div>
-
-              {/* Neighborhood */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">Neighborhood</label>
-                <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Any Area" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="sultanahmet">Sultanahmet</SelectItem>
-                    <SelectItem value="nisantasi">Nişantaşı</SelectItem>
-                    <SelectItem value="taksim">Taksim</SelectItem>
-                    <SelectItem value="kadikoy">Kadıköy</SelectItem>
-                    <SelectItem value="besiktas">Beşiktaş</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* Search */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">Search</label>
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                  <Input
-                    placeholder="Search shops..."
-                    className="pl-10"
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Sorting */}
-            <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
-              <div className="flex items-center gap-4">
-                <span className="text-sm font-medium text-gray-700">Sort by:</span>
-                <div className="flex gap-2">
-                  <Button variant="outline" size="sm">Most Popular</Button>
-                  <Button variant="outline" size="sm">Highest Rated</Button>
-                  <Button variant="outline" size="sm">Hidden Gems</Button>
-                </div>
-              </div>
-              <div className="text-sm text-gray-600">
-                Showing 18 shopping spots in Istanbul
-              </div>
-            </div>
+            </button>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
-      {/* Curated Shopping Grid */}
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-4">
-          <div className="max-w-6xl mx-auto">
-            <h3 className="text-2xl font-bold mb-8 text-gray-900">Curated Shopping Collection</h3>
+      {/* All Shopping Section - Luxury Magazine Grid */}
+      <section id="all-shopping-section" className="scroll-animate py-24 px-6 bg-gradient-to-b from-white to-slate-50 opacity-0 translate-y-8 transition-all duration-1000 ease-out">
+        <div className={`mx-auto transition-all duration-700 ease-out ${isExpanded ? 'max-w-full' : 'max-w-7xl'}`}>
+          <div className={`relative bg-white/70 backdrop-blur-2xl rounded-[2rem] shadow-2xl border border-white/30 transition-all duration-700 ease-out ${isExpanded ? 'p-12' : 'p-12'}`}>
+            {/* Premium Gradient Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-white/5 to-transparent rounded-[2rem]"></div>
             
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {/* Shopping Spot 1 */}
-              <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-lg">
-                <div className="relative overflow-hidden rounded-t-lg">
-                  <div className="h-48 bg-gradient-to-br from-amber-600 to-orange-600 flex items-center justify-center">
-                    <Store className="w-16 h-16 text-white" />
-                  </div>
-                  <Badge className="absolute top-4 left-4 bg-yellow-500 text-black">Market</Badge>
-                </div>
-                <CardContent className="p-6">
-                  <h4 className="text-xl font-bold mb-2">Grand Bazaar</h4>
-                  <p className="text-gray-600 mb-4">World&apos;s oldest covered market with 4,000 shops and authentic Turkish crafts</p>
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-1">
-                      {[...Array(5)].map((_, i) => (
-                        <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                      ))}
-                      <span className="text-sm text-gray-600 ml-2">4.7 (15,234)</span>
-                    </div>
-                    <Badge variant="outline">$$</Badge>
-                  </div>
-                  <div className="flex items-center gap-2 mb-4 text-sm text-gray-600">
-                    <MapPin className="w-4 h-4" />
-                    <span>Sultanahmet • Historic • Authentic</span>
-                  </div>
-                  <AffiliateButton 
-                    href={shoppingLocations[0].ctaLink}
-                    affiliateType="tripadvisor"
-                    trackingId="shopping-grand-bazaar"
-                    locationName={shoppingLocations[0].name}
-                    className="w-full bg-amber-600 hover:bg-amber-700"
-                  >
-                    {shoppingLocations[0].ctaText}
-                  </AffiliateButton>
-                </CardContent>
-              </Card>
+            {/* Content */}
+            <div className="relative z-10">
+              {/* Section Header */}
+              <div className="text-center mb-12">
+                <h2 className="text-4xl md:text-5xl font-black leading-tight tracking-tight text-slate-900 mb-6 bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
+                  All Shopping
+                </h2>
+                <p className="text-lg font-medium text-slate-600 max-w-3xl mx-auto leading-relaxed">
+                  Discover {data.totalCount || 0} carefully curated shopping destinations across Istanbul
+                </p>
+              </div>
 
-              {/* Shopping Spot 2 */}
-              <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-lg">
-                <div className="relative overflow-hidden rounded-t-lg">
-                  <div className="h-48 bg-gradient-to-br from-pink-600 to-rose-600 flex items-center justify-center">
-                    <Crown className="w-16 h-16 text-white" />
-                  </div>
-                  <Badge className="absolute top-4 left-4 bg-pink-500 text-white">Luxury</Badge>
-                </div>
-                <CardContent className="p-6">
-                  <h4 className="text-xl font-bold mb-2">Nişantaşı Shopping District</h4>
-                  <p className="text-gray-600 mb-4">Upscale boutiques and designer stores in Istanbul&apos;s fashion capital</p>
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-1">
-                      {[...Array(5)].map((_, i) => (
-                        <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                      ))}
-                      <span className="text-sm text-gray-600 ml-2">4.8 (3,456)</span>
+              {/* Main Container with Filter Sidebar */}
+              <div className="relative flex gap-8">
+                {/* Filter Sidebar - Slides in from left */}
+                <div className={`transition-all duration-700 ease-out ${showFilters && isExpanded ? 'w-80 opacity-100 translate-x-0' : 'w-0 opacity-0 -translate-x-full overflow-hidden'}`}>
+                  {showFilters && isExpanded && (
+                    <div className="sticky top-6 bg-white/80 backdrop-blur-xl rounded-2xl p-6 shadow-xl border border-white/30 h-fit">
+                      <div className="flex items-center justify-between mb-6">
+                        <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+                          <Filter className="w-5 h-5" />
+                          Filters
+                        </h3>
+                        <button 
+                          onClick={() => setShowFilters(false)}
+                          className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center transition-colors"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                      
+                      {/* Filter Content */}
+                      <div className="space-y-6">
+                        {/* Neighborhoods */}
+                        <div>
+                          <h4 className="font-semibold text-slate-900 mb-3">Neighborhoods</h4>
+                          <div className="space-y-2">
+                            {data.filters?.neighborhoods?.slice(0, 5).map((neighborhood) => (
+                              <label key={neighborhood.value} className="flex items-center gap-2 text-sm">
+                                <input type="checkbox" className="rounded" />
+                                <span>{neighborhood.label}</span>
+                                <span className="text-slate-500">({neighborhood.count})</span>
+                              </label>
+                            ))}
+                          </div>
+                        </div>
+                        
+                        {/* Price Range */}
+                        <div>
+                          <h4 className="font-semibold text-slate-900 mb-3">Price Range</h4>
+                          <div className="space-y-2">
+                            {data.filters?.priceRanges?.slice(0, 4).map((price) => (
+                              <label key={price.value} className="flex items-center gap-2 text-sm">
+                                <input type="checkbox" className="rounded" />
+                                <span>{price.label}</span>
+                                <span className="text-slate-500">({price.count})</span>
+                              </label>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                    <Badge variant="outline">$$$$</Badge>
-                  </div>
-                  <div className="flex items-center gap-2 mb-4 text-sm text-gray-600">
-                    <MapPin className="w-4 h-4" />
-                    <span>Nişantaşı • Designer • Fashion</span>
-                  </div>
-                  <Button className="w-full bg-pink-600 hover:bg-pink-700">
-                    Shop Now
-                  </Button>
-                </CardContent>
-              </Card>
-
-              {/* Shopping Spot 3 */}
-              <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-lg">
-                <div className="relative overflow-hidden rounded-t-lg">
-                  <div className="h-48 bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center">
-                    <ShoppingBag className="w-16 h-16 text-white" />
-                  </div>
-                  <Badge className="absolute top-4 left-4 bg-blue-500 text-white">Mall</Badge>
+                  )}
                 </div>
-                <CardContent className="p-6">
-                  <h4 className="text-xl font-bold mb-2">İstinye Park</h4>
-                  <p className="text-gray-600 mb-4">Modern shopping mall with international brands and entertainment</p>
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-1">
-                      {[...Array(4)].map((_, i) => (
-                        <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                      ))}
-                      <Star className="w-4 h-4 text-gray-300" />
-                      <span className="text-sm text-gray-600 ml-2">4.3 (2,789)</span>
-                    </div>
-                    <Badge variant="outline">$$$</Badge>
-                  </div>
-                  <div className="flex items-center gap-2 mb-4 text-sm text-gray-600">
-                    <MapPin className="w-4 h-4" />
-                    <span>İstinye • Modern • International</span>
-                  </div>
-                  <AffiliateButton 
-                    href={shoppingLocations[1].ctaLink}
-                    affiliateType="tripadvisor"
-                    trackingId="shopping-spice-bazaar"
-                    locationName={shoppingLocations[1].name}
-                    className="w-full bg-blue-600 hover:bg-blue-700"
-                  >
-                    {shoppingLocations[1].ctaText}
-                  </AffiliateButton>
-                </CardContent>
-              </Card>
 
-              {/* Shopping Spot 4 */}
-              <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-lg">
-                <div className="relative overflow-hidden rounded-t-lg">
-                  <div className="h-48 bg-gradient-to-br from-green-600 to-emerald-600 flex items-center justify-center">
-                    <Gift className="w-16 h-16 text-white" />
-                  </div>
-                  <Badge className="absolute top-4 left-4 bg-green-500 text-white">Souvenir</Badge>
+                {/* Shopping Grid - Smoothly shifts right when filters are shown */}
+                <div className={`flex-1 transition-all duration-700 ease-out ${showFilters && isExpanded ? 'translate-x-8' : 'translate-x-0'}`}>
+                  {data.activities && data.activities.length > 0 ? (
+                    <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-8 mb-12 transition-all duration-300 min-h-[600px]`}>
+                      {/* Optimized Grid Layout - Show shops based on expansion state */}
+                      {data.activities.slice(0, isExpanded ? data.activities.length : 6).map((shop, index) => {
+                        return (
+                          <div
+                            key={shop.id}
+                            className="group gpu-accelerate hover:scale-[1.02] transition-transform duration-300 ease-out hover:-translate-y-1"
+                            style={{
+                              animationDelay: `${index * 50}ms`,
+                              animationFillMode: 'both'
+                            }}
+                          >
+                            <div className="relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-shadow duration-300 bg-white">
+                              <CategoryTile
+                                {...shop}
+                                isFavorite={favorites.has(shop.id)}
+                                onToggleFavorite={handleFavoriteToggle}
+                              />
+                            </div>
+                          </div>
+                        );
+                      })}
+                      
+                      {/* Empty placeholder tiles to maintain 6-tile grid layout */}
+                      {!isExpanded && data.activities.length < 6 && 
+                        Array.from({ length: 6 - data.activities.length }).map((_, index) => (
+                          <div
+                            key={`placeholder-${index}`}
+                            className="invisible"
+                            style={{
+                              animationDelay: `${(data.activities.length + index) * 50}ms`,
+                              animationFillMode: 'both'
+                            }}
+                          >
+                            <div className="h-[500px] rounded-2xl bg-transparent"></div>
+                          </div>
+                        ))
+                      }
+                    </div>
+                  ) : (
+                    <div className="text-center py-24">
+                      <div className="text-8xl mb-6 opacity-50">🛍️</div>
+                      <h3 className="text-3xl font-bold text-slate-900 mb-4">
+                        No shopping destinations found
+                      </h3>
+                      <p className="text-slate-600 text-lg">
+                        We&apos;re working on adding more amazing shopping experiences to Istanbul.
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Toggle Button */}
+                  {data.activities && data.activities.length > 6 && (
+                    <div className="text-center">
+                      <button 
+                        onClick={handleToggleExpanded}
+                        className="group px-12 py-4 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white rounded-full font-bold hover:from-blue-700 hover:via-purple-700 hover:to-pink-700 transition-all duration-500 shadow-xl hover:shadow-2xl hover:scale-105 flex items-center gap-3 mx-auto hover:bg-gradient-to-r relative overflow-hidden"
+                      >
+                        {/* Button Shine Effect */}
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform -skew-x-12 translate-x-full group-hover:translate-x-[-200%] transition-transform duration-700"></div>
+                        
+                        <span className="relative z-10">{isExpanded ? 'Show Less' : 'See All Shopping'}</span>
+                        <div className={`relative z-10 transition-transform duration-500 ${isExpanded ? 'rotate-180' : 'rotate-0'}`}>
+                          {isExpanded ? (
+                            <ChevronUp className="w-5 h-5" />
+                          ) : (
+                            <ChevronDown className="w-5 h-5" />
+                          )}
+                        </div>
+                      </button>
+                    </div>
+                  )}
                 </div>
-                <CardContent className="p-6">
-                  <h4 className="text-xl font-bold mb-2">Spice Bazaar</h4>
-                  <p className="text-gray-600 mb-4">Historic market for spices, teas, and traditional Turkish souvenirs</p>
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-1">
-                      {[...Array(5)].map((_, i) => (
-                        <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                      ))}
-                      <span className="text-sm text-gray-600 ml-2">4.6 (8,123)</span>
-                    </div>
-                    <Badge variant="outline">$</Badge>
-                  </div>
-                  <div className="flex items-center gap-2 mb-4 text-sm text-gray-600">
-                    <MapPin className="w-4 h-4" />
-                    <span>Eminönü • Spices • Traditional</span>
-                  </div>
-                  <Button className="w-full bg-green-600 hover:bg-green-700">
-                    Shop Now
-                  </Button>
-                </CardContent>
-              </Card>
-
-              {/* Shopping Spot 5 */}
-              <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-lg">
-                <div className="relative overflow-hidden rounded-t-lg">
-                  <div className="h-48 bg-gradient-to-br from-purple-600 to-violet-600 flex items-center justify-center">
-                    <Sparkles className="w-16 h-16 text-white" />
-                  </div>
-                  <Badge className="absolute top-4 left-4 bg-purple-500 text-white">Boutique</Badge>
-                </div>
-                <CardContent className="p-6">
-                  <h4 className="text-xl font-bold mb-2">Çukurcuma Antiques</h4>
-                  <p className="text-gray-600 mb-4">Charming neighborhood with vintage shops and unique finds</p>
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-1">
-                      {[...Array(4)].map((_, i) => (
-                        <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                      ))}
-                      <Star className="w-4 h-4 text-gray-300" />
-                      <span className="text-sm text-gray-600 ml-2">4.4 (1,567)</span>
-                    </div>
-                    <Badge variant="outline">$$</Badge>
-                  </div>
-                  <div className="flex items-center gap-2 mb-4 text-sm text-gray-600">
-                    <MapPin className="w-4 h-4" />
-                    <span>Çukurcuma • Vintage • Unique</span>
-                  </div>
-                  <AffiliateButton 
-                    href={shoppingLocations[2].ctaLink}
-                    affiliateType="tripadvisor"
-                    trackingId="shopping-istinye-park"
-                    locationName={shoppingLocations[2].name}
-                    className="w-full bg-purple-600 hover:bg-purple-700"
-                  >
-                    {shoppingLocations[2].ctaText}
-                  </AffiliateButton>
-                </CardContent>
-              </Card>
-
-              {/* Shopping Spot 6 */}
-              <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-lg">
-                <div className="relative overflow-hidden rounded-t-lg">
-                  <div className="h-48 bg-gradient-to-br from-teal-600 to-cyan-600 flex items-center justify-center">
-                    <Heart className="w-16 h-16 text-white" />
-                  </div>
-                  <Badge className="absolute top-4 left-4 bg-teal-500 text-white">Boutique</Badge>
-                </div>
-                <CardContent className="p-6">
-                  <h4 className="text-xl font-bold mb-2">Kadıköy Moda</h4>
-                  <p className="text-gray-600 mb-4">Trendy district with local designers and hip boutiques</p>
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-1">
-                      {[...Array(5)].map((_, i) => (
-                        <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                      ))}
-                      <span className="text-sm text-gray-600 ml-2">4.5 (2,345)</span>
-                    </div>
-                    <Badge variant="outline">$$</Badge>
-                  </div>
-                  <div className="flex items-center gap-2 mb-4 text-sm text-gray-600">
-                    <MapPin className="w-4 h-4" />
-                    <span>Kadıköy • Trendy • Local Designers</span>
-                  </div>
-                  <Button className="w-full bg-teal-600 hover:bg-teal-700">
-                    Shop Now
-                  </Button>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Editor's Choice Section */}
-      <section className="py-16 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <div className="max-w-6xl mx-auto">
-            <h3 className="text-2xl font-bold mb-8 text-gray-900">Editor&apos;s Choice</h3>
-            
-            <div className="grid md:grid-cols-3 gap-8">
-              {/* Featured Shopping Spot 1 */}
-              <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-lg">
-                <div className="relative overflow-hidden rounded-t-lg">
-                  <div className="h-56 bg-gradient-to-br from-yellow-600 to-amber-600 flex items-center justify-center">
-                    <Store className="w-20 h-20 text-white" />
-                  </div>
-                  <Badge className="absolute top-4 left-4 bg-yellow-500 text-black">Must Visit</Badge>
-                </div>
-                <CardContent className="p-6">
-                  <h4 className="text-xl font-bold mb-2">Grand Bazaar</h4>
-                  <p className="text-gray-600 mb-4">The world&apos;s oldest covered market with 4,000 shops, authentic Turkish crafts, and unforgettable shopping experience</p>
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-1">
-                      {[...Array(5)].map((_, i) => (
-                        <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                      ))}
-                      <span className="text-sm text-gray-600 ml-2">4.7 (15,234)</span>
-                    </div>
-                    <Badge variant="outline">$$</Badge>
-                  </div>
-                  <AffiliateButton 
-                    href={shoppingLocations[3].ctaLink}
-                    affiliateType="tripadvisor"
-                    trackingId="shopping-nisantasi"
-                    locationName={shoppingLocations[3].name}
-                    className="w-full bg-yellow-600 hover:bg-yellow-700"
-                  >
-                    {shoppingLocations[3].ctaText}
-                  </AffiliateButton>
-                </CardContent>
-              </Card>
-
-              {/* Featured Shopping Spot 2 */}
-              <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-lg">
-                <div className="relative overflow-hidden rounded-t-lg">
-                  <div className="h-56 bg-gradient-to-br from-rose-600 to-pink-600 flex items-center justify-center">
-                    <Crown className="w-20 h-20 text-white" />
-                  </div>
-                  <Badge className="absolute top-4 left-4 bg-rose-500 text-white">Luxury Experience</Badge>
-                </div>
-                <CardContent className="p-6">
-                  <h4 className="text-xl font-bold mb-2">Zorlu Center</h4>
-                  <p className="text-gray-600 mb-4">Ultimate luxury shopping destination with high-end brands, fine dining, and entertainment</p>
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-1">
-                      {[...Array(5)].map((_, i) => (
-                        <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                      ))}
-                      <span className="text-sm text-gray-600 ml-2">4.8 (4,567)</span>
-                    </div>
-                    <Badge variant="outline">$$$$</Badge>
-                  </div>
-                  <Button className="w-full bg-rose-600 hover:bg-rose-700">
-                    Shop Now
-                  </Button>
-                </CardContent>
-              </Card>
-
-              {/* Featured Shopping Spot 3 */}
-              <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-lg">
-                <div className="relative overflow-hidden rounded-t-lg">
-                  <div className="h-56 bg-gradient-to-br from-emerald-600 to-teal-600 flex items-center justify-center">
-                    <Gift className="w-20 h-20 text-white" />
-                  </div>
-                  <Badge className="absolute top-4 left-4 bg-emerald-500 text-white">Hidden Gem</Badge>
-                </div>
-                <CardContent className="p-6">
-                  <h4 className="text-xl font-bold mb-2">Arasta Bazaar</h4>
-                  <p className="text-gray-600 mb-4">Quaint bazaar behind Blue Mosque with authentic Turkish crafts and fewer crowds</p>
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-1">
-                      {[...Array(4)].map((_, i) => (
-                        <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                      ))}
-                      <Star className="w-4 h-4 text-gray-300" />
-                      <span className="text-sm text-gray-600 ml-2">4.3 (1,234)</span>
-                    </div>
-                    <Badge variant="outline">$$</Badge>
-                  </div>
-                  <AffiliateButton 
-                    href={shoppingLocations[4].ctaLink}
-                    affiliateType="tripadvisor"
-                    trackingId="shopping-cukurcuma"
-                    locationName={shoppingLocations[4].name}
-                    className="w-full bg-emerald-600 hover:bg-emerald-700"
-                  >
-                    {shoppingLocations[4].ctaText}
-                  </AffiliateButton>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Interactive Map Placeholder */}
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-4">
-          <div className="max-w-6xl mx-auto">
-            <h3 className="text-2xl font-bold mb-8 text-gray-900">Shopping Spots on the Map</h3>
-            <div className="bg-gray-100 rounded-lg h-96 flex items-center justify-center">
-              <div className="text-center">
-                <MapPin className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                <h4 className="text-xl font-semibold text-gray-600 mb-2">Interactive Map</h4>
-                <p className="text-gray-500">Click on shopping pins to view details and get directions</p>
-                <p className="text-sm text-gray-400 mt-2">Map integration coming soon</p>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Interactive Map */}
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-4">
-          <div className="max-w-6xl mx-auto">
-            <h3 className="text-2xl font-bold mb-8 text-gray-900">Shopping Spots on the Map</h3>
-            {(() => {
-              console.log("Category pins:", shoppingLocations?.length, shoppingLocations?.map(p => p.name))
-              return null
-            })()}
-            <InteractiveMap 
-              locations={shoppingLocations}
-              className="border-2 border-gray-200"
-            />
-            <div className="text-center mt-6">
-              <p className="text-gray-600 mb-4">Click on pins to view shopping details and get directions</p>
+      {/* Explore on Map Section - Premium Hero Map */}
+      <section className="scroll-animate py-24 px-6 bg-gradient-to-b from-slate-50 to-white opacity-0 translate-y-8 transition-all duration-1000 ease-out">
+        <div className="mx-auto max-w-7xl">
+          {/* Map Preview/Trigger */}
+          {!mapExpanded && (
+            <div 
+              onClick={toggleMap}
+              className="relative bg-white/70 backdrop-blur-2xl rounded-[2rem] p-12 shadow-2xl border border-white/30 cursor-pointer group hover:shadow-3xl transition-all duration-700 overflow-hidden"
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-white/5 to-transparent rounded-[2rem]"></div>
+              
+              <div className="relative z-10 text-center">
+                <div className="text-6xl mb-6">🗺️</div>
+                <h2 className="text-4xl md:text-5xl font-black leading-tight tracking-tight text-slate-900 mb-6 bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
+                  Explore on Map
+                </h2>
+                <p className="text-lg font-medium text-slate-600 max-w-3xl mx-auto leading-relaxed mb-8">
+                  Discover all shopping destinations across Istanbul in an interactive map experience
+                </p>
+                <button className="px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full font-bold hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-xl hover:shadow-2xl hover:scale-105">
+                  Open Map
+                </button>
+              </div>
+              
+              {/* Hover Shine Effect */}
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 transform -skew-x-12 translate-x-full group-hover:translate-x-[-200%] transition-transform duration-1000 pointer-events-none"></div>
             </div>
-          </div>
-        </div>
-      </section>
+          )}
 
-      {/* AdSense Banner */}
-      <section className="py-8 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto">
-            <AdSenseBanner slot="shopping-page" format="auto" />
-          </div>
+          {/* Expanded Map */}
+          {mapExpanded && (
+            <div className={`relative bg-white/70 backdrop-blur-2xl rounded-[2rem] shadow-2xl border border-white/30 overflow-hidden transition-all duration-1000 ease-out ${mapExpanded ? 'h-[80vh]' : 'h-40'}`}>
+              <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-white/5 to-transparent rounded-[2rem]"></div>
+              
+              {/* Map Title Overlay */}
+              <div className="absolute top-8 left-8 z-20">
+                <div className="bg-white/90 backdrop-blur-xl rounded-2xl px-6 py-3 border border-white/50 shadow-xl">
+                  <h3 className="text-xl font-bold text-slate-900">
+                    Explore Shopping on the Map
+                  </h3>
+                </div>
+              </div>
+
+              {/* Close Button */}
+              <button 
+                onClick={toggleMap}
+                className="absolute top-8 right-8 z-20 w-12 h-12 bg-white/90 backdrop-blur-xl rounded-full shadow-xl hover:bg-white hover:shadow-2xl transition-all duration-300 flex items-center justify-center"
+              >
+                <X className="w-6 h-6 text-slate-700" />
+              </button>
+
+              {/* Shopping Map */}
+              <ActivitiesMap 
+                activities={data.activities || []}
+                favorites={favorites}
+                onToggleFavorite={handleFavoriteToggle}
+              />
+            </div>
+          )}
         </div>
       </section>
     </div>

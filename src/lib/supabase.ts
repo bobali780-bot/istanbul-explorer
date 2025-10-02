@@ -25,6 +25,10 @@ export interface Activity {
   rating?: number
   review_count?: number
   price_range?: string
+  price_from?: number
+  price_to?: number
+  currency?: string
+  price_unit?: string
   duration?: string
   opening_hours?: string
   location?: string

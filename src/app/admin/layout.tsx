@@ -17,7 +17,8 @@ import {
   Activity,
   Search,
   ClipboardList,
-  Sparkles
+  Sparkles,
+  ExternalLink
 } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
@@ -37,9 +38,13 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
   useEffect(() => {
     // Check if already authenticated
-    const auth = localStorage.getItem('admin_authenticated')
-    if (auth === 'true') {
-      setIsAuthenticated(true)
+    try {
+      const auth = localStorage.getItem('admin_authenticated')
+      if (auth === 'true') {
+        setIsAuthenticated(true)
+      }
+    } catch (error) {
+      console.error('localStorage error:', error)
     }
     setLoading(false)
   }, [])
@@ -48,7 +53,11 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     e.preventDefault()
     if (password === ADMIN_PASSWORD) {
       setIsAuthenticated(true)
-      localStorage.setItem('admin_authenticated', 'true')
+      try {
+        localStorage.setItem('admin_authenticated', 'true')
+      } catch (error) {
+        console.error('localStorage set error:', error)
+      }
     } else {
       alert('Incorrect password')
     }
@@ -126,6 +135,13 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       badge: 'Phase 3'
     },
     {
+      name: 'Google Search',
+      href: '/admin/google-search',
+      icon: Search,
+      current: pathname === '/admin/google-search',
+      badge: 'Live'
+    },
+    {
       name: 'Activities',
       href: '/admin/activities',
       icon: MapPin,
@@ -151,6 +167,20 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       icon: ShoppingBag,
       current: pathname.startsWith('/admin/shopping'),
       badge: 'Soon'
+    },
+    {
+      name: 'Coordinates',
+      href: '/admin/coordinates',
+      icon: MapPin,
+      current: pathname.startsWith('/admin/coordinates'),
+      badge: 'New'
+    },
+    {
+      name: 'Booking Links',
+      href: '/admin/booking-links',
+      icon: ExternalLink,
+      current: pathname.startsWith('/admin/booking-links'),
+      badge: 'New'
     }
   ]
 

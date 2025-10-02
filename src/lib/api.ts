@@ -7,7 +7,7 @@ export async function getActivities(): Promise<Activity[]> {
       return []
     }
 
-    // First get activities
+    // First get activities - optimized with fewer columns for listing
     const { data: activities, error: activitiesError } = await supabase
       .from('activities')
       .select(`
@@ -16,27 +16,19 @@ export async function getActivities(): Promise<Activity[]> {
         slug,
         description,
         short_overview,
-        full_description,
-        booking_url,
         rating,
         review_count,
         price_range,
+        price_from,
         duration,
-        opening_hours,
         location,
-        highlights,
-        trip_advisor_url,
-        address,
         district,
-        meta_title,
-        meta_description,
         is_featured,
-        popularity_score,
-        created_at,
-        updated_at
+        popularity_score
       `)
       .eq('is_active', true)
       .order('popularity_score', { ascending: false })
+      .limit(50)
 
     if (activitiesError) {
       console.error('Supabase activities fetch error:', activitiesError)
@@ -110,37 +102,66 @@ export async function getActivityBySlug(slug: string): Promise<Activity | null> 
       return null
     }
 
-    // First get the activity
-    const { data: activity, error: activityError } = await supabase
-      .from('activities')
-      .select(`
-        id,
-        name,
-        slug,
-        description,
-        short_overview,
-        full_description,
-        booking_url,
-        rating,
-        review_count,
-        price_range,
-        duration,
-        opening_hours,
-        location,
-        highlights,
-        trip_advisor_url,
-        address,
-        district,
-        meta_title,
-        meta_description,
-        is_featured,
-        popularity_score,
-        created_at,
-        updated_at
-      `)
-      .eq('slug', slug)
-      .eq('is_active', true)
-      .single()
+    // Try to find the activity in different tables
+    const tables = ['activities', 'hotels', 'shopping', 'restaurants']
+    let activity = null
+    let activityError = null
+    let entityType = 'activity'
+
+    for (const table of tables) {
+      const { data, error } = await supabase
+        .from(table)
+        .select(`
+          id,
+          name,
+          slug,
+          description,
+          short_overview,
+          full_description,
+          booking_url,
+          rating,
+          review_count,
+          price_range,
+          price_from,
+          price_to,
+          currency,
+          ${table === 'hotels' || table === 'restaurants' ? 'price_unit,' : ''}
+          ${table === 'activities' ? 'duration,' : ''}
+          opening_hours,
+          location,
+          highlights,
+          trip_advisor_url,
+          address,
+          district,
+          coordinates,
+          meta_title,
+          meta_description,
+          is_featured,
+          popularity_score,
+          why_visit,
+          accessibility,
+          facilities,
+          practical_info,
+          created_at,
+          updated_at
+        `)
+        .eq('slug', slug)
+        .eq('is_active', true)
+        .single()
+
+      if (!error && data) {
+        activity = data
+        // Map table names to correct entity types (must match publish pipeline)
+        const entityTypeMap: { [key: string]: string } = {
+          'activities': 'activity',
+          'hotels': 'hotel', 
+          'shopping': 'shop',
+          'restaurants': 'restaurant'
+        }
+        entityType = entityTypeMap[table] || 'activity'
+        break
+      }
+    }
 
     if (activityError || !activity) {
       console.error('Supabase activity fetch error:', activityError)
@@ -151,7 +172,7 @@ export async function getActivityBySlug(slug: string): Promise<Activity | null> 
     const { data: media } = await supabase
       .from('universal_media')
       .select('*')
-      .eq('entity_type', 'activity')
+      .eq('entity_type', entityType)
       .eq('entity_id', activity.id)
       .order('sort_order', { ascending: true })
 
@@ -159,7 +180,7 @@ export async function getActivityBySlug(slug: string): Promise<Activity | null> 
     const { data: reviews } = await supabase
       .from('universal_reviews')
       .select('*')
-      .eq('entity_type', 'activity')
+      .eq('entity_type', entityType)
       .eq('entity_id', activity.id)
       .order('review_date', { ascending: false })
 
@@ -219,6 +240,121 @@ export async function getAllActivitySlugs(): Promise<string[]> {
     return data.map(item => item.slug)
   } catch (error) {
     console.error('Error fetching activity slugs:', error)
+    return []
+  }
+}
+
+// Helper function to calculate distance between two coordinates using Haversine formula
+function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
+  const toRad = (value: number) => (value * Math.PI) / 180
+  const R = 6371 // Earth's radius in kilometers
+
+  const dLat = toRad(lat2 - lat1)
+  const dLon = toRad(lon2 - lon1)
+
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2)
+
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+  const distance = R * c
+
+  return Math.round(distance * 10) / 10 // Round to 1 decimal place
+}
+
+// Get nearby venues from any category table
+export async function getNearbyVenues(
+  lat: number,
+  lng: number,
+  table: 'activities' | 'hotels' | 'shopping' | 'restaurants',
+  excludeId?: number,
+  radiusKm: number = 2,
+  limit: number = 6
+): Promise<any[]> {
+  try {
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+      return []
+    }
+
+    // Fetch all active venues from the table
+    const { data, error } = await supabase
+      .from(table)
+      .select('id, name, slug, description, rating, review_count, price_range, price_from, price_to, currency, price_unit, location, coordinates, district')
+      .eq('is_active', true)
+
+    if (error || !data) {
+      console.error('Error fetching nearby venues:', error)
+      return []
+    }
+
+    // Get entity type for media query
+    const entityTypeMap: { [key: string]: string } = {
+      'activities': 'activity',
+      'hotels': 'hotel',
+      'shopping': 'shop',
+      'restaurants': 'restaurant'
+    }
+    const entityType = entityTypeMap[table] || 'activity'
+
+    // Fetch only primary images for performance
+    const venueIds = data.map(v => v.id)
+    const { data: media } = await supabase
+      .from('universal_media')
+      .select('entity_id, media_url')
+      .eq('entity_type', entityType)
+      .in('entity_id', venueIds)
+      .eq('is_primary', true)
+      .limit(venueIds.length)
+
+    // Map images to venues
+    const venueImages: { [key: number]: string } = {}
+    if (media) {
+      media.forEach(m => {
+        if (!venueImages[m.entity_id]) {
+          venueImages[m.entity_id] = m.media_url
+        }
+      })
+    }
+
+    // Calculate distances and filter
+    const venuesWithDistance = data
+      .filter(venue => {
+        // Exclude current venue
+        if (excludeId && venue.id === excludeId) return false
+
+        // Check if venue has valid coordinates
+        if (!venue.coordinates || !venue.coordinates.lat || !venue.coordinates.lng) return false
+
+        return true
+      })
+      .map(venue => {
+        const distance = calculateDistance(
+          lat,
+          lng,
+          venue.coordinates.lat,
+          venue.coordinates.lng
+        )
+
+        return {
+          ...venue,
+          image_url: venueImages[venue.id] || null,
+          distance,
+          walkingTime: Math.round(distance * 12) // ~12 minutes per km walking
+        }
+      })
+      .filter(venue => venue.distance <= radiusKm)
+      .sort((a, b) => a.distance - b.distance)
+      .slice(0, limit)
+
+    // If we have fewer than 3 results, try expanding radius to 5km
+    if (venuesWithDistance.length < 3 && radiusKm < 5) {
+      return getNearbyVenues(lat, lng, table, excludeId, 5, limit)
+    }
+
+    return venuesWithDistance
+  } catch (error) {
+    console.error('Error in getNearbyVenues:', error)
     return []
   }
 }
