@@ -24,7 +24,7 @@ import {
   Share2,
   Bookmark
 } from "lucide-react"
-import InteractiveMap from "@/components/InteractiveMap"
+import { InteractiveMap } from "@/components/InteractiveMap"
 import AffiliateButton from "@/components/AffiliateButton"
 import AdSenseBanner from "@/components/AdSenseBanner"
 import { useActivities } from "@/hooks/useScrapedData"
