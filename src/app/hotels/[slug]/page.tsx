@@ -125,13 +125,11 @@ export default async function HotelPage({ params }: HotelPageProps) {
               />
 
               {/* Related Content Rows */}
-              <RelatedContentRows 
-                currentItem={{
-                  id: activity.id.toString(),
-                  title: activity.name,
-                  coordinates: activity.coordinates || { lat: 0, lng: 0 },
-                  category: 'hotels'
-                }}
+              <RelatedContentRows
+                relatedExperiences={[]}
+                shoppingNearby={[]}
+                foodDrinkNearby={[]}
+                currentCategory="hotels"
               />
 
               {/* Reviews Section */}
