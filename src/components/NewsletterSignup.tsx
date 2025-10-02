@@ -69,13 +69,11 @@ export default function NewsletterSignup({ variant = 'default', className = '' }
               required
               disabled={loading}
               className="flex-1"
-              size="sm"
             />
             <Button
               type="submit"
               disabled={loading || !email.trim()}
-              size="sm"
-              className="bg-purple-600 hover:bg-purple-700"
+              className="bg-purple-600 hover:bg-purple-700 text-sm px-4 py-2"
             >
               {loading ? '...' : 'Subscribe'}
             </Button>
