@@ -20,7 +20,7 @@ interface ShoppingPageProps {
 
 export default async function ShoppingPage({ params }: ShoppingPageProps) {
   const resolvedParams = await params
-  const activity = await getActivityBySlug(resolvedParams.slug)
+  const activity = await getActivityBySlug(resolvedParams.slug) as any
 
   if (!activity) {
     notFound()
