@@ -20,7 +20,7 @@ interface RestaurantPageProps {
 
 export default async function RestaurantPage({ params }: RestaurantPageProps) {
   const resolvedParams = await params
-  const activity = await getActivityBySlug(resolvedParams.slug)
+  const activity = await getActivityBySlug(resolvedParams.slug) as any
 
   if (!activity) {
     notFound()
