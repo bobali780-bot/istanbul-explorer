@@ -7,6 +7,18 @@ interface SearchRequest {
   types?: string[]
 }
 
+interface PlaceResult {
+  place_id: string
+  name: string
+  formatted_address: string
+  rating: number
+  price_level?: number
+  types: string[]
+  photos?: any[]
+  opening_hours?: any
+  geometry: any
+}
+
 export async function POST(request: NextRequest) {
   try {
     const { query, location = "41.0082,28.9784", radius = 50000, types = [] }: SearchRequest = await request.json()
@@ -89,8 +101,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Filter, enhance, and sort results by rating (highest first)
-    const filteredResults = (data.results || [])
-      .map((place: any) => ({
+    const filteredResults: PlaceResult[] = (data.results || [])
+      .map((place: any): PlaceResult => ({
         place_id: place.place_id,
         name: place.name,
         formatted_address: place.formatted_address,
@@ -101,7 +113,7 @@ export async function POST(request: NextRequest) {
         opening_hours: place.opening_hours,
         geometry: place.geometry
       }))
-      .sort((a, b) => {
+      .sort((a: PlaceResult, b: PlaceResult) => {
         // Sort by rating (highest first), then by name if ratings are equal
         if (b.rating !== a.rating) {
           return b.rating - a.rating
