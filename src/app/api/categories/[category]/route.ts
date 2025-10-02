@@ -143,9 +143,9 @@ export async function GET(
     }
 
     // Attach images to activities
-    const activitiesWithImages = activities.map(activity => ({
+    const activitiesWithImages = activities.map((activity: any) => ({
       ...activity,
-      activity_images: mediaData?.filter(media => media.entity_id === activity.id) || []
+      activity_images: mediaData?.filter((media: any) => media.entity_id === activity.id) || []
     }))
 
     // Generate hero data
