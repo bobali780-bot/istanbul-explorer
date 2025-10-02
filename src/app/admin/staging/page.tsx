@@ -2160,13 +2160,11 @@ export default function StagingPage() {
 
                             {/* Full Width Related Content Rows - Outside Grid */}
                             <div className="mt-16 w-full">
-                              <RelatedContentRows 
-                                currentItem={{
-                                  id: selectedItem.id.toString(),
-                                  title: selectedItem.title,
-                                  coordinates: selectedItem.raw_content?.coordinates || { lat: 0, lng: 0 },
-                                  category: selectedItem.category || 'activities'
-                                }}
+                              <RelatedContentRows
+                                relatedExperiences={[]}
+                                shoppingNearby={[]}
+                                foodDrinkNearby={[]}
+                                currentCategory={selectedItem.category as 'shopping' | 'hotels' | 'restaurants' | 'activities' || 'activities'}
                               />
                             </div>
 
