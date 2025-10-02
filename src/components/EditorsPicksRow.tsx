@@ -94,9 +94,13 @@ export function EditorsPicksRow({
               <CategoryTile
                 key={pick.id}
                 {...pick}
+                description={pick.description || ''}
+                rating={pick.rating || 0}
+                reviewCount={pick.reviewCount || 0}
+                location={pick.location || ''}
                 isEditorPick={true}
                 isFavorite={favorites.has(pick.id)}
-                onFavoriteToggle={onFavoriteToggle}
+                onToggleFavorite={onFavoriteToggle}
               />
             ))}
           </div>

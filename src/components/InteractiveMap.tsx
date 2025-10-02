@@ -75,8 +75,7 @@ export function InteractiveMap({ activities, favorites, onToggleFavorite }: Inte
       logoPosition: 'bottom-right',
       // Performance optimizations
       preserveDrawingBuffer: false,
-      antialias: false,
-      optimizeForTerrain: false
+      antialias: false
     })
 
     // Add navigation controls
@@ -234,10 +233,12 @@ export function InteractiveMap({ activities, favorites, onToggleFavorite }: Inte
       }).setDOMContent(popupContent)
 
       // Add marker to map
-      new mapboxgl.Marker(markerElement)
-        .setLngLat([lng, lat])
-        .setPopup(popup)
-        .addTo(map.current)
+      if (map.current) {
+        new mapboxgl.Marker(markerElement)
+          .setLngLat([lng, lat])
+          .setPopup(popup)
+          .addTo(map.current)
+      }
     })
   }, [activities, isLoaded, favorites])
 

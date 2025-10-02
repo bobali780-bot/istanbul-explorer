@@ -103,14 +103,57 @@ export async function getActivityBySlug(slug: string): Promise<Activity | null> 
     }
 
     // Try to find the activity in different tables
-    const tables = ['activities', 'hotels', 'shopping', 'restaurants']
     let activity = null
     let activityError = null
     let entityType = 'activity'
 
-    for (const table of tables) {
-      const { data, error } = await supabase
-        .from(table)
+    // Check activities table first
+    let { data, error } = await supabase
+      .from('activities')
+      .select(`
+        id,
+        name,
+        slug,
+        description,
+        short_overview,
+        full_description,
+        booking_url,
+        rating,
+        review_count,
+        price_range,
+        price_from,
+        price_to,
+        currency,
+        duration,
+        opening_hours,
+        location,
+        highlights,
+        trip_advisor_url,
+        address,
+        district,
+        coordinates,
+        meta_title,
+        meta_description,
+        is_featured,
+        popularity_score,
+        why_visit,
+        accessibility,
+        facilities,
+        practical_info,
+        created_at,
+        updated_at
+      `)
+      .eq('slug', slug)
+      .eq('is_active', true)
+      .single()
+
+    if (!error && data) {
+      activity = data
+      entityType = 'activity'
+    } else {
+      // Try hotels table
+      const hotelsResult = await supabase
+        .from('hotels')
         .select(`
           id,
           name,
@@ -125,8 +168,7 @@ export async function getActivityBySlug(slug: string): Promise<Activity | null> 
           price_from,
           price_to,
           currency,
-          ${table === 'hotels' || table === 'restaurants' ? 'price_unit,' : ''}
-          ${table === 'activities' ? 'duration,' : ''}
+          price_unit,
           opening_hours,
           location,
           highlights,
@@ -149,17 +191,100 @@ export async function getActivityBySlug(slug: string): Promise<Activity | null> 
         .eq('is_active', true)
         .single()
 
-      if (!error && data) {
-        activity = data
-        // Map table names to correct entity types (must match publish pipeline)
-        const entityTypeMap: { [key: string]: string } = {
-          'activities': 'activity',
-          'hotels': 'hotel', 
-          'shopping': 'shop',
-          'restaurants': 'restaurant'
+      if (!hotelsResult.error && hotelsResult.data) {
+        activity = hotelsResult.data
+        entityType = 'hotel'
+      } else {
+        // Try shopping table
+        const shoppingResult = await supabase
+          .from('shopping')
+          .select(`
+            id,
+            name,
+            slug,
+            description,
+            short_overview,
+            full_description,
+            booking_url,
+            rating,
+            review_count,
+            price_range,
+            price_from,
+            price_to,
+            currency,
+            opening_hours,
+            location,
+            highlights,
+            trip_advisor_url,
+            address,
+            district,
+            coordinates,
+            meta_title,
+            meta_description,
+            is_featured,
+            popularity_score,
+            why_visit,
+            accessibility,
+            facilities,
+            practical_info,
+            created_at,
+            updated_at
+          `)
+          .eq('slug', slug)
+          .eq('is_active', true)
+          .single()
+
+        if (!shoppingResult.error && shoppingResult.data) {
+          activity = shoppingResult.data
+          entityType = 'shop'
+        } else {
+          // Try restaurants table
+          const restaurantsResult = await supabase
+            .from('restaurants')
+            .select(`
+              id,
+              name,
+              slug,
+              description,
+              short_overview,
+              full_description,
+              booking_url,
+              rating,
+              review_count,
+              price_range,
+              price_from,
+              price_to,
+              currency,
+              price_unit,
+              opening_hours,
+              location,
+              highlights,
+              trip_advisor_url,
+              address,
+              district,
+              coordinates,
+              meta_title,
+              meta_description,
+              is_featured,
+              popularity_score,
+              why_visit,
+              accessibility,
+              facilities,
+              practical_info,
+              created_at,
+              updated_at
+            `)
+            .eq('slug', slug)
+            .eq('is_active', true)
+            .single()
+
+          if (!restaurantsResult.error && restaurantsResult.data) {
+            activity = restaurantsResult.data
+            entityType = 'restaurant'
+          } else {
+            activityError = restaurantsResult.error
+          }
         }
-        entityType = entityTypeMap[table] || 'activity'
-        break
       }
     }
 
