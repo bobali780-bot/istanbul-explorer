@@ -90,7 +90,7 @@ export async function POST(request: NextRequest) {
           'https://koqqkpitepqwlfjymcje.supabase.co/storage/v1/object/public/brand-assets/placeholder.jpg'
         
         // Get up to 10 images from Google Places (increased from 5 for premium quality)
-        const googleImages = placeDetails.photos?.slice(0, 10).map(photo => 
+        const googleImages = placeDetails.photos?.slice(0, 10).map((photo: any) =>
           `https://maps.googleapis.com/maps/api/place/photo?maxwidth=1600&photoreference=${photo.photo_reference}&key=${process.env.GOOGLE_PLACES_API_KEY}`
         ) || []
         
