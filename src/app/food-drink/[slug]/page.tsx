@@ -140,7 +140,7 @@ export default async function RestaurantPage({ params }: RestaurantPageProps) {
                     Diner Reviews
                   </h3>
                   <div className="space-y-4 mb-6">
-                    {activity.activity_reviews.map((review, index) => (
+                    {activity.activity_reviews.map((review: any, index: number) => (
                       <div key={index} className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
                         <div className="flex items-center justify-between mb-3">
                           <div className="flex items-center gap-3">
