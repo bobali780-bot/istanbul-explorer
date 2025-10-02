@@ -107,7 +107,7 @@ export default async function RestaurantPage({ params }: RestaurantPageProps) {
               <div>
                 <h2 className="text-3xl font-bold mb-6 text-gray-900">About This Restaurant</h2>
                 <div className="prose prose-lg max-w-none text-gray-600 space-y-4">
-                  {activity.full_description && activity.full_description.split('\n\n').map((paragraph, index) => (
+                  {activity.full_description && activity.full_description.split('\n\n').map((paragraph: string, index: number) => (
                     <p key={index}>{paragraph}</p>
                   ))}
                   {!activity.full_description && activity.description && (
