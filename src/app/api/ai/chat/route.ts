@@ -115,11 +115,19 @@ IMPORTANT:
       response
     });
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('AI Chat error:', error);
+    console.error('Error details:', {
+      message: error?.message,
+      stack: error?.stack,
+      name: error?.name,
+      apiKeyExists: !!process.env.OPENAI_API_KEY,
+      apiKeyPrefix: process.env.OPENAI_API_KEY?.substring(0, 10)
+    });
     return NextResponse.json({
       success: false,
-      error: 'Failed to process chat message'
+      error: error?.message || 'Failed to process chat message',
+      details: process.env.NODE_ENV === 'development' ? error?.stack : undefined
     }, { status: 500 });
   }
 }

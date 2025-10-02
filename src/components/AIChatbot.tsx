@@ -73,9 +73,12 @@ export function AIChatbot() {
           content: data.response
         }])
       } else {
+        // Show actual error message for debugging
+        const errorMsg = data.error || "I'm sorry, I encountered an error. Please try again."
+        console.error('Chat API error:', data)
         setMessages(prev => [...prev, {
           role: 'assistant',
-          content: "I'm sorry, I encountered an error. Please try again."
+          content: `Error: ${errorMsg}`
         }])
       }
     } catch (error) {
