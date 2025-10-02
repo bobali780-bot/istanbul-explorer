@@ -127,9 +127,9 @@ export async function GET(
     }
 
     const entityType = getEntityType(category)
-    
+
     // Optimize media fetch - get primary images first, then any images if no primary exists
-    const activityIds = activities.map(a => a.id)
+    const activityIds = activities.map((a: any) => a.id)
     const { data: mediaData, error: mediaError } = await supabase
       .from('universal_media')
       .select('entity_id, media_url, is_primary, sort_order')
