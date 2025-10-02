@@ -1,8 +1,15 @@
 import { NextResponse } from 'next/server';
 import OpenAI from 'openai';
 
+// Validate and clean API key
+const apiKey = process.env.OPENAI_API_KEY?.trim();
+
+if (!apiKey) {
+  console.error('OPENAI_API_KEY is not set or is empty');
+}
+
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY!
+  apiKey: apiKey!
 });
 
 // Cache the knowledge base to avoid regenerating on every request
