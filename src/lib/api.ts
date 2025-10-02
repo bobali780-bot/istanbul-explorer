@@ -40,45 +40,56 @@ export async function getActivities(): Promise<Activity[]> {
       return []
     }
 
-    // Get media for all activities
-    const { data: media } = await supabase
-      .from('universal_media')
-      .select('*')
-      .eq('entity_type', 'activity')
-      .in('entity_id', activities.map(a => a.id))
-      .order('sort_order', { ascending: true })
+    // Fetch media and reviews in parallel for better performance
+    const activityIds = activities.map(a => a.id)
+    const [mediaResult, reviewsResult] = await Promise.all([
+      supabase
+        .from('universal_media')
+        .select('entity_id, media_url, alt_text, is_primary, sort_order')
+        .eq('entity_type', 'activity')
+        .in('entity_id', activityIds)
+        .eq('is_primary', true) // Only fetch primary images for listing page
+        .order('sort_order', { ascending: true }),
+      supabase
+        .from('universal_reviews')
+        .select('entity_id, reviewer_name, rating, content, review_date')
+        .eq('entity_type', 'activity')
+        .in('entity_id', activityIds)
+        .order('review_date', { ascending: false })
+        .limit(100) // Limit total reviews fetched
+    ])
 
-    // Get reviews for all activities
-    const { data: reviews } = await supabase
-      .from('universal_reviews')
-      .select('*')
-      .eq('entity_type', 'activity')
-      .in('entity_id', activities.map(a => a.id))
-      .order('review_date', { ascending: false })
+    const media = mediaResult.data
+    const reviews = reviewsResult.data
 
-    // Combine data
+    // Combine data - optimized with Map for O(1) lookups
+    const mediaMap = new Map<number, any[]>()
+    const reviewsMap = new Map<number, any[]>()
+
+    // Group media and reviews by entity_id
+    media?.forEach(m => {
+      if (!mediaMap.has(m.entity_id)) mediaMap.set(m.entity_id, [])
+      mediaMap.get(m.entity_id)!.push(m)
+    })
+
+    reviews?.forEach(r => {
+      if (!reviewsMap.has(r.entity_id)) reviewsMap.set(r.entity_id, [])
+      reviewsMap.get(r.entity_id)!.push(r)
+    })
+
     const activitiesWithMedia = activities.map(activity => {
-      const activityMedia = media?.filter(m => m.entity_id === activity.id) || []
-      const activityReviews = reviews?.filter(r => r.entity_id === activity.id) || []
-
-      // Sort media by primary first, then sort_order
-      const sortedMedia = activityMedia.sort((a, b) => {
-        if (a.is_primary && !b.is_primary) return -1
-        if (!a.is_primary && b.is_primary) return 1
-        return a.sort_order - b.sort_order
-      })
+      const activityMedia = mediaMap.get(activity.id) || []
+      const activityReviews = reviewsMap.get(activity.id) || []
 
       return {
         ...activity,
-        activity_images: sortedMedia.map(m => ({
-          id: m.id,
+        activity_images: activityMedia.map(m => ({
           image_url: m.media_url,
           alt_text: m.alt_text,
           is_primary: m.is_primary,
           sort_order: m.sort_order
         })),
-        activity_reviews: activityReviews.map(r => ({
-          id: r.id,
+        activity_reviews: activityReviews.slice(0, 3).map(r => ({
           author: r.reviewer_name,
           rating: r.rating,
           comment: r.content,
@@ -293,21 +304,25 @@ export async function getActivityBySlug(slug: string): Promise<Activity | null> 
       return null
     }
 
-    // Get media for this activity
-    const { data: media } = await supabase
-      .from('universal_media')
-      .select('*')
-      .eq('entity_type', entityType)
-      .eq('entity_id', activity.id)
-      .order('sort_order', { ascending: true })
+    // Fetch media and reviews in parallel for better performance
+    const [mediaResult, reviewsResult] = await Promise.all([
+      supabase
+        .from('universal_media')
+        .select('*')
+        .eq('entity_type', entityType)
+        .eq('entity_id', activity.id)
+        .order('sort_order', { ascending: true }),
+      supabase
+        .from('universal_reviews')
+        .select('*')
+        .eq('entity_type', entityType)
+        .eq('entity_id', activity.id)
+        .order('review_date', { ascending: false })
+        .limit(20) // Limit reviews for performance
+    ])
 
-    // Get reviews for this activity
-    const { data: reviews } = await supabase
-      .from('universal_reviews')
-      .select('*')
-      .eq('entity_type', entityType)
-      .eq('entity_id', activity.id)
-      .order('review_date', { ascending: false })
+    const media = mediaResult.data
+    const reviews = reviewsResult.data
 
     // Sort media by primary first, then sort_order
     const sortedMedia = (media || []).sort((a, b) => {

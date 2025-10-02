@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { Heart, MapPin, Star, Clock } from 'lucide-react'
 import Link from 'next/link'
+import Image from 'next/image'
 
 interface CategoryTileProps {
   id: string
@@ -70,12 +71,16 @@ export function CategoryTile({
       {/* Image Container */}
       <div className="relative h-64 overflow-hidden">
         {heroImage ? (
-          <img
+          <Image
             src={heroImage}
             alt={title}
-            className={`w-full h-full object-cover transition-transform duration-700 ${
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            quality={90}
+            className={`object-cover transition-transform duration-700 ${
               isHovered ? 'scale-[1.05] brightness-110' : 'scale-100 brightness-100'
             }`}
+            priority={false}
           />
         ) : (
           <div className="w-full h-full bg-gradient-to-br from-slate-200 to-slate-300 flex items-center justify-center">

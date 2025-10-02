@@ -1,5 +1,6 @@
 'use client'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useState } from 'react'
 import { Ticket, BedDouble, UtensilsCrossed, ShoppingBag, Landmark, Ship, Store, Search, X } from 'lucide-react'
 
@@ -10,16 +11,13 @@ export function Hero() {
     // FULL-BLEED HERO — covers the full top viewport
     <section aria-label="Galata Tower and Istanbul skyline at golden hour" className="absolute top-0 left-0 right-0 min-h-[100svh] w-full text-white">
       {/* Full-bleed background image + overlay */}
-      <img 
-        src="/istanbul-hero.jpg" 
-        alt="Istanbul skyline" 
-        className="absolute inset-0 h-full w-full object-cover z-0"
-         onError={(e) => {
-           const target = e.target as HTMLImageElement;
-           console.error('Image failed to load:', target.src);
-           target.style.display = 'none';
-         }}
-        onLoad={() => console.log('Background image loaded successfully')}
+      <Image
+        src="/istanbul-hero.jpg"
+        alt="Istanbul skyline"
+        fill
+        quality={90}
+        priority
+        className="object-cover z-0"
       />
       <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(0,0,0,0.5),rgba(0,0,0,0.35))] z-20" />
 
