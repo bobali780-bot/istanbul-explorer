@@ -121,7 +121,7 @@ export default async function ShoppingPage({ params }: ShoppingPageProps) {
               <div>
                 <h2 className="text-3xl font-bold mb-6 text-gray-900">About This Shopping Destination</h2>
                 <div className="prose prose-lg max-w-none text-gray-600 space-y-4">
-                  {activity.full_description && activity.full_description.split('\n\n').map((paragraph, index) => (
+                  {activity.full_description && activity.full_description.split('\n\n').map((paragraph: string, index: number) => (
                     <p key={index}>{paragraph}</p>
                   ))}
                   {!activity.full_description && activity.description && (
@@ -154,13 +154,13 @@ export default async function ShoppingPage({ params }: ShoppingPageProps) {
                     Shopper Reviews
                   </h3>
                   <div className="space-y-4 mb-6">
-                    {activity.activity_reviews.map((review, index) => (
+                    {activity.activity_reviews.map((review: any, index: number) => (
                       <div key={index} className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
                         <div className="flex items-center justify-between mb-3">
                           <div className="flex items-center gap-3">
                             <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
                               <span className="text-purple-600 font-semibold text-sm">
-                                {review.name.split(' ').map(n => n[0]).join('')}
+                                {review.name.split(' ').map((n: string) => n[0]).join('')}
                               </span>
                             </div>
                             <div>
