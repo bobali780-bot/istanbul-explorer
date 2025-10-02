@@ -13,6 +13,9 @@ import { getActivityBySlug, getAllActivitySlugs, getNearbyVenues } from "@/lib/a
 import { getBookingUrl } from "@/lib/booking-urls"
 import type { Activity } from "@/lib/supabase"
 
+// Enable ISR (Incremental Static Regeneration) - revalidate every 60 seconds
+export const revalidate = 60
+
 interface ActivityPageProps {
   params: Promise<{
     slug: string

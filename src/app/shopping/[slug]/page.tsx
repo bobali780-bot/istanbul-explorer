@@ -12,6 +12,9 @@ import ReviewsSection from "@/components/ReviewsSection"
 import { getActivityBySlug, getAllActivitySlugs, getNearbyVenues } from "@/lib/api"
 import type { Activity } from "@/lib/supabase"
 
+// Enable ISR (Incremental Static Regeneration) - revalidate every 60 seconds
+export const revalidate = 60
+
 interface ShoppingPageProps {
   params: Promise<{
     slug: string
