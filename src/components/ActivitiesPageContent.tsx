@@ -473,9 +473,10 @@ export default function ActivitiesPageContent() {
           </h2>
           
           <div className="bg-gray-100 rounded-lg p-8">
-            <InteractiveMap 
-              locations={activitiesLocations}
-              className="border-2 border-gray-200"
+            <InteractiveMap
+              activities={[]}
+              favorites={new Set()}
+              onToggleFavorite={() => {}}
             />
           </div>
         </div>
