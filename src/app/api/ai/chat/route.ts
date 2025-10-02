@@ -17,7 +17,7 @@ let cachedKnowledgeBase: any = null;
 let cacheTime: number = 0;
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
-async function getKnowledgeBase() {
+async function getKnowledgeBase(request: Request) {
   const now = Date.now();
 
   // Return cached version if still valid
@@ -25,8 +25,17 @@ async function getKnowledgeBase() {
     return cachedKnowledgeBase;
   }
 
+  // Get the base URL from the request
+  const url = new URL(request.url);
+  const baseUrl = `${url.protocol}//${url.host}`;
+
   // Fetch fresh knowledge base
-  const knowledgeResponse = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/ai/generate-knowledge-base`);
+  const knowledgeResponse = await fetch(`${baseUrl}/api/ai/generate-knowledge-base`);
+
+  if (!knowledgeResponse.ok) {
+    throw new Error(`Failed to fetch knowledge base: ${knowledgeResponse.status}`);
+  }
+
   const { knowledge_base } = await knowledgeResponse.json();
 
   // Update cache
@@ -41,7 +50,7 @@ export async function POST(request: Request) {
     const { message, conversationHistory } = await request.json();
 
     // Get knowledge base (cached)
-    const knowledge_base = await getKnowledgeBase();
+    const knowledge_base = await getKnowledgeBase(request);
 
     // Create system prompt with knowledge base
     const systemPrompt = `You are a friendly and knowledgeable Istanbul travel assistant for "Best Istanbul" - a curated travel guide platform.
