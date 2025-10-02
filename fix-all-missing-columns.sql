@@ -1,0 +1,99 @@
+-- Fix ALL missing columns in main category tables
+-- Run this in Supabase SQL Editor
+
+-- Activities table - add all missing columns
+ALTER TABLE activities 
+ADD COLUMN IF NOT EXISTS title TEXT,
+ADD COLUMN IF NOT EXISTS slug TEXT,
+ADD COLUMN IF NOT EXISTS description TEXT,
+ADD COLUMN IF NOT EXISTS short_overview TEXT,
+ADD COLUMN IF NOT EXISTS full_description TEXT,
+ADD COLUMN IF NOT EXISTS rating DECIMAL(3,2) DEFAULT 4.5,
+ADD COLUMN IF NOT EXISTS review_count INTEGER DEFAULT 100,
+ADD COLUMN IF NOT EXISTS price_range TEXT DEFAULT '$$',
+ADD COLUMN IF NOT EXISTS opening_hours TEXT,
+ADD COLUMN IF NOT EXISTS location TEXT,
+ADD COLUMN IF NOT EXISTS address TEXT,
+ADD COLUMN IF NOT EXISTS phone TEXT,
+ADD COLUMN IF NOT EXISTS website_url TEXT,
+ADD COLUMN IF NOT EXISTS google_maps_url TEXT,
+ADD COLUMN IF NOT EXISTS coordinates JSONB DEFAULT '{"lat": 41.0082, "lng": 28.9784}',
+ADD COLUMN IF NOT EXISTS is_featured BOOLEAN DEFAULT false,
+ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT NOW(),
+ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP DEFAULT NOW();
+
+-- Hotels table - add all missing columns
+ALTER TABLE hotels 
+ADD COLUMN IF NOT EXISTS title TEXT,
+ADD COLUMN IF NOT EXISTS slug TEXT,
+ADD COLUMN IF NOT EXISTS description TEXT,
+ADD COLUMN IF NOT EXISTS short_overview TEXT,
+ADD COLUMN IF NOT EXISTS full_description TEXT,
+ADD COLUMN IF NOT EXISTS rating DECIMAL(3,2) DEFAULT 4.5,
+ADD COLUMN IF NOT EXISTS review_count INTEGER DEFAULT 100,
+ADD COLUMN IF NOT EXISTS price_range TEXT DEFAULT '$$',
+ADD COLUMN IF NOT EXISTS opening_hours TEXT,
+ADD COLUMN IF NOT EXISTS location TEXT,
+ADD COLUMN IF NOT EXISTS address TEXT,
+ADD COLUMN IF NOT EXISTS phone TEXT,
+ADD COLUMN IF NOT EXISTS website_url TEXT,
+ADD COLUMN IF NOT EXISTS google_maps_url TEXT,
+ADD COLUMN IF NOT EXISTS coordinates JSONB DEFAULT '{"lat": 41.0082, "lng": 28.9784}',
+ADD COLUMN IF NOT EXISTS is_featured BOOLEAN DEFAULT false,
+ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT NOW(),
+ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP DEFAULT NOW();
+
+-- Shopping table - add all missing columns
+ALTER TABLE shopping 
+ADD COLUMN IF NOT EXISTS title TEXT,
+ADD COLUMN IF NOT EXISTS slug TEXT,
+ADD COLUMN IF NOT EXISTS description TEXT,
+ADD COLUMN IF NOT EXISTS short_overview TEXT,
+ADD COLUMN IF NOT EXISTS full_description TEXT,
+ADD COLUMN IF NOT EXISTS rating DECIMAL(3,2) DEFAULT 4.5,
+ADD COLUMN IF NOT EXISTS review_count INTEGER DEFAULT 100,
+ADD COLUMN IF NOT EXISTS price_range TEXT DEFAULT '$$',
+ADD COLUMN IF NOT EXISTS opening_hours TEXT,
+ADD COLUMN IF NOT EXISTS location TEXT,
+ADD COLUMN IF NOT EXISTS address TEXT,
+ADD COLUMN IF NOT EXISTS phone TEXT,
+ADD COLUMN IF NOT EXISTS website_url TEXT,
+ADD COLUMN IF NOT EXISTS google_maps_url TEXT,
+ADD COLUMN IF NOT EXISTS coordinates JSONB DEFAULT '{"lat": 41.0082, "lng": 28.9784}',
+ADD COLUMN IF NOT EXISTS is_featured BOOLEAN DEFAULT false,
+ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT NOW(),
+ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP DEFAULT NOW();
+
+-- Restaurants table - add all missing columns
+ALTER TABLE restaurants 
+ADD COLUMN IF NOT EXISTS title TEXT,
+ADD COLUMN IF NOT EXISTS slug TEXT,
+ADD COLUMN IF NOT EXISTS description TEXT,
+ADD COLUMN IF NOT EXISTS short_overview TEXT,
+ADD COLUMN IF NOT EXISTS full_description TEXT,
+ADD COLUMN IF NOT EXISTS rating DECIMAL(3,2) DEFAULT 4.5,
+ADD COLUMN IF NOT EXISTS review_count INTEGER DEFAULT 100,
+ADD COLUMN IF NOT EXISTS price_range TEXT DEFAULT '$$',
+ADD COLUMN IF NOT EXISTS opening_hours TEXT,
+ADD COLUMN IF NOT EXISTS location TEXT,
+ADD COLUMN IF NOT EXISTS address TEXT,
+ADD COLUMN IF NOT EXISTS phone TEXT,
+ADD COLUMN IF NOT EXISTS website_url TEXT,
+ADD COLUMN IF NOT EXISTS google_maps_url TEXT,
+ADD COLUMN IF NOT EXISTS coordinates JSONB DEFAULT '{"lat": 41.0082, "lng": 28.9784}',
+ADD COLUMN IF NOT EXISTS is_featured BOOLEAN DEFAULT false,
+ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT NOW(),
+ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP DEFAULT NOW();
+
+-- Refresh the schema cache multiple times to ensure all changes are picked up
+SELECT pg_sleep(2);
+NOTIFY pgrst, 'reload schema';
+SELECT pg_sleep(2);
+NOTIFY pgrst, 'reload schema';
+SELECT pg_sleep(2);
+NOTIFY pgrst, 'reload schema';
+SELECT pg_sleep(2);
+NOTIFY pgrst, 'reload schema';
+
+-- Confirmation message
+SELECT 'ALL missing columns added to all category tables - ready for publishing 80 items!' as status;
