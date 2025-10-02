@@ -40,6 +40,7 @@ import {
   Upload,
   Search,
   Loader2,
+  Check,
 } from 'lucide-react'
 import { createClient } from '@supabase/supabase-js'
 import NextImage from 'next/image'
