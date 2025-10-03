@@ -1,12 +1,22 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import dynamic from 'next/dynamic'
 import { Hero } from '@/components/Hero'
 import { EditorPicks } from '@/components/EditorPicks'
 import { CategoryGrid } from '@/components/CategoryGrid'
-import { IstanbulMap } from '@/components/IstanbulMap'
 import { GoogleAdsSection } from '@/components/GoogleAdsSection'
-import { AIChatbot } from '@/components/AIChatbot'
+
+// Lazy load heavy components - loads after page is interactive
+const AIChatbot = dynamic(() => import('@/components/AIChatbot').then(mod => ({ default: mod.AIChatbot })), {
+  ssr: false,
+  loading: () => null
+})
+
+const IstanbulMap = dynamic(() => import('@/components/IstanbulMap').then(mod => ({ default: mod.IstanbulMap })), {
+  ssr: false,
+  loading: () => <div className="h-96 bg-slate-100 animate-pulse rounded-2xl flex items-center justify-center"><span className="text-slate-500">Loading map...</span></div>
+})
 
 interface MapItem {
   id: string
