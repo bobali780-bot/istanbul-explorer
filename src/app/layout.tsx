@@ -2,6 +2,7 @@ import './globals.css'
 import type { Metadata } from 'next'
 import { ConditionalHeader } from '@/components/ConditionalHeader'
 import { Footer } from '@/components/Footer'
+import { AdSenseScript } from '@/components/AdSenseScript'
 
 export const metadata: Metadata = {
   title: 'Istanbul City Guide | Best Things To Do, Eat, Shop & Stay',
@@ -11,15 +12,8 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <head>
-        {/* Google AdSense - for verification */}
-        <script
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4768819231981592"
-          crossOrigin="anonymous"
-        />
-      </head>
       <body className="text-slate-900 antialiased">
+        <AdSenseScript />
         <ConditionalHeader />
         {children}
         <Footer />
