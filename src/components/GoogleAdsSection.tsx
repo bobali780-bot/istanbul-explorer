@@ -1,11 +1,10 @@
 'use client'
 
 import { useEffect } from 'react'
-import Script from 'next/script'
 
 export function GoogleAdsSection() {
   useEffect(() => {
-    // Push ad after script loads
+    // Push ad after script loads (script is loaded in layout.tsx)
     try {
       if (typeof window !== 'undefined' && (window as any).adsbygoogle) {
         ((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({})
@@ -17,13 +16,6 @@ export function GoogleAdsSection() {
 
   return (
     <>
-      {/* Load AdSense script */}
-      <Script
-        async
-        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4768819231981592"
-        crossOrigin="anonymous"
-        strategy="afterInteractive"
-      />
 
       <section className="mx-auto max-w-7xl px-5 py-8">
         {/* Google Ads Container */}
