@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
 
-// Cache for 60 seconds, revalidate in background
-export const revalidate = 60
+// Cache for 5 minutes, revalidate in background
+export const revalidate = 300
 
 export async function GET(
   request: NextRequest,
@@ -71,6 +71,7 @@ export async function GET(
     const { data: activities, error } = await supabase
       .from(tableName)
       .select(selectColumns)
+      .eq('is_active', true) // Add is_active filter for index usage
       .order('rating', { ascending: false })
       .limit(50) // Limit results for faster loading
 
@@ -128,15 +129,28 @@ export async function GET(
 
     const entityType = getEntityType(category)
 
-    // Optimize media fetch - get primary images first, then any images if no primary exists
+    // Optimize media fetch - fetch only what's needed for initial render
     const activityIds = activities.map((a: any) => a.id)
-    const { data: mediaData, error: mediaError } = await supabase
-      .from('universal_media')
-      .select('entity_id, media_url, is_primary, sort_order')
-      .eq('entity_type', entityType)
-      .in('entity_id', activityIds)
-      // Remove the is_primary filter to get ALL images, we'll handle primary selection in code
-      .order('sort_order', { ascending: true })
+    
+    // Fetch primary images and first 3 images per entity in parallel
+    const [primaryMediaResult, allMediaResult] = await Promise.all([
+      supabase
+        .from('universal_media')
+        .select('entity_id, media_url, is_primary')
+        .eq('entity_type', entityType)
+        .in('entity_id', activityIds)
+        .eq('is_primary', true),
+      supabase
+        .from('universal_media')
+        .select('entity_id, media_url, is_primary, sort_order')
+        .eq('entity_type', entityType)
+        .in('entity_id', activityIds)
+        .order('sort_order', { ascending: true })
+        .limit(150) // Limit total images fetched
+    ]);
+
+    const mediaData = allMediaResult.data
+    const mediaError = allMediaResult.error
 
     if (mediaError) {
       console.error('Error fetching media:', mediaError)
@@ -175,6 +189,10 @@ export async function GET(
       filters,
       editorsPicks,
       totalCount: activities.length
+    }, {
+      headers: {
+        'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600'
+      }
     })
 
   } catch (error) {

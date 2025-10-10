@@ -1,5 +1,6 @@
 'use client'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useState, useRef } from 'react'
 
 export function EditorPicks() {
@@ -132,10 +133,14 @@ function PickCard({ item, priority }: { item: PickItem; priority?: boolean }) {
         }}
       >
       {/* Image */}
-      <img
+      <Image
         src={item.img}
         alt={item.title}
-        className="absolute inset-0 h-full w-full object-cover"
+        fill
+        sizes="340px"
+        className="object-cover"
+        priority={priority}
+        quality={85}
       />
 
       {/* Bottom gradient with gradual blur starting at 3/4 down */}
