@@ -71,16 +71,18 @@ export function CategoryTile({
       {/* Image Container */}
       <div className="relative h-64 overflow-hidden">
         {heroImage ? (
+          // ⚡ Performance Optimization: Reduced quality for faster loading
           <Image
             src={heroImage}
             alt={title}
             fill
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            quality={90}
+            quality={70}
             className={`object-cover transition-transform duration-700 ${
               isHovered ? 'scale-[1.05] brightness-110' : 'scale-100 brightness-100'
             }`}
             priority={false}
+            loading="lazy"
           />
         ) : (
           <div className="w-full h-full bg-gradient-to-br from-slate-200 to-slate-300 flex items-center justify-center">

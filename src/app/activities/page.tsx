@@ -1,13 +1,27 @@
 'use client'
 
 import { useEffect, useState, useRef } from 'react'
+import dynamic from 'next/dynamic'
 import { CategoryHero } from '@/components/CategoryHero'
 import { FilterBar } from '@/components/FilterBar'
 import { CategoryTile } from '@/components/CategoryTile'
 import { EditorPicksRow } from '@/components/EditorPicksRow'
 import { EditorPickTile } from '@/components/EditorPickTile'
-import { ActivitiesMap } from '@/components/ActivitiesMap'
 import { ChevronDown, ChevronUp, Filter, X, ArrowLeft, ArrowRight } from 'lucide-react'
+
+// ⚡ Performance Optimization: Lazy load ActivitiesMap only when needed
+// Map loads only when user clicks "Open Map", reducing initial bundle size
+const ActivitiesMap = dynamic(() => import('@/components/ActivitiesMap').then(mod => ({ default: mod.ActivitiesMap })), {
+  ssr: false,
+  loading: () => (
+    <div className="h-full w-full flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+        <p className="text-slate-600 font-medium">Loading interactive map...</p>
+      </div>
+    </div>
+  )
+})
 
 // Types for our data structure
 interface Activity {

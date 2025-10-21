@@ -7,6 +7,11 @@ import { AdSenseScript } from '@/components/AdSenseScript'
 export const metadata: Metadata = {
   title: 'Istanbul City Guide | Best Things To Do, Eat, Shop & Stay',
   description: 'Plan your perfect Istanbul trip with handpicked activities, hotels, food & drink, and shopping—everything in one place.',
+  // ⚡ Performance Optimization: Add favicon for browser optimization
+  icons: {
+    icon: '/favicon.svg',
+    apple: '/favicon.svg',
+  },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

@@ -6,15 +6,20 @@
   --shadow-soft: 0 20px 40px rgba(2,6,23,0.2); 
 }
 
-/* Performance optimizations for smooth scrolling */
+/* ⚡ Performance optimizations for smooth scrolling */
 html {
   scroll-behavior: smooth;
+  /* Enable GPU acceleration for smoother scrolling */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
   /* Removed transform and perspective to allow position:fixed children */
+  /* Enable hardware acceleration */
+  transform: translateZ(0);
 }
 
 /* GPU acceleration for common elements */
@@ -23,6 +28,25 @@ body {
   will-change: transform;
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
+}
+
+/* ⚡ Optimize animations for better performance */
+* {
+  /* Only animate transform and opacity for best performance */
+  transition-property: transform, opacity, color, background-color, border-color, fill, stroke;
+  /* Use GPU-accelerated properties when possible */
+}
+
+/* ⚡ Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 /* Hide scrollbar for horizontal scroll areas */
@@ -209,17 +233,29 @@ body {
   box-shadow: 0 0 30px rgba(59, 130, 246, 0.3);
 }
 
-/* Premium glass morphism */
+/* ⚡ Premium glass morphism with performance optimization */
 .glass {
   background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.3);
+  /* Use will-change sparingly and only when needed */
+  will-change: transform;
 }
 
 .glass-dark {
   background: rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.1);
+  will-change: transform;
+}
+
+/* ⚡ Lighter backdrop-filter for scroll performance */
+@media (prefers-reduced-motion: no-preference) {
+  .glass-light {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+  }
 }
 
 /* Masonry layout helpers */

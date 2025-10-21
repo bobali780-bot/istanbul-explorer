@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { Heart, Star } from 'lucide-react'
 import Link from 'next/link'
+import Image from 'next/image'
 
 interface EditorPickTileProps {
   id: string
@@ -153,16 +154,21 @@ export function EditorPickTile({
         style={{ borderRadius: '28px' }}
       >
       {/* Premium Background Image */}
+      {/* ⚡ Performance Optimization: Using Next.js Image for AVIF/WebP support */}
       <div className="absolute inset-0 h-full w-full overflow-hidden rounded-[28px]" style={{ borderRadius: '28px' }}>
         {heroImage ? (
-          <img
+          <Image
             src={heroImage}
             alt={title}
-            className="absolute inset-0 h-full w-full object-cover transition-transform duration-500"
+            fill
+            sizes="340px"
+            quality={70}
+            className="object-cover transition-transform duration-500"
             style={{ 
               transform: isHovered ? 'scale(1.05)' : 'scale(1)',
               willChange: 'transform'
             }}
+            loading="lazy"
           />
         ) : (
           <div className="absolute inset-0 h-full w-full bg-gradient-to-br from-slate-200 to-slate-300 flex items-center justify-center">

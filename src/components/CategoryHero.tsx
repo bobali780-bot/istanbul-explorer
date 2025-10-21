@@ -42,10 +42,13 @@ export function CategoryHero({
           transform: `translateY(${scrollY * 0.5}px) scale(1.05)`
         }}
       >
+        {/* ⚡ Performance Optimization: Hero image with optimized quality and sizes */}
         <Image
           src={heroImage}
           alt="Hero background"
           fill
+          sizes="100vw"
+          quality={70}
           className="object-cover"
           priority
         />

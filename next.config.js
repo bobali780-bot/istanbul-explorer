@@ -6,7 +6,14 @@ const nextConfig = {
   experimental: {
     optimizePackageImports: ['lucide-react']
   },
+  
+  // ⚡ Performance Optimization: Image Configuration
+  // Use modern AVIF and WebP formats for better compression
+  // Optimized device sizes for responsive images
   images: {
+    formats: ['image/avif', 'image/webp'],
+    deviceSizes: [480, 768, 1080, 1366, 1920],
+    imageSizes: [16, 32, 64, 128, 256, 384],
     remotePatterns: [
       // Supabase storage
       {
@@ -156,6 +163,37 @@ const nextConfig = {
         hostname: "media-cdn.tripadvisor.com",
       }
     ],
+  },
+  
+  // ⚡ Performance Optimization: Aggressive caching for static assets
+  // Immutable cache headers for Next.js static files and optimized images
+  async headers() {
+    return [
+      {
+        source: '/_next/static/:path*',
+        headers: [
+          { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }
+        ],
+      },
+      {
+        source: '/_next/image/:path*',
+        headers: [
+          { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }
+        ],
+      },
+      {
+        source: '/favicon.ico',
+        headers: [
+          { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }
+        ],
+      },
+      {
+        source: '/images/:path*',
+        headers: [
+          { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }
+        ],
+      },
+    ]
   }
 }
 
